@@ -71,12 +71,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -85,13 +89,15 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>winmm.lib;d3d9.lib;Xinput.lib;d3dx9d.lib;dinput8.lib;dxguid.lib;Effekseer.Debug.lib;EffekseerRendererDX9.Debug.lib;EffekseerSoundXAudio2.Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -109,19 +115,21 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>winmm.lib;d3d9.lib;Xinput.lib;d3dx9.lib;dinput8.lib;dxguid.lib;Effekseer.Release.lib;EffekseerRendererDX9.Release.lib;EffekseerSoundXAudio2.Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,6 +150,131 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Camera\Camera.cpp" />
+    <ClCompile Include="Source\Camera\StayCamera.cpp" />
+    <ClCompile Include="Source\Collision\Collision.cpp" />
+    <ClCompile Include="Source\DInput\DirectInput.cpp" />
+    <ClCompile Include="Source\DirectXRenderer.cpp" />
+    <ClCompile Include="Source\Effekseer\Effekseer.cpp" />
+    <ClCompile Include="Source\Game\Billboard\Billboard.cpp" />
+    <ClCompile Include="Source\Game\Core\Core.cpp" />
+    <ClCompile Include="Source\Game\Core\StateCore\StateCore_Default.cpp" />
+    <ClCompile Include="Source\Game\Core\StateCore\StateCore_UpDown.cpp" />
+    <ClCompile Include="Source\Game\Enemy\Enemy.cpp" />
+    <ClCompile Include="Source\Game\GameManager\GameManager.cpp" />
+    <ClCompile Include="Source\Game\MeshField\MeshField.cpp" />
+    <ClCompile Include="Source\Game\Object.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_Idle.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_Jump.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_KickCombo.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_KickLeft.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_KickRight.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_PunchCombo.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_PunchLeft.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_PunchRight.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_Run.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_Walk_Back.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimationState\StatePlayer_Walk_Forward.cpp" />
+    <ClCompile Include="Source\Game\Player\AnimPlayer.cpp" />
+    <ClCompile Include="Source\Game\Player\DefaultPlayer.cpp" />
+    <ClCompile Include="Source\Game\Player\Player.cpp" />
+    <ClCompile Include="Source\Game\Player\PlayerCamera.cpp" />
+    <ClCompile Include="Source\Game\Portal\Portal.cpp" />
+    <ClCompile Include="Source\Game\Shader\OutlineShader.cpp" />
+    <ClCompile Include="Source\Game\Shader\ShaderManager.cpp" />
+    <ClCompile Include="Source\Game\Shader\ShadowMapShader.cpp" />
+    <ClCompile Include="Source\Game\Shader\ShadowVolume.cpp" />
+    <ClCompile Include="Source\Game\Shader\ToonShader.cpp" />
+    <ClCompile Include="Source\Game\SkinMesh\sceneSkinMesh.cpp" />
+    <ClCompile Include="Source\Game\SkinMesh\SkinMeshData.cpp" />
+    <ClCompile Include="Source\Game\SkinMesh\SkinMeshFile.cpp" />
+    <ClCompile Include="Source\Game\XModel\XModel.cpp" />
+    <ClCompile Include="Source\Imgui\imgui.cpp" />
+    <ClCompile Include="Source\Imgui\ImguiManager.cpp" />
+    <ClCompile Include="Source\Imgui\imgui_demo.cpp" />
+    <ClCompile Include="Source\Imgui\imgui_draw.cpp" />
+    <ClCompile Include="Source\Imgui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="Source\Light\Light.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\MouseState\MouseState.cpp" />
+    <ClCompile Include="Source\Scene\Fade.cpp" />
+    <ClCompile Include="Source\Scene\GameScene.cpp" />
+    <ClCompile Include="Source\Sound\Sound.cpp" />
+    <ClCompile Include="Source\Texture\Texture.cpp" />
+    <ClCompile Include="Source\UI\UI.cpp" />
+    <ClCompile Include="Source\UI\UIState\UIState_Move.cpp" />
+    <ClCompile Include="Source\UI\UIState\UIState_Scale.cpp" />
+    <ClCompile Include="Source\Vector3\Vector3.cpp" />
+    <ClCompile Include="Source\XInput\xcontroller.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Camera\Camera.h" />
+    <ClInclude Include="Source\Camera\StayCamera.h" />
+    <ClInclude Include="Source\Collision\Collision.h" />
+    <ClInclude Include="Source\DInput\DirectInput.h" />
+    <ClInclude Include="Source\DirectXRenderer.h" />
+    <ClInclude Include="Source\Effekseer\Effekseer.h" />
+    <ClInclude Include="Source\Game\Billboard\Billboard.h" />
+    <ClInclude Include="Source\Game\Core\Core.h" />
+    <ClInclude Include="Source\Game\Core\StateCore\StateCore.h" />
+    <ClInclude Include="Source\Game\Core\StateCore\StateCore_Default.h" />
+    <ClInclude Include="Source\Game\Core\StateCore\StateCore_UpDown.h" />
+    <ClInclude Include="Source\Game\Enemy\Enemy.h" />
+    <ClInclude Include="Source\Game\GameManager\GameManager.h" />
+    <ClInclude Include="Source\Game\MeshField\MeshField.h" />
+    <ClInclude Include="Source\Game\Object.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_Idle.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_Jump.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_KickCombo.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_KickLeft.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_KickRight.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_PunchCombo.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_PunchLeft.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_PunchRight.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_Run.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_Walk_Back.h" />
+    <ClInclude Include="Source\Game\Player\AnimationState\StatePlayer_Walk_Forward.h" />
+    <ClInclude Include="Source\Game\Player\AnimPlayer.h" />
+    <ClInclude Include="Source\Game\Player\DefaultPlayer.h" />
+    <ClInclude Include="Source\Game\Player\Player.h" />
+    <ClInclude Include="Source\Game\Player\PlayerCamera.h" />
+    <ClInclude Include="Source\Game\Portal\Portal.h" />
+    <ClInclude Include="Source\Game\Shader\Demo.h" />
+    <ClInclude Include="Source\Game\Shader\OutlineShader.h" />
+    <ClInclude Include="Source\Game\Shader\ShaderManager.h" />
+    <ClInclude Include="Source\Game\Shader\ShadowMapShader.h" />
+    <ClInclude Include="Source\Game\Shader\ShadowVolume.h" />
+    <ClInclude Include="Source\Game\Shader\ToonShader.h" />
+    <ClInclude Include="Source\Game\SkinMesh\sceneSkinMesh.h" />
+    <ClInclude Include="Source\Game\SkinMesh\SkinMeshData.h" />
+    <ClInclude Include="Source\Game\SkinMesh\SkinMeshFile.h" />
+    <ClInclude Include="Source\Game\XModel\XModel.h" />
+    <ClInclude Include="Source\Imgui\imconfig.h" />
+    <ClInclude Include="Source\Imgui\imgui.h" />
+    <ClInclude Include="Source\Imgui\ImguiManager.h" />
+    <ClInclude Include="Source\Imgui\imgui_impl_dx9.h" />
+    <ClInclude Include="Source\Imgui\imgui_internal.h" />
+    <ClInclude Include="Source\Imgui\stb_rect_pack.h" />
+    <ClInclude Include="Source\Imgui\stb_textedit.h" />
+    <ClInclude Include="Source\Imgui\stb_truetype.h" />
+    <ClInclude Include="Source\Light\Light.h" />
+    <ClInclude Include="Source\main.h" />
+    <ClInclude Include="Source\MouseState\MouseState.h" />
+    <ClInclude Include="Source\Scene\Fade.h" />
+    <ClInclude Include="Source\Scene\GameScene.h" />
+    <ClInclude Include="Source\Scene\Scene.h" />
+    <ClInclude Include="Source\Sound\Sound.h" />
+    <ClInclude Include="Source\Texture\Texture.h" />
+    <ClInclude Include="Source\UI\UI.h" />
+    <ClInclude Include="Source\UI\UIState\UIState.h" />
+    <ClInclude Include="Source\UI\UIState\UIState_Move.h" />
+    <ClInclude Include="Source\UI\UIState\UIState_Scale.h" />
+    <ClInclude Include="Source\Vector3\Vector3.h" />
+    <ClInclude Include="Source\XInput\xcontroller.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Imgui\imgui.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
