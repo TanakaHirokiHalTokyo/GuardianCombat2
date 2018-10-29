@@ -5,7 +5,7 @@ class Vector3;
 
 constexpr float Proj_Near = 0.1f ;											//近視
 constexpr float Proj_Far = 45000.0f;										//遠視
-constexpr int Fov = 60;														//視野角
+constexpr int Fov = 50;														//視野角
 
 constexpr float EyeX = 0.0f;												//カメラ座標X
 constexpr float EyeY = 80.0f;												//カメラ座標Y

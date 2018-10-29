@@ -23,6 +23,8 @@ public:
 	void Draw()override;
 	void EndDraw()override;
 
+	Player* GetPlayer();
+
 private:
 	Fade* fade_ = nullptr;
 	XModel* model_ = nullptr;

@@ -69,6 +69,9 @@ public:
 	//----------------------------------------------------------------------------------------
 	void SetPosition(float x, float y, float z) { this->transform_.pos = D3DXVECTOR3(x, y, z); }
 	void SetPosition(D3DXVECTOR3 pos) { this->transform_.pos = pos; }
+	void SetPositionX(float x) { this->transform_.pos.x = x; }
+	void SetPositionY(float y) { this->transform_.pos.y = y; }
+	void SetPositionZ(float z) { this->transform_.pos.z = z; }
 	D3DXVECTOR3 GetPosition() { return this->transform_.pos; }
 
 	//---------------------------------------------------------------------------------------
@@ -76,6 +79,9 @@ public:
 	//----------------------------------------------------------------------------------------
 	void SetRotation(float x, float y, float z) { this->transform_.rotate = D3DXVECTOR3(x, y, z); }
 	void SetRotation(D3DXVECTOR3 rot) { this->transform_.rotate = rot; }
+	void SetRotationX(float x) { this->transform_.rotate.x = x; }
+	void SetRotationY(float y) { this->transform_.rotate.y = y; }
+	void SetRotationZ(float z) { this->transform_.rotate.z = z; }
 	D3DXVECTOR3 GetRotate() { return this->transform_.rotate; }
 
 	//----------------------------------------------------------------------------------------

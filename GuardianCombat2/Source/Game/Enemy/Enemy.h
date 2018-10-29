@@ -22,9 +22,10 @@ public:
 	float GetSpeed() { return speed_; }
 
 	XModel* GetModel();
+	Vector3* GetVector();
 protected:
 	float life_ = 100.0f;
-	float speed_ = 1.0f;
+	float speed_ = 0.01f;
 	Vector3* vector_ = nullptr;
 	XModel* model_ = nullptr;
 };

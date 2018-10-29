@@ -11,3 +11,8 @@ XModel * Enemy::GetModel()
 {
 	return model_;
 }
+
+Vector3 * Enemy::GetVector()
+{
+	return vector_;
+}

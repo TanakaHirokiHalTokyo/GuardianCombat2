@@ -19,12 +19,7 @@ struct XFILENAME
 const XFILENAME g_aXFileName[] =
 {
 	{ "resource/Xmodel/dome303.X" },
-	{ "resource/Xmodel/anim/BODY.x" },
-	{ "resource/Xmodel/anim/HEAD.x" },
-	{ "resource/Xmodel/anim/ARM_R.x" },
-	{ "resource/Xmodel/anim/ARM_L.x" },
-	{ "resource/Xmodel/anim/ASI.x" },
-	{ "resource/Xmodel/core.x" },
+	{ "resource/Xmodel/youkai_hige.x" },
 };
 
 
@@ -35,12 +30,7 @@ public:
 	enum XMODEL
 	{
 		MODEL_DOME303,
-		MODEL_BODY,
-		MODEL_HEAD,
-		MODEL_ARM_R,
-		MODEL_ARM_L,
-		MODEL_ASI,
-		MODE_CORE,
+		MODEL_HIGE,
 		MODEL_MAX
 	};
 
