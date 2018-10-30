@@ -172,6 +172,8 @@
     <ClCompile Include="Source\Game\Player\Player.cpp" />
     <ClCompile Include="Source\Game\Player\PlayerCamera.cpp" />
     <ClCompile Include="Source\Game\Player\StatePlayer\FPSPlayer_Movement.cpp" />
+    <ClCompile Include="Source\Game\Player\Weapon\WeaponState\WeaponRelative.cpp" />
+    <ClCompile Include="Source\Game\Player\Weapon\Weapon_Shotgun.cpp" />
     <ClCompile Include="Source\Game\Shader\OutlineShader.cpp" />
     <ClCompile Include="Source\Game\Shader\ShaderManager.cpp" />
     <ClCompile Include="Source\Game\Shader\ShadowMapShader.cpp" />
@@ -226,6 +228,10 @@
     <ClInclude Include="Source\Game\Player\PlayerCamera.h" />
     <ClInclude Include="Source\Game\Player\StatePlayer\FPSPlayer_Movement.h" />
     <ClInclude Include="Source\Game\Player\StatePlayer\FPSPlayer_State.h" />
+    <ClInclude Include="Source\Game\Player\Weapon\Weapon.h" />
+    <ClInclude Include="Source\Game\Player\Weapon\WeaponState\WeaponRelative.h" />
+    <ClInclude Include="Source\Game\Player\Weapon\WeaponState\WeaponState.h" />
+    <ClInclude Include="Source\Game\Player\Weapon\Weapon_Shotgun.h" />
     <ClInclude Include="Source\Game\Shader\Demo.h" />
     <ClInclude Include="Source\Game\Shader\OutlineShader.h" />
     <ClInclude Include="Source\Game\Shader\ShaderManager.h" />

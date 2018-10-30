@@ -20,6 +20,7 @@ const XFILENAME g_aXFileName[] =
 {
 	{ "resource/Xmodel/dome303.X" },
 	{ "resource/Xmodel/youkai_hige.x" },
+	{ "resource/Xmodel/shotgun.x" },
 };
 
 
@@ -31,6 +32,7 @@ public:
 	{
 		MODEL_DOME303,
 		MODEL_HIGE,
+		MODEL_SHOTGUN,
 		MODEL_MAX
 	};
 

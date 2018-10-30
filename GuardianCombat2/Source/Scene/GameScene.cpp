@@ -38,6 +38,8 @@ GameScene::GameScene()
 		Object::Create<EnemyHige>();										//敵作成
 
 		GameManager::SetPlayer(Object::Create<FPSPlayer>());				//プレイヤー作成
+		XModel* model = Object::Create<XModel>();
+		model->SetModelType(XModel::XMODEL::MODEL_SHOTGUN);
 
 		UI* ui = Object::Create<UI>(TextureManager::Tex_Mission);			//UI作成
 		ui->SetStartScale(200.0f,40.0f);									//UI初期スケール設定
