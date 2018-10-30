@@ -35,12 +35,22 @@ public:
 	float GetScaleTime();							//移動開始から何秒間動かすのかを取得
 	D3DXVECTOR2 GetAfterScale();					//更新後のScaleを取得
 
+	//  UI初期開始地点 ------------------------------------------------------------------------------
+	void SetStartPosition(D3DXVECTOR2 pos);
+	void SetStartPosition(float x, float y);
+	D3DXVECTOR2 GetStartPosition();
 
+	//	UIScale初期値
+	void SetStartScale(D3DXVECTOR2 scale);
+	void SetStartScale(float x,float y);
+	D3DXVECTOR2 GetStartScale();
 
 private:
 	Texture* texture_ = nullptr;
 	UIState* stateMove_ = nullptr;					//動きを制御
 	UIState* stateScale_ = nullptr;					//サイズを制御
+	D3DXVECTOR2 startPos_ = D3DXVECTOR2(0, 0);		//初期開始地点
+	D3DXVECTOR2 startScale_ = D3DXVECTOR2(0,0);		//初期開始時サイズ
 	//		Move Info	----------------------------------------------------------------------------
 	float countMove_ = 0;							//生成してから何秒後に移動させるか
 	float moveTime_ = 0;							//移動開始から何秒間で移動し終わるのか

@@ -4,6 +4,7 @@
 #include "../../Scene/Scene.h"
 #include "../../Texture/Texture.h"
 #include "../../Scene/Fade.h"
+#include "../../Scene/TitleScene.h"
 #include "../../DInput/DirectInput.h"
 #include "../../Sound/Sound.h"
 #include "../../Imgui/ImguiManager.h"
@@ -15,6 +16,9 @@
 Scene* GameManager::scene_ = NULL;
 Fade* GameManager::fade_ = NULL;
 DirectionalLight* GameManager::light_ = NULL;
+std::string GameManager::sceneTag_ = "None";
+bool GameManager::gameObjectLoaded_ = false;
+Player* GameManager::player_ = nullptr;
 
 void GameManager::Init()
 {
@@ -24,7 +28,7 @@ void GameManager::Init()
 	/*fade_ = new Fade();
 	fade_->Init();
 	fade_->FadeIn();*/
-	SetScene(new GameScene());
+	SetScene(new TitleScene());
 }
 void GameManager::Uninit()
 {
@@ -37,9 +41,10 @@ void GameManager::Uninit()
 		fade_->Uninit();
 		SAFE_DELETE(fade_);
 	}
-	SoundManager::Uninit();
-	TextureManager::ReleaseAll();
-	ShaderManager::ReleaseAll();
+	Object::GameObjectReleaseAll();			//ゲームオブジェクトすべて解放。
+	SoundManager::Uninit();					//サウンド終了処理
+	TextureManager::ReleaseAll();			//テクスチャ解放
+	ShaderManager::ReleaseAll();			//シェーダー解放
 }
 void GameManager::Update()
 {
@@ -108,4 +113,33 @@ void GameManager::SetDirectionalLight(DirectionalLight * light)
 DirectionalLight * GameManager::GetDirectionalLight()
 {
 	return light_;
+}
+void GameManager::SetSceneTag(std::string sceneTag)
+{
+	sceneTag_ = sceneTag;
+}
+
+std::string GameManager::GetSceneTag()
+{
+	return sceneTag_;
+}
+
+void GameManager::SetGameObjectLoad(bool loaded)
+{
+	gameObjectLoaded_ = loaded;
+}
+
+bool GameManager::GetGameObjectLoad()
+{
+	return gameObjectLoaded_;
+}
+
+void GameManager::SetPlayer(Player * player)
+{
+	player_ = player;
+}
+
+Player * GameManager::GetPlayer()
+{
+	return player_;
 }

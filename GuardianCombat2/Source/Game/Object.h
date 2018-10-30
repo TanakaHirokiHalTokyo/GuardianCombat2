@@ -6,6 +6,8 @@
 #include	<memory>
 #include	<d3d9.h>
 #include	<d3dx9.h>
+#include	"../Scene/Scene.h"
+#include	"../Game/GameManager/GameManager.h"
 
 #include "../Collision/Collision.h"
 
@@ -55,11 +57,13 @@ public:
 	virtual void Draw() = 0;
 	virtual void EndDraw() = 0;
 
+	static void InitAll();
 	static void UpdateAll();
 	static void BeginDrawAll();
 	static void DrawAll();
 	static void EndDrawAll();
 	static void ReleaseAll();
+	static void GameObjectReleaseAll();
 
 
 	void Release();
@@ -139,13 +143,27 @@ public:
 	template<class _Object, class ... Args>
 	static _Object* Create(Args ... args)
 	{
-		_Object* obj = new _Object(args ...);
-		obj->Init();
-		objects_.emplace_back(obj);
-		return obj;
+		Scene* scene = GameManager::GetScene();
+
+		if(GameManager::GetSceneTag() == "GameScene")
+		{	//ゲームシーンだった場合
+			_Object* obj = new _Object(args ...);
+			obj->Init();
+			gameObjects_.emplace_back(obj);
+			return obj;
+		}
+		else
+		{	//ゲームシーンではない場合
+			_Object* obj = new _Object(args ...);
+			obj->Init();
+			objects_.emplace_back(obj);
+			return obj;
+		}
+		
 	}
 
 protected:
+	static vector<Object*> gameObjects_;							//ゲームシーンオブジェクト動的配列（ゲーム終了時に解放処理　Load時間削減）
 	static vector<Object*> objects_;								//動的配列
 
 	bool exist_ = true;												//存在しているか falseになったら消される。

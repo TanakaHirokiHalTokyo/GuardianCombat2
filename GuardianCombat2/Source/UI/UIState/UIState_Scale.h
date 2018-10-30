@@ -6,6 +6,7 @@
 class UIState_Scale :public UIState
 {
 public:
+	void Init()override;
 	void Update(UI* ui)override;
 
 private:

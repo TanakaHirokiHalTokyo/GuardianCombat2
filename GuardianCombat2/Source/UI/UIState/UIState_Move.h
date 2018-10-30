@@ -6,6 +6,7 @@
 class UIState_Move:public UIState
 {
 public:
+	void Init()override;
 	void Update(UI* ui)override;
 private:
 	int count_ = 0;

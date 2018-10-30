@@ -3,6 +3,14 @@
 #include "../UI.h"
 #include "../../main.h"
 
+void UIState_Scale::Init()
+{
+	this->count_ = 0;							//カウンタ初期化
+	this->moveValue_ = D3DXVECTOR2(0,0);		//移動量初期化
+	this->initScaleValue_ = false;				//スケール変化値計算したかを初期化
+	this->updateScale_ = true;					//現在スケールの変更をおこなっているのかを初期化
+}
+
 void UIState_Scale::Update(UI * ui)
 {
 	if (updateScale_)

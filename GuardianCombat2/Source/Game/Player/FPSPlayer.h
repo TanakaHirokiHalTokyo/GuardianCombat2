@@ -20,7 +20,8 @@ public:
 	void Draw()override;			//描画処理
 	void EndDraw()override;			//オブジェクトすべての描画が終わった後の処理
 
-	Camera* GetCamera();
+	void SetCamera(Camera* camera);	//PlayerCameraを設定
+	Camera* GetCamera();			//PlayerCameraを取得
 
 private:
 	Camera* camera_ = nullptr;				//カメラ情報

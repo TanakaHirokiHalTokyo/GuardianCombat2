@@ -3,6 +3,14 @@
 #include "../UI.h"
 #include "../../main.h"
 
+void UIState_Move::Init()
+{
+	this->count_ = 0;
+	this->initMoveValue_ = false;
+	this->moveValue_ = D3DXVECTOR2(0, 0);
+	this->updateMove_ = true;
+}
+
 void UIState_Move::Update(UI* ui)
 {
 	if (updateMove_)

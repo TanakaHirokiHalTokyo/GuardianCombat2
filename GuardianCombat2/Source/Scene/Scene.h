@@ -1,5 +1,6 @@
 #pragma once
 
+
 class Scene
 {
 public:
@@ -10,5 +11,7 @@ public:
 	virtual void BeginDraw() = 0;
 	virtual void Draw() = 0;
 	virtual void EndDraw() = 0;
+private:
+	
 };
 

@@ -26,10 +26,12 @@ UI::~UI()
 
 void UI::Init()
 {
-	SetPosition(0,0,0);
-	SetScale(1.0f,1.0f,1.0f);
-	texture_->SetPosition(GetPosition());
-	texture_->SetDrawSize(GetScale().x,GetScale().y);
+	if(stateMove_ != nullptr) stateMove_->Init();										//移動制御初期化
+	if (stateScale_ != nullptr) stateScale_->Init();									//サイズ制御初期化
+	SetPosition(startPos_.x,startPos_.y,0);					//開始地点初期化
+	SetScale(startScale_.x, startScale_.y,0);				//サイズ初期化
+	texture_->SetPosition(GetPosition());					//テクスチャの座標更新
+	texture_->SetDrawSize(GetScale().x,GetScale().y);		//テクスチャのサイズ更新
 }
 
 void UI::Uninit()
@@ -159,4 +161,34 @@ float UI::GetScaleTime()
 D3DXVECTOR2 UI::GetAfterScale()
 {
 	return updateSize_;
+}
+
+void UI::SetStartPosition(D3DXVECTOR2 pos)
+{
+	startPos_ = pos;
+}
+
+void UI::SetStartPosition(float x, float y)
+{
+	startPos_ = D3DXVECTOR2(x,y);
+}
+
+D3DXVECTOR2 UI::GetStartPosition()
+{
+	return startPos_;
+}
+
+void UI::SetStartScale(D3DXVECTOR2 scale)
+{
+	startScale_ = scale;
+}
+
+void UI::SetStartScale(float x, float y)
+{
+	startScale_ = D3DXVECTOR2(x,y);
+}
+
+D3DXVECTOR2 UI::GetStartScale()
+{
+	return startScale_;
 }

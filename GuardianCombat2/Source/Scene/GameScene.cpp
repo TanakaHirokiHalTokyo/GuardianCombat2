@@ -13,25 +13,41 @@
 #include "../Game/Player/FPSPlayer.h"
 #include "../UI/UI.h"
 #include "Fade.h"
+#include "../DInput/DirectInput.h"
+#include "ResultScene.h"
 
 GameScene::GameScene()
 {
-	DirectionalLight* light = Object::Create<DirectionalLight>();		//環境光作成
-	light->SetPause(true);											
-	light->SetVector(D3DXVECTOR3(0.0f, -1.0f, 1.0f));
-	GameManager::SetDirectionalLight(light);							//GameManagerにライトを設定
-	XModel* dome = Object::Create<XModel>();							//SkyDome作成
-	dome->SetPause(true);
-	dome->SetModelType(XModel::MODEL_DOME303);
-	dome->SetScale(10.0f, 10.0f, 10.0f);
-	field_ = Object::Create<MeshField>();								//フィールド作成
-	Object::Create<EnemyHige>();										//敵作成
-	player_ = Object::Create<FPSPlayer>();								//プレイヤー作成
-	UI* ui = Object::Create<UI>(TextureManager::Tex_Mission);			//UI作成
-	ui->SetScale(200.0f,40.0f,0.0f);
-	ui->SetPosition(-200.0f, (float)ScreenHeight / 2.0f,0.0f);
-	ui->MoveTexture(0.0f,5.0f,0, (float)ScreenHeight / 2.0f);
-	ui->ScalingTexture(0.0f, 5.0f,200.0f,40.0f);
+	//SceneTag設定
+	GameManager::SetSceneTag("GameScene");
+
+	if (!GameManager::GetGameObjectLoad())
+	{
+		DirectionalLight* light = Object::Create<DirectionalLight>();		//環境光作成
+		light->SetPause(true);
+		light->SetVector(D3DXVECTOR3(0.0f, -1.0f, 1.0f));
+		GameManager::SetDirectionalLight(light);							//GameManagerにライトを設定
+
+		XModel* dome = Object::Create<XModel>();							//SkyDome作成
+		dome->SetPause(true);
+		dome->SetModelType(XModel::MODEL_DOME303);
+		dome->SetScale(10.0f, 10.0f, 10.0f);
+
+		Object::Create<MeshField>();										//フィールド作成
+
+		Object::Create<EnemyHige>();										//敵作成
+
+		GameManager::SetPlayer(Object::Create<FPSPlayer>());				//プレイヤー作成
+
+		UI* ui = Object::Create<UI>(TextureManager::Tex_Mission);			//UI作成
+		ui->SetStartScale(200.0f,40.0f);									//UI初期スケール設定
+		ui->SetStartPosition(-200.0f, (float)ScreenHeight / 2.0f);			//UI初期座標設定
+		ui->MoveTexture(0.0f, 5.0f, 0, (float)ScreenHeight / 2.0f);			//UI移動設定
+		ui->ScalingTexture(0.0f, 5.0f, 200.0f, 40.0f);						//UI拡大設定
+
+		GameManager::SetGameObjectLoad(true);								//GameObjectを読み込んだ設定
+	}
+	
 }
 
 GameScene::~GameScene()
@@ -44,7 +60,7 @@ GameScene::~GameScene()
 
 void GameScene::Init()
 {
-	
+	Object::InitAll();
 }
 
 void GameScene::Uninit()
@@ -58,6 +74,11 @@ void GameScene::Update()
 	SetCursorPos((int)ScreenWidth / 2,(int)ScreenHeight / 2);
 	//オブジェクト更新
 	Object::UpdateAll();
+
+	if (GetKeyboardTrigger(DIK_SPACE) || GetKeyboardTrigger(DIK_RETURN))
+	{
+		GameManager::SetScene(new ResultScene());
+	}
 }
 
 void GameScene::BeginDraw()
@@ -77,9 +98,4 @@ void GameScene::EndDraw()
 {
 	CRendererDirectX::ClearZ();
 	Object::EndDrawAll();
-}
-
-Player * GameScene::GetPlayer()
-{
-	return player_;
 }

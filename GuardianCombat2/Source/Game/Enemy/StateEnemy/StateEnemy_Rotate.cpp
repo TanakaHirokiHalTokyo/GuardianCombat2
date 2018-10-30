@@ -1,7 +1,6 @@
 #include "StateEnemy_Rotate.h"
 #include "../Enemy.h"
 #include "../../GameManager/GameManager.h"
-#include "../../../Scene/GameScene.h"
 #include "../../Player/Player.h"
 #include "../../../Vector3/Vector3.h"
 #include "../../XModel/XModel.h"
@@ -10,8 +9,7 @@
 void StateEnemy_Rotate::Act(Enemy * enemy)
 {
 	//Playerî•ñŽæ“¾
-	const auto& game_scene = (GameScene*)GameManager::GetScene();
-	const auto& player_info = game_scene->GetPlayer();
+	const auto& player_info = GameManager::GetPlayer();
 
 	//EnemyModelŽæ“¾
 	auto enemy_model = enemy->GetModel();

@@ -22,8 +22,8 @@
 #define CLASS_NAME		" "
 #define WINDOW_STYLE	WS_OVERLAPPEDWINDOW
 
-constexpr unsigned int ScreenWidth = 1280U;															//画面幅サイズ
-constexpr unsigned int ScreenHeight = 720U;															//画面高さサイズ
+constexpr unsigned int ScreenWidth = 1440U;															//画面幅サイズ
+constexpr unsigned int ScreenHeight = 810U;															//画面高さサイズ
 constexpr int	GameFPS = 60;																	//FPS
 constexpr bool	FullScreenFlag = true;
 

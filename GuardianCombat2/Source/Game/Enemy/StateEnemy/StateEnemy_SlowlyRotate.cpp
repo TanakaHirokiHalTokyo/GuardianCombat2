@@ -1,7 +1,6 @@
 #include "StateEnemy_SlowlyRotate.h"
 #include "../Enemy.h"
 #include "../../GameManager/GameManager.h"
-#include "../../../Scene/GameScene.h"
 #include "../../Player/Player.h"
 #include "../../../Vector3/Vector3.h"
 #include "../../XModel/XModel.h"
@@ -12,8 +11,7 @@ constexpr float ROTATE_ANGLE = 0.5f;					//U‚èŒü‚«‘¬“x
 void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 {
 	//Playerî•ñŽæ“¾
-	const auto& game_scene = (GameScene*)GameManager::GetScene();
-	const auto& player_info = game_scene->GetPlayer();
+	const auto& player_info = GameManager::GetPlayer();
 
 	//EnemyModelŽæ“¾
 	auto enemy_model = enemy->GetModel();
