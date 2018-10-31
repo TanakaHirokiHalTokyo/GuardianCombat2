@@ -11,7 +11,7 @@ class Texture;
 class FPSPlayer_UI
 {
 public:
-	const float RETICLE_SIZE = 10.0f;
+	const float RETICLE_SIZE = 50.0f;
 
 	FPSPlayer_UI();
 	~FPSPlayer_UI();

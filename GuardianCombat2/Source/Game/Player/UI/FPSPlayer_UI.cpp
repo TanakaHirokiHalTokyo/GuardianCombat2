@@ -9,7 +9,6 @@ FPSPlayer_UI::FPSPlayer_UI()
 	reticle_->SetDrawSize(RETICLE_SIZE,RETICLE_SIZE);
 	reticle_->SetPosition((float)ScreenWidth / 2.0f - RETICLE_SIZE / 2.0f,(float)ScreenHeight / 2.0f - RETICLE_SIZE / 2.0f,0.0f);
 	reticle_->SetColor(D3DCOLOR_RGBA(0,255,0,128));
-	reticle_->SetScale(0.0f,0.0f,RETICLE_SIZE,RETICLE_SIZE);
 	reticle_->SetVisible(true);
 }
 

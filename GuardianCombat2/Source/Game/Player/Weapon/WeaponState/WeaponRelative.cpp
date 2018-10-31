@@ -20,5 +20,4 @@ void WeaponRelative::Act(Weapon * weapon)
 	weapon->SetPosition(weapon->GetPosition() + player_camera->GetRight() * 0.1f + player_camera->GetUp() * -0.05f);
 	//‰ñ“]Šp“xÝ’è
 	weapon->SetRotation(player_camera->GetRotate().y,player_camera->GetRotate().x,0);
-
 }
