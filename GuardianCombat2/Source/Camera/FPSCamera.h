@@ -18,6 +18,7 @@ public:
 	void EndDraw()override;					//すべてのオブジェクトが描画し終わった際の処理
 
 	void SetPlayer(Player* player);
+
 private:
 	void CameraAtUpdate();							//中視点更新
 

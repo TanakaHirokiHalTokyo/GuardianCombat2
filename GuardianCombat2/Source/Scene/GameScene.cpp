@@ -37,9 +37,7 @@ GameScene::GameScene()
 
 		Object::Create<EnemyHige>();										//敵作成
 
-		GameManager::SetPlayer(Object::Create<FPSPlayer>());				//プレイヤー作成
-		XModel* model = Object::Create<XModel>();
-		model->SetModelType(XModel::XMODEL::MODEL_SHOTGUN);
+		player_ = GameManager::SetPlayer(Object::Create<FPSPlayer>());				//プレイヤー作成しマネージャーにプレイヤー登録する
 
 		UI* ui = Object::Create<UI>(TextureManager::Tex_Mission);			//UI作成
 		ui->SetStartScale(200.0f,40.0f);									//UI初期スケール設定
@@ -49,7 +47,6 @@ GameScene::GameScene()
 
 		GameManager::SetGameObjectLoad(true);								//GameObjectを読み込んだ設定
 	}
-	
 }
 
 GameScene::~GameScene()
@@ -73,7 +70,7 @@ void GameScene::Uninit()
 void GameScene::Update()
 {
 	//カーソルの位置固定
-	SetCursorPos((int)ScreenWidth / 2,(int)ScreenHeight / 2);
+	//SetCursorPos((int)ScreenWidth / 2,(int)ScreenHeight / 2);
 	//オブジェクト更新
 	Object::UpdateAll();
 
@@ -89,6 +86,14 @@ void GameScene::BeginDraw()
 	ShadowMapShader::CreateShadowMap();
 	CRendererDirectX::Clear();
 	Object::BeginDrawAll();
+
+	if (player_ == nullptr)
+	{
+		player_ = GameManager::GetPlayer();
+	}
+
+	Camera* player_camera = player_->GetCamera();
+	player_camera->SetMainCameraInfo(player_camera->GetPosition(),player_camera->GetAt(),player_camera->GetUp(),player_camera->GetView(),player_camera->GetProj());
 }
 
 void GameScene::Draw()

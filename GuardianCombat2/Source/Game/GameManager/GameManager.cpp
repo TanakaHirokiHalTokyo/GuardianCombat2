@@ -134,9 +134,11 @@ bool GameManager::GetGameObjectLoad()
 	return gameObjectLoaded_;
 }
 
-void GameManager::SetPlayer(Player * player)
+Player* GameManager::SetPlayer(Player * player)
 {
 	player_ = player;
+
+	return player_;
 }
 
 Player * GameManager::GetPlayer()

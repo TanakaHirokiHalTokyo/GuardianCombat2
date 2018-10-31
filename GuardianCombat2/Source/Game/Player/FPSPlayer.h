@@ -5,6 +5,8 @@
 
 class Camera;
 class FPSPlayerState;
+class Weapon;
+class FPSPlayer_UI;
 
 class FPSPlayer :public Player
 {
@@ -20,10 +22,10 @@ public:
 	void Draw()override;			//描画処理
 	void EndDraw()override;			//オブジェクトすべての描画が終わった後の処理
 
-	void SetCamera(Camera* camera);	//PlayerCameraを設定
-	Camera* GetCamera();			//PlayerCameraを取得
+	
 
 private:
-	Camera* camera_ = nullptr;				//カメラ情報
 	FPSPlayerState* movement_ = nullptr;	//プレイヤーの移動を制御
+	Weapon* shotgun_ = nullptr;				//ショットガン情報
+	FPSPlayer_UI* playerUI_ = nullptr;		//PlayerUI情報
 };

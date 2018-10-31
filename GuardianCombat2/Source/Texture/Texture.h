@@ -48,6 +48,7 @@ public:
 		Tex_Fade,
 		Tex_Toon,
 		Tex_Mission,
+		Tex_Reticle,
 		Tex_Max,
 	};
 

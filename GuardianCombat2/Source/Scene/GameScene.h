@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 
+class Player;
+
 class GameScene:public Scene
 {
 public:
@@ -14,4 +16,6 @@ public:
 	void Draw()override;
 	void EndDraw()override;
 
+private:
+	Player* player_ = nullptr;		//ƒvƒŒƒCƒ„[î•ñ
 };

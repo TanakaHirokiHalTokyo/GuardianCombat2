@@ -70,6 +70,15 @@ void FPSCamera::Update()
 
 void FPSCamera::BeginDraw()
 {
+	D3DXMATRIX mtxRotate, mtxTrans, mtxScale;
+	D3DXMatrixTranslation(&mtxTrans, GetPosition().x, GetPosition().y, GetPosition().z);
+	D3DXMatrixRotationYawPitchRoll(&mtxRotate, GetRotate().x, GetRotate().y, GetRotate().z);
+	D3DXMatrixScaling(&mtxScale, GetScale().x, GetScale().y, GetScale().z);
+
+	world_ = mtxScale;
+	world_ *= mtxRotate;
+	world_ *= mtxTrans;
+
 }
 
 void FPSCamera::Draw()
@@ -146,6 +155,15 @@ void FPSCamera::CameraAtUpdate()
 	if (DotAngle <= 0.5f || DotAngle > 1.0f)
 	{
 		at_ = OldCamAt;
+
+		if (X_CONTROLLER::GetConnectController())
+		{
+			transform_.rotate.y += -controllerRY * sensitivity_;
+		}
+		else
+		{
+			transform_.rotate.y += MouseRotate.y;
+		}
 	}
 
 
@@ -194,6 +212,15 @@ void FPSCamera::CameraAtUpdate()
 	if (DotAngle <= 0.5f || DotAngle > 1.0f)
 	{
 		at_ = OldCamAt;
+
+		if (X_CONTROLLER::GetConnectController())
+		{
+			transform_.rotate.x -= -controllerRX * sensitivity_;
+		}
+		else
+		{
+			transform_.rotate.x -= MouseRotate.x;
+		}
 	}
 
 	dir = vector_->GetFront();

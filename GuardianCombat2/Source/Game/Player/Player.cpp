@@ -15,3 +15,13 @@ bool Player::GetOnLand()
 {
 	return onLand_;
 }
+
+void Player::SetCamera(Camera * camera)
+{
+	camera_ = camera;
+}
+
+Camera * Player::GetCamera()
+{
+	return camera_;
+}

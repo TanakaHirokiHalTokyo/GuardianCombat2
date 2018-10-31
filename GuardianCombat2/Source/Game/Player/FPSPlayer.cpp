@@ -5,6 +5,8 @@
 #include "../../XInput/xcontroller.h"
 #include "../../Imgui/ImguiManager.h"
 #include "StatePlayer\FPSPlayer_Movement.h"
+#include "Weapon\Weapon_Shotgun.h"
+#include "UI\FPSPlayer_UI.h"
 
 FPSPlayer::FPSPlayer()
 {
@@ -15,9 +17,17 @@ FPSPlayer::FPSPlayer()
 	movement_ = new FPSPlayerMovement();
 
 	//カメラ作成
-	camera_ = new FPSCamera();
+	camera_ = Object::Create<FPSCamera>();
 	FPSCamera*  FpsCamera = (FPSCamera*)camera_;
 	FpsCamera->SetPlayer(this);
+
+	//武器作成
+	shotgun_ = Object::Create<Weapon_Shotgun>();
+	shotgun_->SetPlayer(this);
+
+	//UI作成
+	playerUI_ = new FPSPlayer_UI();
+	playerUI_->Init();
 }
 
 FPSPlayer::~FPSPlayer()
@@ -28,10 +38,8 @@ FPSPlayer::~FPSPlayer()
 	//移動制御破棄
 	delete movement_;
 
-	//カメラ破棄
-	camera_->Uninit();
-	delete camera_;
-	camera_ = nullptr;
+	//UI破棄
+	delete playerUI_;
 }
 
 void FPSPlayer::Init()
@@ -40,14 +48,13 @@ void FPSPlayer::Init()
 	SetRotation(0.0f,0.0f,0.0f);
 	SetScale(1.0f,1.0f,1.0f);
 
-	//カメラ初期化
-	camera_->Init();
+	playerUI_->Init();
 }
 
 void FPSPlayer::Uninit()
 {
-	//カメラ終了処理
-	camera_->Uninit();
+	//
+	playerUI_->Uninit();
 }
 
 void FPSPlayer::Update()
@@ -55,28 +62,28 @@ void FPSPlayer::Update()
 	//移動処理更新
 	movement_->Act(this);
 
-	//カメラ更新
-	camera_->Update();
+	//UI更新
+	playerUI_->Update();
 }
 
 void FPSPlayer::BeginDraw()
 {
-	camera_->BeginDraw();
+	D3DXMATRIX mtxRotate, mtxTrans, mtxScale;
+	D3DXMatrixTranslation(&mtxTrans,GetPosition().x, GetPosition().y, GetPosition().z);
+	D3DXMatrixRotationYawPitchRoll(&mtxRotate, GetRotate().x, GetRotate().y, GetRotate().z);
+	D3DXMatrixScaling(&mtxScale, GetScale().x, GetScale().y, GetScale().z);
+
+	world_ = mtxScale;
+	world_ *= mtxRotate;
+	world_ *= mtxTrans;
 }
 
 void FPSPlayer::Draw()
 {
-	//カメラ描画処理
-	camera_->Draw();
+	playerUI_->Draw();
 }
 
 void FPSPlayer::EndDraw()
 {
-	//カメラ描画終了時処理
-	camera_->EndDraw();
-}
 
-Camera * FPSPlayer::GetCamera()
-{
-	return camera_;
-}	
+}

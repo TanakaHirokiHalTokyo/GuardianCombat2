@@ -3,7 +3,7 @@
 
 class Vector3;
 
-constexpr float Proj_Near = 0.1f ;											//‹ßŽ‹
+constexpr float Proj_Near = 0.01f ;											//‹ßŽ‹
 constexpr float Proj_Far = 45000.0f;										//‰“Ž‹
 constexpr int Fov = 50;														//Ž‹–ìŠp
 

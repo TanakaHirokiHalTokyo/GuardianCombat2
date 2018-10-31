@@ -27,7 +27,7 @@ public:
 	static void SetGameObjectLoad(bool loaded);							//GameObject‚ğ‚·‚Å‚É“Ç‚İ‚ñ‚Å‚¢‚é‚Ì‚©‚ğİ’èB
 	static bool GetGameObjectLoad();									//GameObject‚ğ‚·‚Å‚É“Ç‚İ‚ñ‚Å‚¢‚é‚Ì‚©‚ğæ“¾B
 
-	static void SetPlayer(Player* player);								//Playerî•ñ“o˜^B
+	static Player* SetPlayer(Player* player);								//Playerî•ñ“o˜^B
 	static Player* GetPlayer();											//Playerî•ñæ“¾B
 private:
 	static Scene* scene_;												//Sceneî•ñ

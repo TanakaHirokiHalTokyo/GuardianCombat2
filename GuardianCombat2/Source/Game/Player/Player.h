@@ -3,6 +3,7 @@
 #include "../Object.h"
 class SceneSkinMesh;
 class Vector3;
+class Camera;
 
 constexpr float PLAYER_DEFAULT_SPEED = 0.005f;
 constexpr float PLAYER_DEFAULT_LIFE = 100.0f;
@@ -28,7 +29,11 @@ public:
 
 	void SetOnLand(bool flag);
 	bool GetOnLand();
+
+	void SetCamera(Camera* camera);					//PlayerCameraを設定
+	Camera* GetCamera();							//PlayerCameraを取得
 protected:
+	Camera* camera_ = nullptr;						//カメラ情報
 	SceneSkinMesh* animModel_ = nullptr;			//アニメーション付きモデル
 	float speed_ = PLAYER_DEFAULT_SPEED;			//プレイヤースピード
 	float life_ = PLAYER_DEFAULT_LIFE;				//プレイヤー体力
