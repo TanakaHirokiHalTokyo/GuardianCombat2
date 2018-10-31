@@ -70,7 +70,7 @@ void GameScene::Uninit()
 void GameScene::Update()
 {
 	//カーソルの位置固定
-	//SetCursorPos((int)ScreenWidth / 2,(int)ScreenHeight / 2);
+	SetCursorPos((int)ScreenWidth / 2,(int)ScreenHeight / 2);
 	//オブジェクト更新
 	Object::UpdateAll();
 
