@@ -1,7 +1,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include "../MouseState/MouseState.h"
-#include "../Main/Main.h"
+#include "../../main.h"
 
 POINT MouseState::point_ = {};
 

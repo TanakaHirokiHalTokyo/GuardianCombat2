@@ -12,6 +12,7 @@ const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 	"resource/texture/ToonPaint.png",				256, 256,256,256,
 	"resource/texture/Mission.png",					395, 70,395,70,
 	"resource/texture/reticle.png",					400, 400,400,400,
+	"resource/texture/pauseWord.png",				400, 300,400,300,
 };
 void TextureManager::LoadAll()
 {

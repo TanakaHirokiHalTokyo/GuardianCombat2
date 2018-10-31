@@ -15,11 +15,14 @@
 #include "Fade.h"
 #include "../DInput/DirectInput.h"
 #include "ResultScene.h"
+#include "PauseScene.h"
 
 GameScene::GameScene()
 {
 	//SceneTag設定
 	GameManager::SetSceneTag("GameScene");
+
+	pauseScene_ = new PauseScene();		//ポーズシーン作成
 
 	if (!GameManager::GetGameObjectLoad())
 	{
@@ -51,6 +54,10 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	//ポーズシーン破棄
+	delete pauseScene_;
+	pauseScene_ = nullptr;
+
 	//シャドウマップ終了処理
 	ShadowMapShader::Uninit();
 	//オブジェクト解放
@@ -60,20 +67,28 @@ GameScene::~GameScene()
 void GameScene::Init()
 {
 	Object::InitAll();
+	pauseScene_->Init();
 }
 
 void GameScene::Uninit()
 {
-	
+	pauseScene_->Uninit();
 }
 
 void GameScene::Update()
 {
-	//カーソルの位置固定
-	SetCursorPos((int)ScreenWidth / 2,(int)ScreenHeight / 2);
-	//オブジェクト更新
-	Object::UpdateAll();
+	//ポーズシーンの更新
+	pauseScene_->Update();
 
+	if (!pauseScene_->GetPause())
+	{
+		//カーソルの位置固定
+		SetCursorPos((int)ScreenWidth / 2, (int)ScreenHeight / 2);
+		//オブジェクト更新
+		Object::UpdateAll();
+
+	}
+	
 	if (GetKeyboardTrigger(DIK_SPACE) || GetKeyboardTrigger(DIK_RETURN))
 	{
 		GameManager::SetScene(new ResultScene());
@@ -99,6 +114,7 @@ void GameScene::BeginDraw()
 void GameScene::Draw()
 {
 	Object::DrawAll();
+	pauseScene_->Draw();
 }
 
 void GameScene::EndDraw()

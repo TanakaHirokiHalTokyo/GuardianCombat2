@@ -53,9 +53,7 @@ void UI::BeginDraw()
 
 void UI::Draw()
 {
-	ImGui::Begin("UI Position");
-	ImGui::Text("UI Pos: %f %f %f",GetPosition().x, GetPosition().y, GetPosition().z);
-	ImGui::End();
+	
 }
 
 void UI::EndDraw()

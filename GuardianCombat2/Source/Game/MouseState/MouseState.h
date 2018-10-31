@@ -1,5 +1,4 @@
 #pragma once
-#include "../DInput/DirectInput.h"
 
 
 class MouseState

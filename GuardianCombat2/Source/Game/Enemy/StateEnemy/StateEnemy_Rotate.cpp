@@ -71,9 +71,4 @@ void StateEnemy_Rotate::Act(Enemy * enemy)
 		D3DXVec3Normalize(&right, &right);
 		enemy_vector->SetRight(right);
 	}
-
-	ImGui::Begin("Angle");
-	ImGui::Text("Angle : %f",Angle);
-	ImGui::Text("Rotate : %f %f %f",enemy_model->GetRotate().x, enemy_model->GetRotate().y, enemy_model->GetRotate().z);
-	ImGui::End();
 }

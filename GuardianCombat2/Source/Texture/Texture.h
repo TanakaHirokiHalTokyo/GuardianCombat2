@@ -49,6 +49,7 @@ public:
 		Tex_Toon,
 		Tex_Mission,
 		Tex_Reticle,
+		Tex_PauseWord,
 		Tex_Max,
 	};
 

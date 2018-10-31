@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 class Player;
+class PauseScene;
 
 class GameScene:public Scene
 {
@@ -17,5 +18,6 @@ public:
 	void EndDraw()override;
 
 private:
-	Player* player_ = nullptr;		//プレイヤー情報
+	Player* player_ = nullptr;				//プレイヤー情報
+	PauseScene* pauseScene_ = nullptr;		//ポーズシーン情報
 };
