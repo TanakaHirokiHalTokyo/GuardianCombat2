@@ -12,6 +12,9 @@ PauseScene::PauseScene()
 {
 	//ポーズ文字テクスチャ生成
 	pauseWord_ = new Texture(TextureManager::Tex_PauseWord);
+
+	//裏イメージ生成
+	backImage_ = new Texture(TextureManager::Tex_Fade);
 }
 
 PauseScene::~PauseScene()
@@ -22,14 +25,28 @@ PauseScene::~PauseScene()
 		delete pauseWord_;
 		pauseWord_ = nullptr;
 	}
+
+	if (backImage_)
+	{
+		backImage_->Uninit();
+		delete backImage_;
+		backImage_ = nullptr;
+	}
 	
 }
 
 void PauseScene::Init()
 {
+	//ポーズ文字初期化
 	pauseWord_->Init();
 	pauseWord_->SetDrawSize(PAUSE_WORD_SIZEX,PAUSE_WORD_SIZEY);
 	pauseWord_->SetPosition((float)(ScreenWidth - PAUSE_WORD_SIZEX) / 2.0f,(float)(ScreenHeight - PAUSE_WORD_SIZEY) / 2.0f,0.0f);	
+
+	//裏イメージ初期化
+	backImage_->Init();
+	backImage_->SetDrawSize((float)ScreenWidth, (float)ScreenHeight);
+	backImage_->SetColor(D3DCOLOR_RGBA(255, 255, 255, 128));
+	backImage_->SetVisible(true);
 }
 
 void PauseScene::Uninit()
@@ -45,6 +62,7 @@ void PauseScene::Update()
 
 	if (pausing_)
 	{
+		backImage_->Update();
 		pauseWord_->Update();
 	}
 }
@@ -57,6 +75,7 @@ void PauseScene::Draw()
 {
 	if (pausing_)
 	{
+		backImage_->Draw();
 		pauseWord_->Draw();
 	}
 }

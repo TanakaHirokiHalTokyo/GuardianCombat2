@@ -25,11 +25,13 @@ public:
 	{
 		Effect_Core,
 		Effect_Portal,
+		Effect_Bullet,
 		Effect_Max
 	};
 	const EffectFile fileName_[Effect_Max]{
 		L"resource/Effekseer/Core.efk",
 		L"resource/Effekseer/Portal.efk",
+		L"resource/Effekseer/Bullet.efk",
 	};
 
 

@@ -3,6 +3,8 @@
 #include "../../Object.h"
 #include "../../../main.h"
 
+const float RETICLE_SIZE = 50.0f;
+
 FPSPlayer_UI::FPSPlayer_UI()
 {
 	//レティクルテクスチャ生成
@@ -15,6 +17,8 @@ FPSPlayer_UI::FPSPlayer_UI()
 	reticle_->SetColor(D3DCOLOR_RGBA(0,255,0,128));
 	//レティクル可視化
 	reticle_->SetVisible(true);
+
+	
 }
 
 FPSPlayer_UI::~FPSPlayer_UI()

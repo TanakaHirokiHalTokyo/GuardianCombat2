@@ -48,12 +48,13 @@ void FPSPlayer::Init()
 	SetRotation(0.0f,0.0f,0.0f);
 	SetScale(1.0f,1.0f,1.0f);
 
+	//プレイヤーUI初期化
 	playerUI_->Init();
 }
 
 void FPSPlayer::Uninit()
 {
-	//
+	//プレイヤーUI終了処理
 	playerUI_->Uninit();
 }
 
@@ -80,6 +81,7 @@ void FPSPlayer::BeginDraw()
 
 void FPSPlayer::Draw()
 {
+	//プレイヤーUI描画
 	playerUI_->Draw();
 }
 

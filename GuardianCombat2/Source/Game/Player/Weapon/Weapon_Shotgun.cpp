@@ -6,6 +6,7 @@
 #include "../../Shader/OutlineShader.h"
 #include "../../Shader/ShadowMapShader.h"
 #include "../../Shader/ToonShader.h"
+#include "Bullet\Bullet_Shotgun.h"
 
 Weapon_Shotgun::Weapon_Shotgun()
 {
@@ -18,6 +19,10 @@ Weapon_Shotgun::Weapon_Shotgun()
 	model_->SetUseShader(true);
 	//êeéqä÷åWÇìKóp
 	model_->SetHieral(false);
+
+	//íeê∂ê¨
+	bullet_ = Object::Create<Bullet_Shotgun>();
+	bullet_->SetWeapon(this);
 }
 
 Weapon_Shotgun::~Weapon_Shotgun()

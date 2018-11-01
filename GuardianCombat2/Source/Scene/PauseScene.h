@@ -27,4 +27,5 @@ public:
 private:
 	bool pausing_ = false;					//現在ポーズ中か
 	Texture* pauseWord_ = nullptr;			//ポーズ文字テクスチャ
+	Texture* backImage_ = nullptr;			//裏テクスチャ	
 };
