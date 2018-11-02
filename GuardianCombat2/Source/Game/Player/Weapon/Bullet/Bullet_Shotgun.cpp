@@ -4,6 +4,7 @@
 #include "../../Player.h"
 #include "../../../../Camera/Camera.h"
 
+
 Bullet_Shotgun::Bullet_Shotgun()
 {
 	for (int i = 0; i < BulletNum; i++)

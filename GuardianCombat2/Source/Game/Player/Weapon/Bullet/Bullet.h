@@ -34,6 +34,6 @@ public:
 protected:
 	float attack_ = 1.0f;			//UŒ‚—Í
 	float rate_ = 1.0f;				//ˆê•bŠÔ‚É‘Å‚Ä‚é‰ñ”
-
-	Weapon* weapon_ = nullptr;			//”­Ë‚·‚é•Ší
+	Weapon* weapon_ = nullptr;		//”­Ë‚·‚é•Ší
+	
 };

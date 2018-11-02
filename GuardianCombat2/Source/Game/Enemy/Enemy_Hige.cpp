@@ -6,6 +6,7 @@
 #include "../../Vector3/Vector3.h"
 #include "../../Imgui/ImguiManager.h"
 #include "StateEnemy\StatePattern_EnemyHige.h"
+#include "../../Collision/Collision.h"
 
 EnemyHige::EnemyHige()
 {
@@ -19,6 +20,12 @@ EnemyHige::EnemyHige()
 
 	//ステート管理
 	statePattern_ = new StatePattern_EnemyHige(this);
+
+	//コリジョン作成
+	collision_ = new Sphere();
+	collision_->object_ = this;
+	collision_->pos = GetPosition();
+	
 }
 
 EnemyHige::~EnemyHige()
@@ -46,6 +53,9 @@ void EnemyHige::Init()
 	vector_->SetRight(1.0f,0.0f,0.0f);
 	vector_->SetUp(0,1.0f,0);
 
+	//Collision初期化
+	collision_->rad = GetScale().x / 2.0f;
+
 	//デバッグモードON
 	debug_ = true;
 }
@@ -59,9 +69,13 @@ void EnemyHige::Update()
 	//ステート制御実行
 	statePattern_->Act();
 
+	//モデル情報更新
 	model_->SetRotation(GetRotate());
 	model_->SetPosition(GetPosition());
 	model_->SetScale(GetScale());
+
+	//コリジョン更新
+	collision_->pos = GetPosition();
 }
 
 void EnemyHige::BeginDraw()

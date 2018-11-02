@@ -8,6 +8,7 @@
 
 #include "Bullet.h"
 class CEffekseer;
+class Sphere;
 
 const unsigned int BulletNum = 6;		//U’e‚·‚é’e‚Ì”
 
@@ -33,4 +34,5 @@ private:
 	D3DXVECTOR3 bulletVector_[BulletNum] = { D3DXVECTOR3(0,0,0) };		//’e‚Ì”­ËŒü‚«
 	bool shot_ = false;													//”­Ë’†‚©
 	int count_ = 0;
+	Sphere* collision_ = nullptr;										//ƒRƒŠƒWƒ‡ƒ“î•ñ
 };

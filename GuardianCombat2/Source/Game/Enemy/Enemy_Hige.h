@@ -3,6 +3,7 @@
 #include "Enemy.h"
 
 class StatePattern_Enemy;
+class Sphere;
 
 class EnemyHige :public Enemy
 {
@@ -38,5 +39,5 @@ private:
 private:
 	StatePattern_Enemy* statePattern_ = nullptr;	//ステート状態管理
 	STATE state_ = IDLE;							//状態
-	
+	Sphere* collision_ = nullptr;					//コリジョン情報
 };

@@ -26,17 +26,17 @@ StateAction_Idle::~StateAction_Idle()
 
 void StateAction_Idle::Action()
 {
-	move_->Act(enemy_);
-	rotate_->Act(enemy_);
+	move_->Act(enemy_);				//動きを制御
+	rotate_->Act(enemy_);			//回転制御
 }
 
 void StateAction_Idle::Display()
 {
-	move_->Display(enemy_);
-	rotate_->Display(enemy_);
+	move_->Display(enemy_);			//デバッグ表示
+	rotate_->Display(enemy_);		//デバッグ表示
 }
 
 void StateAction_Idle::SetEnemy(Enemy * enemy)
 {
-	enemy_ = enemy;
+	enemy_ = enemy;					//敵を設定
 }
