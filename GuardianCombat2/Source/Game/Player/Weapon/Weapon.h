@@ -11,6 +11,7 @@
 class Player;
 class XModel;
 class WeaponState;
+class Bullet;
 
 class Weapon:public Object
 {
@@ -29,6 +30,9 @@ public:
 	//相対座標取得
 	D3DXVECTOR3 GetRelativePosition() { return relativePosition_; }
 
+	//弾の取得
+	Bullet* GetBullet() { return bullet_; }
+
 protected:
 	//攻撃力設定・取得
 	void SetAttack(float Attack) { attack_ = Attack; }
@@ -37,10 +41,15 @@ protected:
 	//相対座標設定
 	void SetRelativePosition(D3DXVECTOR3 pos) { relativePosition_ = pos; }
 	void SetRelativePosition(float x, float y, float z) { relativePosition_ = D3DXVECTOR3(x, y, z); }
+
+	//弾の設定
+	void SetBullet(Bullet* bullet) { bullet_ = bullet; }
+	
 protected:
 	float attack_ = 1.0f;									//攻撃力
 	Player* player_ = nullptr;								//プレイヤー情報。アタッチする際などに使用
 	XModel* model_ = nullptr;								//銃のモデル
 	WeaponState* relative_ = nullptr;						//相対関係制御
 	D3DXVECTOR3 relativePosition_ = D3DXVECTOR3(0,0,0);		//相対座標
+	Bullet* bullet_ = nullptr;								//弾の情報
 };

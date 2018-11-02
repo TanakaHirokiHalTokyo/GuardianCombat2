@@ -4,6 +4,9 @@
 #include "../../../DInput/DirectInput.h"
 #include "../../../XInput/xcontroller.h"
 #include "../../../Vector3/Vector3.h"
+#include "../Weapon/Weapon.h"
+#include "../Weapon/Bullet/Bullet.h"
+#include "../../MeshField/MeshField.h"
 
 void FPSPlayerMovement::Act(FPSPlayer* player)
 {
@@ -59,4 +62,5 @@ void FPSPlayerMovement::Act(FPSPlayer* player)
 
 	D3DXVec3Normalize(&transvector_,&transvector_);
 	player->SetPosition(player_position + transvector_ * player->FPSPLAYER_DEF_SPEED);
+	player->SetPositionY(MeshField::GetHeight(player->GetPosition()));
 }

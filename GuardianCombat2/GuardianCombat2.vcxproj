@@ -160,9 +160,11 @@
     <ClCompile Include="Source\Game\Billboard\Billboard.cpp" />
     <ClCompile Include="Source\Game\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\Game\Enemy\Enemy_Hige.cpp" />
+    <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Idle.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_MoveToPlayer.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rotate.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_SlowlyRotate.cpp" />
+    <ClCompile Include="Source\Game\Enemy\StateEnemy\StatePattern_EnemyHige.cpp" />
     <ClCompile Include="Source\Game\GameManager\GameManager.cpp" />
     <ClCompile Include="Source\Game\MeshField\MeshField.cpp" />
     <ClCompile Include="Source\Game\MouseState\MouseState.cpp" />
@@ -216,11 +218,14 @@
     <ClInclude Include="Source\Game\Billboard\Billboard.h" />
     <ClInclude Include="Source\Game\Enemy\Enemy.h" />
     <ClInclude Include="Source\Game\Enemy\Enemy_Hige.h" />
-    <ClInclude Include="Source\Game\Enemy\StateEnemy\EnemyHige\StateEnemyHige.h" />
+    <ClInclude Include="Source\Game\Enemy\StateAction\StateAction.h" />
+    <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Idle.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_MoveToPlayer.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rotate.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_SlowlyRotate.h" />
+    <ClInclude Include="Source\Game\Enemy\StateEnemy\StatePattern_Enemy.h" />
+    <ClInclude Include="Source\Game\Enemy\StateEnemy\StatePattern_EnemyHige.h" />
     <ClInclude Include="Source\Game\GameManager\GameManager.h" />
     <ClInclude Include="Source\Game\MeshField\MeshField.h" />
     <ClInclude Include="Source\Game\MouseState\MouseState.h" />
@@ -233,6 +238,7 @@
     <ClInclude Include="Source\Game\Player\StatePlayer\FPSPlayer_State.h" />
     <ClInclude Include="Source\Game\Player\UI\FPSPlayer_UI.h" />
     <ClInclude Include="Source\Game\Player\Weapon\Bullet\Bullet.h" />
+    <ClInclude Include="Source\Game\Player\Weapon\Bullet\BulletState\BulletState.h" />
     <ClInclude Include="Source\Game\Player\Weapon\Bullet\Bullet_Shotgun.h" />
     <ClInclude Include="Source\Game\Player\Weapon\Weapon.h" />
     <ClInclude Include="Source\Game\Player\Weapon\WeaponState\WeaponRelative.h" />

@@ -5,8 +5,7 @@
 #include "../Shader/ShadowMapShader.h"
 #include "../../Vector3/Vector3.h"
 #include "../../Imgui/ImguiManager.h"
-#include "StateEnemy\StateEnemy_SlowlyRotate.h"
-#include "StateEnemy\StateEnemy_MoveToPlayer.h"
+#include "StateEnemy\StatePattern_EnemyHige.h"
 
 EnemyHige::EnemyHige()
 {
@@ -18,17 +17,17 @@ EnemyHige::EnemyHige()
 	//ベクトル作成
 	vector_ = new Vector3();
 
-	//回転制御作成
-	rotate_ = new StateEnemy_SlowlyRotate();
-	//プレイヤーに向かう制御作成
-	moveToPlayer_ = new StateEnemy_MoveToPlayer();
+	//ステート管理
+	statePattern_ = new StatePattern_EnemyHige(this);
 }
 
 EnemyHige::~EnemyHige()
 {
 	delete vector_;
-	delete rotate_;	
-	delete moveToPlayer_;
+	if (statePattern_ )
+	{
+		delete statePattern_;
+	}
 }
 
 void EnemyHige::Init()
@@ -54,10 +53,8 @@ void EnemyHige::Uninit()
 
 void EnemyHige::Update()
 {
-	//回転制御実行
-	rotate_->Act(this);
-	//プレイヤーに向かう制御実行
-	moveToPlayer_->Act(this);
+	//ステート制御実行
+	statePattern_->Act();
 
 	model_->SetRotation(GetRotate());
 	model_->SetPosition(GetPosition());
@@ -118,4 +115,14 @@ void EnemyHige::Draw()
 
 void EnemyHige::EndDraw()
 {
+}
+
+EnemyHige::STATE EnemyHige::GetState()
+{
+	return state_;
+}
+
+void EnemyHige::SetState(STATE state)
+{
+	state_ = state;
 }

@@ -24,7 +24,13 @@ public:
 	void EndDraw()override;
 	
 	void SetShooting();
+	bool GetShooting();
+
+
+	                  
 private:
-	CEffekseer* bullet_[BulletNum];		//散弾のエフェクト
-	bool shot_ = false;					//発射中か
+	CEffekseer* bullet_[BulletNum];										//散弾のエフェクト
+	D3DXVECTOR3 bulletVector_[BulletNum] = { D3DXVECTOR3(0,0,0) };		//弾の発射向き
+	bool shot_ = false;													//発射中か
+	int count_ = 0;
 };

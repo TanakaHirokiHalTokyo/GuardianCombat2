@@ -22,7 +22,7 @@ public:
 	void Draw()override;			//描画処理
 	void EndDraw()override;			//オブジェクトすべての描画が終わった後の処理
 
-	
+	Weapon* GetWeapon();
 
 private:
 	FPSPlayerState* movement_ = nullptr;	//プレイヤーの移動を制御

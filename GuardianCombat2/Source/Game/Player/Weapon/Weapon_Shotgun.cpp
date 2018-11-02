@@ -7,6 +7,8 @@
 #include "../../Shader/ShadowMapShader.h"
 #include "../../Shader/ToonShader.h"
 #include "Bullet\Bullet_Shotgun.h"
+#include "../../../DInput/DirectInput.h"
+#include "../../../XInput/xcontroller.h"
 
 Weapon_Shotgun::Weapon_Shotgun()
 {
@@ -54,6 +56,12 @@ void Weapon_Shotgun::Uninit()
 void Weapon_Shotgun::Update()
 {
 	model_->Update();
+
+	if (GetKeyboardTrigger(DIK_J))
+	{
+		Bullet_Shotgun* shotgun_bullet = (Bullet_Shotgun*)bullet_;
+		shotgun_bullet->SetShooting();
+	}
 }
 
 void Weapon_Shotgun::BeginDraw()

@@ -2,10 +2,15 @@
 
 #include "Enemy.h"
 
-class StateEnemy;
+class StatePattern_Enemy;
 
 class EnemyHige :public Enemy
 {
+public:
+	enum STATE
+	{
+		IDLE,
+	};
 public:
 	EnemyHige();
 	~EnemyHige();
@@ -17,7 +22,10 @@ public:
 	void EndDraw()override;
 
 	const float DEFAULT_SPEED = 0.1f;			//デフォルトスピード
+
+	STATE GetState();
+	void SetState(STATE state);
 private:
-	StateEnemy* rotate_ = nullptr;				//回転制御
-	StateEnemy* moveToPlayer_ = nullptr;		//プレイヤーに向かう制御
+	StatePattern_Enemy* statePattern_ = nullptr;	//ステート状態管理
+	STATE state_ = IDLE;						//状態
 };

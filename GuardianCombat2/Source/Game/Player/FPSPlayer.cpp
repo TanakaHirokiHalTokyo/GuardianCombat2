@@ -89,3 +89,8 @@ void FPSPlayer::EndDraw()
 {
 
 }
+
+Weapon * FPSPlayer::GetWeapon()
+{
+	return shotgun_;
+}

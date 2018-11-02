@@ -7,7 +7,6 @@
 //====================================================
 
 #include "Weapon.h"
-class Bullet;
 
 class Weapon_Shotgun :public Weapon
 {
@@ -22,5 +21,5 @@ public:
 	void EndDraw()override;
 
 private:
-	Bullet* bullet_ = nullptr;		//’e‚Ìî•ñ
+	
 };
