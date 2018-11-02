@@ -72,3 +72,7 @@ void StateEnemy_Rotate::Act(Enemy * enemy)
 		enemy_vector->SetRight(right);
 	}
 }
+
+void StateEnemy_Rotate::Display(Enemy* enemy)
+{
+}

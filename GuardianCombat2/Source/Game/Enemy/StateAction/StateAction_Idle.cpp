@@ -30,6 +30,12 @@ void StateAction_Idle::Action()
 	rotate_->Act(enemy_);
 }
 
+void StateAction_Idle::Display()
+{
+	move_->Display(enemy_);
+	rotate_->Display(enemy_);
+}
+
 void StateAction_Idle::SetEnemy(Enemy * enemy)
 {
 	enemy_ = enemy;

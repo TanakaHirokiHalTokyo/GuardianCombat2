@@ -13,5 +13,6 @@ class StateAction
 public:
 	virtual ~StateAction() {};					//デストラクタ
 	virtual void Action() = 0;					//実行
+	virtual void Display() = 0;					//表示
 	virtual void SetEnemy(Enemy* enemy) = 0;	//敵をセット
 };

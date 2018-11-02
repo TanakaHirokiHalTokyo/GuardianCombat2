@@ -17,6 +17,7 @@ public:
 	StatePattern_EnemyHige(EnemyHige * enemy);		//コンストラクタ
 	~StatePattern_EnemyHige()override;				//デストラクタ
 	void Act()override;								//実行
+	void Display()override;							//表示
 	void ChangeState()override;						//状態変更
 
 	void SetEnemyHige(EnemyHige* enemy);			//敵を設定

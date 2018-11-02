@@ -38,7 +38,7 @@ VS_OUT vs_main(VS_IN In)
 	VS_OUT Out = (VS_OUT)0;
 
 	In.pos += float4(In.normal * 0.05f,0);
-
+ 
 	Out.pos = mul(In.pos,mWVP);
 	Out.uv = In.uv;
 	Out.normal = In.normal;

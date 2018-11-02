@@ -45,6 +45,9 @@ void EnemyHige::Init()
 	vector_->SetFront(0,0,1.0f);
 	vector_->SetRight(1.0f,0.0f,0.0f);
 	vector_->SetUp(0,1.0f,0);
+
+	//デバッグモードON
+	debug_ = true;
 }
 
 void EnemyHige::Uninit()
@@ -111,6 +114,12 @@ void EnemyHige::Draw()
 		effect->SetTechnique("ToonPaintInk");
 		model_->Draw(effect, 0);
 	}
+
+	if (debug_)
+	{
+		//デバッグ表示
+		DrawDebug();
+	}
 }
 
 void EnemyHige::EndDraw()
@@ -125,4 +134,12 @@ EnemyHige::STATE EnemyHige::GetState()
 void EnemyHige::SetState(STATE state)
 {
 	state_ = state;
+}
+void EnemyHige::DrawDebug()
+{
+	ImGui::Begin("Enemy Debug Info");
+	ImGui::Text("STATE : %s",StateWord[state_].c_str());
+	ImGui::End();
+
+	statePattern_->Display();
 }

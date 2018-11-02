@@ -10,6 +10,11 @@ public:
 	enum STATE
 	{
 		IDLE,
+		STATE_MAX,
+	};
+	const std::string StateWord[STATE_MAX]
+	{
+		"IDLE",
 	};
 public:
 	EnemyHige();
@@ -25,7 +30,13 @@ public:
 
 	STATE GetState();
 	void SetState(STATE state);
+
+	
+
+private:
+	void DrawDebug();								//Debug表示
 private:
 	StatePattern_Enemy* statePattern_ = nullptr;	//ステート状態管理
-	STATE state_ = IDLE;						//状態
+	STATE state_ = IDLE;							//状態
+	
 };

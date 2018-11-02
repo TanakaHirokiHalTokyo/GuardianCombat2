@@ -24,6 +24,11 @@ void StatePattern_EnemyHige::Act()
 	action_->Action();		//実行
 }
 
+void StatePattern_EnemyHige::Display()
+{
+	action_->Display();		//パラメータ表示
+}
+
 void StatePattern_EnemyHige::ChangeState()
 {
 	//状態変更

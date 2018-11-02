@@ -12,4 +12,5 @@ class StateEnemy_Rotate :public StateEnemy
 {
 public:
 	void Act(Enemy* enemy)override;
+	void Display(Enemy* enemy)override;
 };
