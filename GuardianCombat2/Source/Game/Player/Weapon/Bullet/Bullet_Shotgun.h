@@ -9,6 +9,7 @@
 #include "Bullet.h"
 class CEffekseer;
 class Sphere;
+class DebugSphere;
 
 const unsigned int BulletNum = 6;		//散弾する弾の数
 
@@ -35,4 +36,5 @@ private:
 	bool shot_ = false;													//発射中か
 	int count_ = 0;
 	Sphere* collision_ = nullptr;										//コリジョン情報
+	DebugSphere* debug_ = nullptr;										//コリジョン表示
 };

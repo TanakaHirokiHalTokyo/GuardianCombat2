@@ -124,6 +124,7 @@ void XModel::Draw()
 		}
 	}
 	
+	
 }
 void XModel::Draw(LPD3DXEFFECT effect,UINT pass)
 {

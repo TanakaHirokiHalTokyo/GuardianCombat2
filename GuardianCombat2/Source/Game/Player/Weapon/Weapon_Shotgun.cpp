@@ -66,6 +66,7 @@ void Weapon_Shotgun::Update()
 
 void Weapon_Shotgun::BeginDraw()
 {
+	
 	//‘Š‘ÎŠÖŒW§ŒäŽÀs
 	relative_->Act(this);
 

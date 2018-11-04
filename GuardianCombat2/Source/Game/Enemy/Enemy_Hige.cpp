@@ -7,6 +7,7 @@
 #include "../../Imgui/ImguiManager.h"
 #include "StateEnemy\StatePattern_EnemyHige.h"
 #include "../../Collision/Collision.h"
+#include "../../Debug/Debug.h"
 
 EnemyHige::EnemyHige()
 {
@@ -25,7 +26,8 @@ EnemyHige::EnemyHige()
 	collision_ = new Sphere();
 	collision_->object_ = this;
 	collision_->pos = GetPosition();
-	
+
+	debug = Object::Create<DebugSphere>();
 }
 
 EnemyHige::~EnemyHige()
@@ -54,7 +56,9 @@ void EnemyHige::Init()
 	vector_->SetUp(0,1.0f,0);
 
 	//Collision初期化
-	collision_->rad = GetScale().x / 2.0f;
+	collision_->rad = 0.5f;
+
+	debug->SetRadius(0.5f);
 
 	//デバッグモードON
 	debug_ = true;
@@ -76,6 +80,8 @@ void EnemyHige::Update()
 
 	//コリジョン更新
 	collision_->pos = GetPosition();
+	debug->SetPosition(GetPosition());
+	debug->SetPositionY(debug->GetRadius());
 }
 
 void EnemyHige::BeginDraw()

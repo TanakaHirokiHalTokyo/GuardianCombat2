@@ -3,7 +3,7 @@
 #include "../Weapon.h"
 #include "../../Player.h"
 #include "../../../../Camera/Camera.h"
-
+#include "../../../../Debug/Debug.h"
 
 Bullet_Shotgun::Bullet_Shotgun()
 {
@@ -11,6 +11,7 @@ Bullet_Shotgun::Bullet_Shotgun()
 	{
 		bullet_[i] = new CEffekseer(CEffekseer::Effect_Bullet);
 	}
+	debug_ = Object::Create<DebugSphere>();
 }
 
 Bullet_Shotgun::~Bullet_Shotgun()
@@ -32,6 +33,7 @@ void Bullet_Shotgun::Init()
 		bullet_[i]->SetScale(0.3f, 0.3f, 0.3f);
 		bullet_[i]->SetVisible(false);
 	}
+	debug_->SetRadius(0.2f);
 }
 
 void Bullet_Shotgun::Uninit()
@@ -46,14 +48,10 @@ void Bullet_Shotgun::Update()
 {
 	for (int i = 0; i < BulletNum; i++)
 	{
-		if (bullet_[i]->GetVisible())
-		{
-			bullet_[i]->Play();
-			bullet_[i]->SetPosition(bullet_[i]->GetPosition() + bulletVector_[i] * 1.0f);
-		}
 		if (shot_)
 		{
 			count_++;
+			bullet_[i]->Play();
 			if (count_  > 3 * 60)
 			{
 				count_ = 0;
@@ -61,9 +59,15 @@ void Bullet_Shotgun::Update()
 				bullet_[i]->SetVisible(false);
 			}
 		}
+		if (bullet_[i]->GetVisible())
+		{
+			bullet_[i]->SetPosition(bullet_[i]->GetPosition() + bulletVector_[i] * 1.0f);
+		}
 
 		bullet_[i]->Update();
 	}
+	debug_->SetPosition(bullet_[0]->GetPosition());
+	debug_->SetPositionY(bullet_[0]->GetPosition().y + (debug_->GetRadius() / 2.0f));
 }
 
 void Bullet_Shotgun::BeginDraw()
