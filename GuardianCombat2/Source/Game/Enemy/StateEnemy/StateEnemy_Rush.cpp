@@ -33,16 +33,6 @@ void StateEnemy_Rush::Display(EnemyHige * enemy)
 	//デバッグモード時
 	if (enemy->GetDebugMode())
 	{
-		//パラメータ取得
-		EnemyHigeRush::ENEMY_PARAMETER parameter = enemy->GetRushParameter();
-
-		//パラメータ設定
-		ImGui::Begin("EnemyDebugParameter");
-		ImGui::DragFloat("Speed Set",&parameter.speed,0.01f,0.0f,1.0f);
-		ImGui::DragFloat("Length Set",&parameter.length,1.0f,0.0f,100.0f);
-		ImGui::End();
-
-		//パラメータ設定
-		enemy->SetRushParameter(parameter);
+		
 	}
 }

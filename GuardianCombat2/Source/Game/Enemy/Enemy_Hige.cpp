@@ -173,14 +173,6 @@ void EnemyHige::FinishState()
 	state_ = IDLE;
 	statePattern_->ChangeState();
 }
-EnemyHigeIdle::ENEMY_PARAMETER EnemyHige::GetIdleParameter()
-{
-	return idleParameter_;	//待機状態のパラメータ取得
-}
-void EnemyHige::SetIdleParameter(EnemyHigeIdle::ENEMY_PARAMETER parameter)
-{
-	idleParameter_ = parameter;	//待機状態のパラメータ設定
-}
 EnemyHigeRush::ENEMY_PARAMETER EnemyHige::GetRushParameter()
 {
 	return rushParameter_;		//突進状態のパラメータ取得
@@ -194,10 +186,34 @@ void EnemyHige::DrawDebug()
 	static int listbox_item_current = 1;
 	static bool changeState = false;
 
+	//Window位置固定
 	ImGui::SetNextWindowPos(ImVec2(10,(float)ScreenHeight / 2.0f));
+	//敵のデバッグ情報
 	ImGui::Begin("Enemy Debug Info");
+	//今現在のSTATE名
 	ImGui::Text("STATE : %s",StateWord[state_]);
+	//次に設定するSTATE
 	changeState = ImGui::ListBox("listbox\n(single select)", &listbox_item_current, StateWord, IM_ARRAYSIZE(StateWord), 4);
+
+	//待機状態のパラメータ設定
+	if (ImGui::TreeNode("IDLE PARAMETER"))
+	{
+		ImGui::DragFloat("Speed Set", &idleParameter_.speed, 0.001f, 0.0f, 0.1f);
+		ImGui::DragFloat("RotateAngle", &idleParameter_.rot_angle, 0.1f, 0.0f, 10.0f);
+		ImGui::TreePop();
+	}
+	//通常攻撃パラメータ設定
+	if (ImGui::CollapsingHeader("NORMAL ATTACK"))
+	{
+		//突進状態のパラメータ設定
+		if (ImGui::TreeNode("RUSH PARAMETER"))
+		{
+			ImGui::DragFloat("Speed Set", &rushParameter_.speed, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Length Set", &rushParameter_.length, 1.0f, 0.0f, 100.0f);
+			ImGui::TreePop();
+		}
+	}
+	//Imugui終了
 	ImGui::End();
 
 	if (changeState)

@@ -6,14 +6,6 @@ class StatePattern_Enemy;
 class Sphere;
 class DebugSphere;
 
-namespace EnemyHigeIdle							//待機状態のパラメータ
-{
-	struct ENEMY_PARAMETER
-	{
-		float speed = 0.1f;						//スピード
-		float rot_angle = 0.1f;					//回転角度
-	};
-}
 namespace EnemyHigeRush							//突進状態のパラメータ
 {
 	struct ENEMY_PARAMETER
@@ -56,10 +48,6 @@ public:
 	//行動を終えた際にIDLE状態に
 	void FinishState();
 
-	//Idle状態のパラメータ取得・設定
-	EnemyHigeIdle::ENEMY_PARAMETER GetIdleParameter();
-	void SetIdleParameter(EnemyHigeIdle::ENEMY_PARAMETER parameter);
-
 	//突進状態のパラメータ取得・設定
 	EnemyHigeRush::ENEMY_PARAMETER GetRushParameter();
 	void SetRushParameter(EnemyHigeRush::ENEMY_PARAMETER parameter);
@@ -72,6 +60,5 @@ private:
 	Sphere* collision_ = nullptr;							//コリジョン情報
 	DebugSphere* debugCollision_ = nullptr;					//コリジョンを可視化するか
 
-	EnemyHigeIdle::ENEMY_PARAMETER idleParameter_ = {};		//待機状態のパラメータ情報
 	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};		//突進状態のパラメータ情報
 };

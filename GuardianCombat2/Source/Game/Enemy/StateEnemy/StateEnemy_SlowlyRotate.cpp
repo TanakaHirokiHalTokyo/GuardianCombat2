@@ -128,25 +128,5 @@ void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 
 void StateEnemy_SlowlyRotate::Display(Enemy * enemy)
 {
-	//デバッグモード時
-	if (enemy->GetDebugMode())
-	{
-		//格納変数用意
-		float angle = 0.0f;
-
-		//パラメータ取得
-		EnemyIdle::ENEMY_PARAMETER parameter = enemy->GetIdleParameter();
-		angle = parameter.rot_angle;
-
-		//パラメータ表示
-		ImGui::Begin("EnemyDebugParameter");
-		ImGui::DragFloat("RotateAngle",&angle,0.1f,0.0f,10.0f);
-		ImGui::End();
-
-		//パラメータ設定
-		parameter.rot_angle = angle;
-
-
-		enemy->SetIdleParameter(&parameter);
-	}
+	
 }
