@@ -16,3 +16,13 @@ Vector3 * Enemy::GetVector()
 {
 	return vector_;
 }
+
+EnemyIdle::ENEMY_PARAMETER Enemy::GetIdleParameter()
+{
+	return idleParameter_;
+}
+
+void Enemy::SetIdleParameter(EnemyIdle::ENEMY_PARAMETER* parameter)
+{
+	idleParameter_ = *parameter;
+}

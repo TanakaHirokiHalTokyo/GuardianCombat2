@@ -2,6 +2,7 @@
 #include "../Enemy_Hige.h"
 #include "../StateAction/StateAction.h"
 #include "../StateAction/StateAction_Idle.h"
+#include "../StateAction/StateAction_Rush.h"
 #include "../Enemy_Hige.h"
 
 StatePattern_EnemyHige::StatePattern_EnemyHige(EnemyHige * enemy)
@@ -31,11 +32,17 @@ void StatePattern_EnemyHige::Display()
 
 void StatePattern_EnemyHige::ChangeState()
 {
+	//制御変更
+	if (action_) { delete action_; action_ = nullptr; }
+
 	//状態変更
 	switch (enemy_->GetState())
 	{
 	case EnemyHige::STATE::IDLE:
-		action_ = new StateAction_Idle(enemy_);
+		action_ = new StateAction_Idle(enemy_);			//待機状態作成
+		break;
+	case EnemyHige::STATE::RUSH:
+		action_ = new StateAction_Rush(enemy_);			//突進状態作成
 		break;
 	default:
 		break;

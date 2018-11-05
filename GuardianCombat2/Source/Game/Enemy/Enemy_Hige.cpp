@@ -8,6 +8,7 @@
 #include "StateEnemy\StatePattern_EnemyHige.h"
 #include "../../Collision/Collision.h"
 #include "../../Debug/Debug.h"
+#include "../../main.h"
 
 EnemyHige::EnemyHige()
 {
@@ -27,15 +28,23 @@ EnemyHige::EnemyHige()
 	collision_->object_ = this;
 	collision_->pos = GetPosition();
 
-	debug = Object::Create<DebugSphere>();
+	//コリジョン可視化作成
+	debugCollision_ = Object::Create<DebugSphere>();
+
 }
 
 EnemyHige::~EnemyHige()
 {
-	delete vector_;
+	if (vector_)
+	{
+		delete vector_;
+		vector_ = nullptr;
+	}
+	
 	if (statePattern_ )
 	{
 		delete statePattern_;
+		statePattern_ = nullptr;
 	}
 }
 
@@ -47,10 +56,12 @@ void EnemyHige::Init()
 	SetRotation(0,0,0);
 	SetSpeed(0.02f);
 
+	//モデル情報初期化
 	model_->SetScale(GetScale());
 	model_->SetPosition(GetPosition());
 	model_->SetRotation(GetRotate());
 
+	//ベクトル初期化
 	vector_->SetFront(0,0,1.0f);
 	vector_->SetRight(1.0f,0.0f,0.0f);
 	vector_->SetUp(0,1.0f,0);
@@ -58,7 +69,8 @@ void EnemyHige::Init()
 	//Collision初期化
 	collision_->rad = 0.5f;
 
-	debug->SetRadius(0.5f);
+	//デバッグ表示のラディウス設定
+	debugCollision_->SetRadius(collision_->rad);
 
 	//デバッグモードON
 	debug_ = true;
@@ -80,8 +92,8 @@ void EnemyHige::Update()
 
 	//コリジョン更新
 	collision_->pos = GetPosition();
-	debug->SetPosition(GetPosition());
-	debug->SetPositionY(debug->GetRadius());
+	debugCollision_->SetPosition(GetPosition());
+	debugCollision_->SetPositionY(debugCollision_->GetRadius());
 }
 
 void EnemyHige::BeginDraw()
@@ -137,29 +149,64 @@ void EnemyHige::Draw()
 
 	if (debug_)
 	{
-		//デバッグ表示
+		//デバッグ表示　ステート・パラメータ表示
 		DrawDebug();
 	}
 }
 
 void EnemyHige::EndDraw()
 {
+	
 }
 
 EnemyHige::STATE EnemyHige::GetState()
 {
-	return state_;
+	return state_;		//状態取得
 }
 
 void EnemyHige::SetState(STATE state)
 {
-	state_ = state;
+	state_ = state;		//状態設定
+}
+void EnemyHige::FinishState()
+{
+	state_ = IDLE;
+	statePattern_->ChangeState();
+}
+EnemyHigeIdle::ENEMY_PARAMETER EnemyHige::GetIdleParameter()
+{
+	return idleParameter_;	//待機状態のパラメータ取得
+}
+void EnemyHige::SetIdleParameter(EnemyHigeIdle::ENEMY_PARAMETER parameter)
+{
+	idleParameter_ = parameter;	//待機状態のパラメータ設定
+}
+EnemyHigeRush::ENEMY_PARAMETER EnemyHige::GetRushParameter()
+{
+	return rushParameter_;		//突進状態のパラメータ取得
+}
+void EnemyHige::SetRushParameter(EnemyHigeRush::ENEMY_PARAMETER parameter)
+{
+	rushParameter_ = parameter;	//突進状態のパラメータ設定
 }
 void EnemyHige::DrawDebug()
 {
+	static int listbox_item_current = 1;
+	static bool changeState = false;
+
+	ImGui::SetNextWindowPos(ImVec2(10,(float)ScreenHeight / 2.0f));
 	ImGui::Begin("Enemy Debug Info");
-	ImGui::Text("STATE : %s",StateWord[state_].c_str());
+	ImGui::Text("STATE : %s",StateWord[state_]);
+	changeState = ImGui::ListBox("listbox\n(single select)", &listbox_item_current, StateWord, IM_ARRAYSIZE(StateWord), 4);
 	ImGui::End();
+
+	if (changeState)
+	{
+		//状態変更
+		state_ = (STATE)listbox_item_current;
+		changeState = false;
+		statePattern_->ChangeState();
+	}
 
 	statePattern_->Display();
 }

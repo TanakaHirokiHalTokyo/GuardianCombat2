@@ -70,6 +70,7 @@ void Weapon_Shotgun::BeginDraw()
 	//‘Š‘ÎŠÖŒW§ŒäŽÀs
 	relative_->Act(this);
 
+
 	model_->SetScale(GetScale());
 	model_->SetPosition(GetPosition());
 	model_->SetRotation(GetRotate());

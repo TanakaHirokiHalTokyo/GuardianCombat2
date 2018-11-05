@@ -162,8 +162,10 @@
     <ClCompile Include="Source\Game\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\Game\Enemy\Enemy_Hige.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Idle.cpp" />
+    <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Rush.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_MoveToPlayer.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rotate.cpp" />
+    <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rush.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_SlowlyRotate.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StatePattern_EnemyHige.cpp" />
     <ClCompile Include="Source\Game\GameManager\GameManager.cpp" />
@@ -222,9 +224,12 @@
     <ClInclude Include="Source\Game\Enemy\Enemy_Hige.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Idle.h" />
+    <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Rush.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy.h" />
+    <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemyHige.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_MoveToPlayer.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rotate.h" />
+    <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rush.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_SlowlyRotate.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StatePattern_Enemy.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StatePattern_EnemyHige.h" />

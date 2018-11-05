@@ -78,9 +78,6 @@ void XModel::BeginDraw()
 		world_ *= mtxRotateZ;
 		world_ *= mtxTrans;
 	}
-	
-	
-
 
 }
 void XModel::EndDraw()

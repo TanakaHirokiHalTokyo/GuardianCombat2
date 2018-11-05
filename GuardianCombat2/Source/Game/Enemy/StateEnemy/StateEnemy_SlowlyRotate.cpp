@@ -5,6 +5,8 @@
 #include "../../../Vector3/Vector3.h"
 #include "../../XModel/XModel.h"
 #include "../../../Imgui/ImguiManager.h"
+#include <fstream>
+#include <iostream>
 
 void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 {
@@ -14,10 +16,13 @@ void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 	//EnemyModel取得
 	auto enemy_model = enemy->GetModel();
 
+	//パラメータ取得
+	EnemyIdle::ENEMY_PARAMETER parameter = enemy->GetIdleParameter();
+
 	//--------------------------
 	//	Playerのほうを向かせる
 	//--------------------------
-
+	 
 	//	プレイヤー方向ベクトル計算
 	D3DXVECTOR3 vec_player = player_info->GetPosition() - enemy->GetPosition();
 	vec_player.y = 0.0f;
@@ -28,8 +33,10 @@ void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 
 	//　前方向ベクトル取得
 	D3DXVECTOR3 front = enemy_vector->GetFront();
+	
 	//	右方向ベクトル取得
 	D3DXVECTOR3 right = enemy_vector->GetRight();
+	
 	//	上方向ベクトル取得
 	D3DXVECTOR3 up = enemy_vector->GetUp();
 
@@ -41,36 +48,82 @@ void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 		Angle = 0.0f;
 	}
 
-	if (RightDot >= 0.1f)
-	{
-		enemy->SetRotationY(enemy->GetRotate().y - rotateAngle_);
-		enemy_model->SetRotation(enemy->GetRotate());
+	//敵の前方向ベクトル
+	D3DXVECTOR3 vecEnemy = enemy->GetVector()->GetFront();
+	float ReverceDot = D3DXVec3Dot(&vecEnemy, &vec_player);
 
-		//回転行列を作成
-		D3DXMATRIX mtxRotate;
-		D3DXMatrixRotationY(&mtxRotate, D3DXToRadian(-rotateAngle_));
-		D3DXVec3TransformNormal(&front, &front, &mtxRotate);
-		D3DXVec3Normalize(&front, &front);
-		enemy_vector->SetFront(front);
-		D3DXVec3Cross(&right, &enemy_vector->GetFront(), &enemy_vector->GetUp());
-		D3DXVec3Normalize(&right, &right);
-		enemy_vector->SetRight(right);
-	}
-	else if(RightDot <= -0.1f)
-	{
-		enemy->SetRotationY(enemy->GetRotate().y + rotateAngle_);
-		enemy_model->SetRotation(enemy->GetRotate());
+	ImGui::Begin("ReverceDot");
+	ImGui::Text("Dot : %f", ReverceDot);
+	ImGui::End();
 
-		//回転行列を作成
-		D3DXMATRIX mtxRotate;
-		D3DXMatrixRotationY(&mtxRotate, D3DXToRadian(rotateAngle_));
-		D3DXVec3TransformNormal(&front, &front, &mtxRotate);
-		D3DXVec3Normalize(&front, &front);
-		enemy_vector->SetFront(front);
-		D3DXVec3Cross(&right, &enemy_vector->GetFront(), &enemy_vector->GetUp());
-		D3DXVec3Normalize(&right, &right);
-		enemy_vector->SetRight(right);
+	//逆向きを見ていた時にプレイヤーのほうに向かせる
+	if (ReverceDot < 0.0f)
+	{
+		if (RightDot > 0.0f)
+		{
+			enemy->SetRotationY(enemy->GetRotate().y - parameter.rot_angle);
+			enemy_model->SetRotation(enemy->GetRotate());
+
+			//回転行列を作成
+			D3DXMATRIX mtxRotate;
+			D3DXMatrixRotationY(&mtxRotate, D3DXToRadian(-parameter.rot_angle));
+			D3DXVec3TransformNormal(&front, &front, &mtxRotate);
+			D3DXVec3Normalize(&front, &front);
+			enemy_vector->SetFront(front);
+			D3DXVec3Cross(&right, &enemy_vector->GetFront(), &enemy_vector->GetUp());
+			D3DXVec3Normalize(&right, &right);
+			enemy_vector->SetRight(right);
+		}
+		else if (RightDot < 0.0f)
+		{
+			enemy->SetRotationY(enemy->GetRotate().y + parameter.rot_angle);
+			enemy_model->SetRotation(enemy->GetRotate());
+
+			//回転行列を作成
+			D3DXMATRIX mtxRotate;
+			D3DXMatrixRotationY(&mtxRotate, D3DXToRadian(parameter.rot_angle));
+			D3DXVec3TransformNormal(&front, &front, &mtxRotate);
+			D3DXVec3Normalize(&front, &front);
+			enemy_vector->SetFront(front);
+			D3DXVec3Cross(&right, &enemy_vector->GetFront(), &enemy_vector->GetUp());
+			D3DXVec3Normalize(&right, &right);
+			enemy_vector->SetRight(right);
+		}
 	}
+	else
+	{
+		if (RightDot >= 0.1f)
+		{
+			enemy->SetRotationY(enemy->GetRotate().y - parameter.rot_angle);
+			enemy_model->SetRotation(enemy->GetRotate());
+
+			//回転行列を作成
+			D3DXMATRIX mtxRotate;
+			D3DXMatrixRotationY(&mtxRotate, D3DXToRadian(-parameter.rot_angle));
+			D3DXVec3TransformNormal(&front, &front, &mtxRotate);
+			D3DXVec3Normalize(&front, &front);
+			enemy_vector->SetFront(front);
+			D3DXVec3Cross(&right, &enemy_vector->GetFront(), &enemy_vector->GetUp());
+			D3DXVec3Normalize(&right, &right);
+			enemy_vector->SetRight(right);
+		}
+		else if (RightDot <= -0.1f)
+		{
+			enemy->SetRotationY(enemy->GetRotate().y + parameter.rot_angle);
+			enemy_model->SetRotation(enemy->GetRotate());
+
+			//回転行列を作成
+			D3DXMATRIX mtxRotate;
+			D3DXMatrixRotationY(&mtxRotate, D3DXToRadian(parameter.rot_angle));
+			D3DXVec3TransformNormal(&front, &front, &mtxRotate);
+			D3DXVec3Normalize(&front, &front);
+			enemy_vector->SetFront(front);
+			D3DXVec3Cross(&right, &enemy_vector->GetFront(), &enemy_vector->GetUp());
+			D3DXVec3Normalize(&right, &right);
+			enemy_vector->SetRight(right);
+		}
+	}
+	
 }
 
 void StateEnemy_SlowlyRotate::Display(Enemy * enemy)
@@ -78,9 +131,22 @@ void StateEnemy_SlowlyRotate::Display(Enemy * enemy)
 	//デバッグモード時
 	if (enemy->GetDebugMode())
 	{
+		//格納変数用意
+		float angle = 0.0f;
+
+		//パラメータ取得
+		EnemyIdle::ENEMY_PARAMETER parameter = enemy->GetIdleParameter();
+		angle = parameter.rot_angle;
+
 		//パラメータ表示
 		ImGui::Begin("EnemyDebugParameter");
-		ImGui::DragFloat("RotateAngle",&rotateAngle_,0.1f,0.0f,10.0f);
+		ImGui::DragFloat("RotateAngle",&angle,0.1f,0.0f,10.0f);
 		ImGui::End();
+
+		//パラメータ設定
+		parameter.rot_angle = angle;
+
+
+		enemy->SetIdleParameter(&parameter);
 	}
 }
