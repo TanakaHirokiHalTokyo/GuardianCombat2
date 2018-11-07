@@ -8,14 +8,13 @@
 
 void StateEnemy_Rush::Act(EnemyHige * enemy)
 {
-	//Player情報取得
-	const auto& player_info = GameManager::GetPlayer();
-
 	//パラメータ取得
 	EnemyHigeRush::ENEMY_PARAMETER parameter = enemy->GetRushParameter();
+
+	const auto& vector = enemy->GetVector();
 	
 	//座標更新
-	enemy->SetPosition(enemy->GetPosition() + enemy->GetVector()->GetFront() * parameter.speed);
+	enemy->SetPosition(enemy->GetPosition() + vector->GetFront() * parameter.speed);
 
 	//進んだ距離更新
 	rushLength_ += parameter.speed;

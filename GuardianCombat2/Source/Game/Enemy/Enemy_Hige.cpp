@@ -10,8 +10,9 @@
 #include "../../Debug/Debug.h"
 #include "../../main.h"
 #include "../Cube/Cube.h"
+#include "../Player/Player.h"
 
-const D3DXVECTOR3 init_pos = D3DXVECTOR3(0,0,-8.0f);
+const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0,-8.0f);
 
 EnemyHige::EnemyHige()
 {
@@ -74,8 +75,15 @@ void EnemyHige::Init()
 	model_->SetRotation(GetRotate());
 
 	//ベクトル初期化
-	vector_->SetFront(0,0,1.0f);
-	vector_->SetRight(1.0f,0.0f,0.0f);
+	Player* player = GameManager::GetPlayer();
+	D3DXVECTOR3 front = player->GetPosition() - GetPosition();
+	D3DXVec3Normalize(&front,&front);
+	vector_->SetFront(front);
+	D3DXVECTOR3 right;
+	//右ベクトル
+	D3DXVec3Cross(&right, &vector_->GetUp(), &vector_->GetFront());
+	D3DXVec3Normalize(&right, &right);
+	vector_->SetRight(right);
 	vector_->SetUp(0,1.0f,0);
 
 	//Collision初期化
@@ -84,7 +92,10 @@ void EnemyHige::Init()
 	//デバッグ表示のラディウス設定
 	debugCollision_->SetRadius(collision_->rad);
 
-	InitParameterValue();
+	//波状パラメータ初期化
+	InitCircleParameterValue();
+	//ホーミングパラメータ初期化
+	InitHormingParameterValue();
 
 	//デバッグモードON
 	debug_ = true;
@@ -167,8 +178,8 @@ void EnemyHige::Draw()
 	{
 		//デバッグ表示　ステート・パラメータ表示
 		DrawDebug();
-		statePattern_->Display();
 	}
+	statePattern_->Display();
 }
 
 void EnemyHige::EndDraw()
@@ -224,11 +235,15 @@ void EnemyHige::DrawDebug()
 	static bool change_hormingcube_num = false;	//ホーミングキューブの数を変更したか
 
 	//Window位置固定
-	ImGui::SetNextWindowPos(ImVec2(10,(float)ScreenHeight / 2.0f));
+	//ImGui::SetNextWindowPos(ImVec2(10,(float)ScreenHeight / 2.0f));
 	//敵のデバッグ情報
 	ImGui::Begin("Enemy Debug Info");
 	//敵の位置表示
 	ImGui::Text("Position %f %f %f",GetPosition().x, GetPosition().y, GetPosition().z);
+	//敵のベクトル表示
+	ImGui::Text("FrontVector\t %f %f %f",vector_->GetFront().x, vector_->GetFront().y, vector_->GetFront().z);
+	ImGui::Text("RightVector\t %f %f %f", vector_->GetRight().x, vector_->GetRight().y, vector_->GetRight().z);
+	ImGui::Text("UpVector\t %f %f %f", vector_->GetUp().x, vector_->GetUp().y, vector_->GetUp().z);
 	//ポジション初期化
 	reset_position = ImGui::Button("Reset Enemy Position");
 	//パラメータ初期化
@@ -272,12 +287,11 @@ void EnemyHige::DrawDebug()
 			ImGui::SliderFloat("FanAngle",&hormingParameter_.fanangle,60.0f,180.0f,"%.1f",1.0f);			//扇の角度設定
 			ImGui::DragFloat("InitalVelocity", &hormingParameter_.inital_velocity, 0.01f, 0.0f, 10.0f);		//初期速度設定
 			ImGui::DragFloat("Acceleration", &hormingParameter_.acceleration, 0.001f, 0.0f, 1.0f);			//加速度設定
-			ImGui::DragFloat("FanRadius",&hormingParameter_.radius,0.01f,5.0f);								//扇の半径
+			ImGui::DragFloat("FanRadius",&hormingParameter_.radius,0.1f,1.0f,10.0f);						//扇の半径
 			ImGui::SliderInt("NextShotCoolTime",&hormingParameter_.cooltime,0,120);							//次の弾を打つまでのクールタイム
 			ImGui::SliderInt("AliveTime",&hormingParameter_.alivetime,1,300);								//ホーミング生存時間
 			ImGui::DragFloat("HormingAccuracy",&hormingParameter_.horming_accuracy,0.01f,0.0f,1.0f);		//ホーミング精度
 			ImGui::DragFloat("SetPositionSpeed",&hormingParameter_.setposition_speed,0.01f,1.0f);			//ポジションに向かうスピード
-			ImGui::DragFloat("Length", &hormingParameter_.length, 1.0f, 0.0f, 100.0f);						//キューブを飛ばす距離設定
 			ImGui::SliderFloat("CUBE SIZE", &hormingParameter_.cubeSize, 0.1f, 1.0f);						//キューブのサイズ
 			ImGui::TreePop();
 		}
@@ -310,6 +324,7 @@ void EnemyHige::DrawDebug()
 			delete[] circleShotParameter_.vec;
 			circleShotParameter_.vec = new ParameterVector[circleShotParameter_.CUBE_NUM];
 
+			InitCircleParameterValue();
 			FinishState();
 		}
 	}
@@ -341,6 +356,10 @@ void EnemyHige::DrawDebug()
 			delete[] hormingParameter_.alivetimecount;
 			hormingParameter_.alivetimecount = new int[hormingParameter_.CUBE_NUM];
 
+			delete[] hormingParameter_.speed;
+			hormingParameter_.speed = new float[hormingParameter_.CUBE_NUM];
+
+			InitHormingParameterValue();
 			FinishState();
 		}
 	}
@@ -367,6 +386,8 @@ void EnemyHige::DrawDebug()
 		SetHormingParameter(&hormingparameter);
 
 		InitParameter();
+		InitCircleParameterValue();
+		InitHormingParameterValue();
 	}
 }
 
@@ -389,9 +410,11 @@ void EnemyHige::InitParameter()
 	hormingParameter_.cooltimecount = new int[hormingParameter_.CUBE_NUM];
 	//ホーミング生存時間カウンタ作成
 	hormingParameter_.alivetimecount = new int[hormingParameter_.CUBE_NUM];
+	//ホーミングスピード変数作成
+	hormingParameter_.speed = new float[hormingParameter_.CUBE_NUM];	
 }
 
-void EnemyHige::InitParameterValue()
+void EnemyHige::InitCircleParameterValue()
 {
 	//波状攻撃初期化
 	for (int i = 0; i < circleShotParameter_.CUBE_NUM; i++)
@@ -400,19 +423,24 @@ void EnemyHige::InitParameterValue()
 		circleShotParameter_.cube[i].SetPosition(0.0f, 0.0f, 0.0f);
 		circleShotParameter_.cube[i].SetScale(circleShotParameter_.cubeSize, circleShotParameter_.cubeSize, circleShotParameter_.cubeSize);
 	}
+}
 
+void EnemyHige::InitHormingParameterValue()
+{
 	//ホーミング初期化
 	for (int i = 0; i < hormingParameter_.CUBE_NUM; i++)
 	{
 		hormingParameter_.cube[i].SetVisible(false);
-		hormingParameter_.cube[i].SetPosition(0.0f,0.0f,0.0f);
+		hormingParameter_.cube[i].SetPosition(0.0f, 0.0f, 0.0f);
 		hormingParameter_.cube[i].SetScale(hormingParameter_.cubeSize, hormingParameter_.cubeSize, hormingParameter_.cubeSize);
 		hormingParameter_.shot[i] = false;
 		hormingParameter_.cooltimecount[i] = 0;
 		hormingParameter_.alivetimecount[i] = 0;
+		hormingParameter_.speed[i] = hormingParameter_.inital_velocity;
+		hormingParameter_.spawnvec[i].vector = D3DXVECTOR3(0,1.0f,0);
+		hormingParameter_.vec[i] = *vector_;
 	}
 }
-
 void EnemyHige::DestParameter()
 {
 	if (circleShotParameter_.cube)
@@ -446,5 +474,9 @@ void EnemyHige::DestParameter()
 	if (hormingParameter_.alivetimecount)
 	{
 		delete[] hormingParameter_.alivetimecount;
+	}
+	if (hormingParameter_.speed)
+	{
+		delete[] hormingParameter_.speed;
 	}
 }

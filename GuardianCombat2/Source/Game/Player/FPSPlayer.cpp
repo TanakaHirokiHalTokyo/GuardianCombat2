@@ -44,7 +44,7 @@ FPSPlayer::~FPSPlayer()
 
 void FPSPlayer::Init()
 {
-	SetPosition(0.0f,0.0f, 8.0f);
+	SetPosition(0.1f,0.0f, 8.0f);
 	SetRotation(0.0f,0.0f,0.0f);
 	SetScale(1.0f,1.0f,1.0f);
 

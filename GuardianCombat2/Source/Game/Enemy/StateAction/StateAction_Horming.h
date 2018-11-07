@@ -8,6 +8,7 @@
 
 #include "StateAction.h"
 class StateEnemyHige;
+class StateEnemy;
 
 class StateAction_Horming :public StateAction
 {
@@ -21,4 +22,6 @@ public:
 
 private:
 	StateEnemyHige* horming_ = nullptr;			//ホーミング実行
+	StateEnemy* rotate_ = nullptr;				//プレイヤーのほうを向く制御
+	bool rotateEnemy_ = false;
 };

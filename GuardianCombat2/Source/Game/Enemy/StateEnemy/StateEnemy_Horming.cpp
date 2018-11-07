@@ -27,6 +27,7 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 			parameter.cube[i].SetScale(parameter.cubeSize, parameter.cubeSize, parameter.cubeSize);
 
 			D3DXVECTOR3 leftVector = enemy_vector->GetRight();
+			leftVector *= -1.0f;
 			D3DXVECTOR3 frontVector = enemy_vector->GetFront();
 			D3DXQUATERNION quaternion;
 
@@ -131,14 +132,24 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 					parameter.vec[i].SetFront(frontVec);
 				}
 
-				parameter.cube[i].SetPosition(parameter.cube[i].GetPosition() + (parameter.vec[i].GetFront() * parameter.speed));
+				parameter.cube[i].SetPosition(parameter.cube[i].GetPosition() + (parameter.vec[i].GetFront() * parameter.speed[i]));
 
-				parameter.speed += parameter.acceleration;
+				parameter.speed[i] += parameter.acceleration;
 
 				if (parameter.alivetimecount[i] >= parameter.alivetime)
 				{
+					parameter.cube[i].SetVisible(false);
 					if (i == parameter.CUBE_NUM - 1)
 					{
+						for (int i = 0; i < parameter.CUBE_NUM; i++)
+						{
+							parameter.alivetimecount[i] = 0;
+							parameter.cooltimecount[i] = 0;
+							parameter.shot[i] = false;
+							parameter.speed[i] = parameter.inital_velocity;
+							spawn_ = false;
+							setPosition_ = false;
+						}
 						enemy->FinishState();
 					}
 				}

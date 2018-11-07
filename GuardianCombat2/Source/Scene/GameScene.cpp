@@ -39,9 +39,10 @@ GameScene::GameScene()
 
 		Object::Create<MeshField>();										//フィールド作成
 
+		player_ = GameManager::SetPlayer(Object::Create<FPSPlayer>());		//プレイヤー作成しマネージャーにプレイヤー登録する
+
 		Object::Create<EnemyHige>();										//敵作成
 
-		player_ = GameManager::SetPlayer(Object::Create<FPSPlayer>());				//プレイヤー作成しマネージャーにプレイヤー登録する
 
 		UI* ui = Object::Create<UI>(TextureManager::Tex_Mission);			//UI作成
 		ui->SetStartScale(200.0f,40.0f);									//UI初期スケール設定

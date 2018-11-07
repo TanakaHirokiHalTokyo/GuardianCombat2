@@ -45,12 +45,11 @@ namespace EnemyHigeHorming
 		int OLD_CUBE_NUM = 10;					//前回のキューブの数
 		float inital_velocity = 0.1f;			//キューブの飛んでいく初速度
 		float acceleration = 0.001f;			//加速度
-		float speed = inital_velocity;			//現在のスピード
-		float length = 10.0f;					//キューブを飛ばす距離
+		float* speed = nullptr;					//現在のスピード
 		float cubeSize = 1.0f;					//キューブのサイズ
 		float fanangle = 120.0f;				//キューブスポーン時の扇状角度
 		float setposition_speed = 0.1f;			//ポジションに向かうスピード
-		float radius = 1.0f;					//扇の半径
+		float radius = 5.0f;					//扇の半径
 		int cooltime = 30;						//次の弾を打つまでのフレーム数
 		int* cooltimecount = nullptr;			//クールタイムカウント
 		bool* shot = nullptr;					//現在のインデックス番号の弾を打っているのか
@@ -58,7 +57,7 @@ namespace EnemyHigeHorming
 		int* alivetimecount = nullptr;			//生存時間カウント
 		float horming_accuracy = 0.2f;			//ホーミング精度
 		Cube* cube = nullptr;					//キューブ情報
-		Vector3* vec = nullptr;			//ベクトル情報
+		Vector3* vec = nullptr;					//ベクトル情報
 		ParameterVector* spawnvec = nullptr;	//スポーン時のベクトル情報
 	};
 }
@@ -115,7 +114,8 @@ public:
 private:
 	void DrawDebug();													//Debug表示
 	void InitParameter();												//パラメータ初期化
-	void InitParameterValue();											//パラメータの詳細を初期化
+	void InitCircleParameterValue();									//波状パラメータ初期化
+	void InitHormingParameterValue();									//パラメータの詳細を初期化
 	void DestParameter();												//パラメータデストラクタ
 private:
 	StatePattern_Enemy* statePattern_ = nullptr;						//ステート状態管理
