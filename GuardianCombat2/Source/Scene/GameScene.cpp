@@ -93,7 +93,7 @@ void GameScene::Update()
 
 	}
 	
-	if (GetKeyboardTrigger(DIK_SPACE) || GetKeyboardTrigger(DIK_RETURN))
+	if (GetKeyboardTrigger(DIK_SPACE))
 	{
 		GameManager::SetScene(new ResultScene());
 	}

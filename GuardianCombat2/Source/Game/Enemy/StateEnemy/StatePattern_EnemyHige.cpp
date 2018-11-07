@@ -4,6 +4,7 @@
 #include "../StateAction/StateAction_Idle.h"
 #include "../StateAction/StateAction_Rush.h"
 #include "../StateAction/StateAction_CircleShot.h"
+#include "../StateAction/StateAction_Horming.h"
 #include "../Enemy_Hige.h"
 
 StatePattern_EnemyHige::StatePattern_EnemyHige(EnemyHige * enemy)
@@ -57,6 +58,9 @@ void StatePattern_EnemyHige::ChangeState()
 		break;
 	case EnemyHige::STATE::CIRCLESHOT:
 		action_ = new StateAction_CircleShot(enemy_);	//波状攻撃作成
+		break;
+	case EnemyHige::STATE::HORMING:
+		action_ = new StateAction_Horming(enemy_);		//ホーミング作製
 		break;
 	default:
 		break;

@@ -77,7 +77,7 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 			enemy->FinishState();
 		}
 	}
-	enemy->SetCircleShotParameter(parameter);
+	enemy->SetCircleShotParameter(&parameter);
 }
 
 void StateEnemy_CircleShot::BeginDisplay(EnemyHige * enemy)
