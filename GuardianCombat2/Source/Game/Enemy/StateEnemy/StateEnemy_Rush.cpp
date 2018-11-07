@@ -28,6 +28,10 @@ void StateEnemy_Rush::Act(EnemyHige * enemy)
 	}
 }
 
+void StateEnemy_Rush::BeginDisplay(EnemyHige * enemy)
+{
+}
+
 void StateEnemy_Rush::Display(EnemyHige * enemy)
 {
 	//デバッグモード時
@@ -35,4 +39,8 @@ void StateEnemy_Rush::Display(EnemyHige * enemy)
 	{
 		
 	}
+}
+
+void StateEnemy_Rush::EndDisplay(EnemyHige * enemy)
+{
 }

@@ -17,12 +17,12 @@ public:
 	StateAction_Rush(Enemy* enemy);			//コンストラクタ
 	~StateAction_Rush()override;			//デストラクタ
 	void Action()override;					//実行
+	void BeginDisplay()override;			//事前表示
 	void Display()override;					//デバッグ・パラメータ表示
-	void SetEnemy(Enemy* enemy)override;	//敵を設定
+	void EndDisplay()override;				//表示終了
 
 private:
 	StateEnemy* rotate_ = nullptr;			//プレイヤーのほうに振り向き
 	StateEnemyHige* rush_ = nullptr;		//突進制御
-	Enemy* enemy_ = nullptr;				//敵の情報
 	bool isRotate_ = false;					//プレイヤーのほうを振り向いたか
 };

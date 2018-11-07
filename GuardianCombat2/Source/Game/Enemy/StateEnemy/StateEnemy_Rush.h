@@ -12,7 +12,9 @@ class StateEnemy_Rush :public StateEnemyHige
 {
 public:
 	void Act(EnemyHige* enemy)override;
+	void BeginDisplay(EnemyHige* enemy)override;
 	void Display(EnemyHige* enemy)override;
+	void EndDisplay(EnemyHige* enemy)override;
 private:
 	float rushLength_ = 0.0f;		//“Ëi‚µ‚½‹——£
 };

@@ -50,6 +50,7 @@ public:
 		Tex_Mission,
 		Tex_Reticle,
 		Tex_PauseWord,
+		Tex_Turret,
 		Tex_Max,
 	};
 

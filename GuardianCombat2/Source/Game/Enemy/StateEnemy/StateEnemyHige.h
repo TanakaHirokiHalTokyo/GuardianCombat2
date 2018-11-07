@@ -12,5 +12,7 @@ class StateEnemyHige
 {
 public:
 	virtual void Act(EnemyHige* enemy) = 0;
+	virtual void BeginDisplay(EnemyHige* enemy) = 0;
 	virtual void Display(EnemyHige* enemy) = 0;
+	virtual void EndDisplay(EnemyHige* enemy) = 0;
 };

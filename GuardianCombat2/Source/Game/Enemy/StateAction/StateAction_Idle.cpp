@@ -30,13 +30,16 @@ void StateAction_Idle::Action()
 	rotate_->Act(enemy_);			//回転制御
 }
 
+void StateAction_Idle::BeginDisplay()
+{
+}
+
 void StateAction_Idle::Display()
 {
 	move_->Display(enemy_);			//デバッグ表示
 	rotate_->Display(enemy_);		//デバッグ表示
 }
 
-void StateAction_Idle::SetEnemy(Enemy * enemy)
+void StateAction_Idle::EndDisplay()
 {
-	enemy_ = enemy;					//敵を設定
 }

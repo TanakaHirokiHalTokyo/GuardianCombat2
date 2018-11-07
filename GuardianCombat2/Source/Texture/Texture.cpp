@@ -13,6 +13,7 @@ const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 	"resource/texture/Mission.png",					395, 70,395,70,
 	"resource/texture/reticle.png",					400, 400,400,400,
 	"resource/texture/pauseWord.png",				400, 300,400,300,
+	"resource/texture/turret.png",					200, 200,200,200,
 };
 void TextureManager::LoadAll()
 {

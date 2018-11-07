@@ -16,6 +16,7 @@
 #include "../DInput/DirectInput.h"
 #include "ResultScene.h"
 #include "PauseScene.h"
+#include "../Game/Cube/Cube.h"	
 
 GameScene::GameScene()
 {
@@ -47,6 +48,9 @@ GameScene::GameScene()
 		ui->SetStartPosition(-200.0f, (float)ScreenHeight / 2.0f);			//UI‰ŠúÀ•Wİ’è
 		ui->MoveTexture(0.0f, 5.0f, 0, (float)ScreenHeight / 2.0f);			//UIˆÚ“®İ’è
 		ui->ScalingTexture(0.0f, 5.0f, 200.0f, 40.0f);						//UIŠg‘åİ’è
+
+		cube_ = Object::Create<Cube>();
+		
 
 		GameManager::SetGameObjectLoad(true);								//GameObject‚ğ“Ç‚İ‚ñ‚¾İ’è
 	}

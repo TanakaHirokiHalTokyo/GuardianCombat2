@@ -9,6 +9,7 @@
 #include "../../Collision/Collision.h"
 #include "../../Debug/Debug.h"
 #include "../../main.h"
+#include "../Cube/Cube.h"
 
 EnemyHige::EnemyHige()
 {
@@ -31,6 +32,11 @@ EnemyHige::EnemyHige()
 	//コリジョン可視化作成
 	debugCollision_ = Object::Create<DebugSphere>();
 
+	//波状攻撃時のキューブ作成
+	circleShotParameter_.cube = new Cube[circleShotParameter_.CUBE_NUM];
+
+	//波状攻撃ベクトル作製
+	circleShotParameter_.vec = new CircleVector[circleShotParameter_.CUBE_NUM];
 }
 
 EnemyHige::~EnemyHige()
@@ -45,6 +51,19 @@ EnemyHige::~EnemyHige()
 	{
 		delete statePattern_;
 		statePattern_ = nullptr;
+	}
+	if (circleShotParameter_.cube)
+	{
+		delete[] circleShotParameter_.cube;
+	}
+	if (circleShotParameter_.vec)
+	{
+		delete[] circleShotParameter_.vec;
+	}
+	if (collision_)
+	{
+		delete collision_;
+		collision_ = nullptr;
 	}
 }
 
@@ -71,6 +90,14 @@ void EnemyHige::Init()
 
 	//デバッグ表示のラディウス設定
 	debugCollision_->SetRadius(collision_->rad);
+
+	//波状攻撃初期化
+	for (int i = 0; i < circleShotParameter_.CUBE_NUM; i++)
+	{
+		circleShotParameter_.cube[i].SetVisible(false);
+		circleShotParameter_.cube[i].SetPosition(0.0f,0.0f,0.0f);
+		circleShotParameter_.cube[i].SetScale(0.5f,0.5f,0.5f);
+	}
 
 	//デバッグモードON
 	debug_ = true;
@@ -116,6 +143,8 @@ void EnemyHige::BeginDraw()
 
 	SetWorld(&world_);
 
+	statePattern_->BeginDisplay();
+
 	//シェーダー処理
 	if (model_->GetUseShader())
 	{	
@@ -151,12 +180,13 @@ void EnemyHige::Draw()
 	{
 		//デバッグ表示　ステート・パラメータ表示
 		DrawDebug();
+		statePattern_->Display();
 	}
 }
 
 void EnemyHige::EndDraw()
 {
-	
+	statePattern_->EndDisplay();
 }
 
 EnemyHige::STATE EnemyHige::GetState()
@@ -181,15 +211,28 @@ void EnemyHige::SetRushParameter(EnemyHigeRush::ENEMY_PARAMETER parameter)
 {
 	rushParameter_ = parameter;	//突進状態のパラメータ設定
 }
+EnemyHigeCircleShot::ENEMY_PARAMETER EnemyHige::GetCircleShotParameter()
+{
+	return circleShotParameter_;		//波状攻撃取得
+}
+void EnemyHige::SetCircleShotParameter(EnemyHigeCircleShot::ENEMY_PARAMETER parameter)
+{
+	circleShotParameter_ = parameter;	//波状攻撃設定
+}
 void EnemyHige::DrawDebug()
 {
-	static int listbox_item_current = 1;
-	static bool changeState = false;
+	static int listbox_item_current = 1;		//リストボックスの初期選択番号
+	static bool changeState = false;			//状態を変更したか
+	static bool change_cube_num = false;		//キューブの数を変更したか
+	static bool reset_position = false;			//敵のポジションリセットフラグ
 
 	//Window位置固定
 	ImGui::SetNextWindowPos(ImVec2(10,(float)ScreenHeight / 2.0f));
 	//敵のデバッグ情報
 	ImGui::Begin("Enemy Debug Info");
+	//敵の位置表示
+	ImGui::Text("Position %f %f %f",GetPosition().x, GetPosition().y, GetPosition().z);
+	reset_position = ImGui::Button("Reset Enemy Position");
 	//今現在のSTATE名
 	ImGui::Text("STATE : %s",StateWord[state_]);
 	//次に設定するSTATE
@@ -198,8 +241,8 @@ void EnemyHige::DrawDebug()
 	//待機状態のパラメータ設定
 	if (ImGui::TreeNode("IDLE PARAMETER"))
 	{
-		ImGui::DragFloat("Speed Set", &idleParameter_.speed, 0.001f, 0.0f, 0.1f);
-		ImGui::DragFloat("RotateAngle", &idleParameter_.rot_angle, 0.1f, 0.0f, 10.0f);
+		ImGui::DragFloat("Speed Set", &idleParameter_.speed, 0.001f, 0.0f, 0.1f);			//スピード設定
+		ImGui::DragFloat("RotateAngle", &idleParameter_.rot_angle, 0.01f, 0.01f, 6.0f);		//回転スピード設定
 		ImGui::TreePop();
 	}
 	//通常攻撃パラメータ設定
@@ -208,14 +251,25 @@ void EnemyHige::DrawDebug()
 		//突進状態のパラメータ設定
 		if (ImGui::TreeNode("RUSH PARAMETER"))
 		{
-			ImGui::DragFloat("Speed Set", &rushParameter_.speed, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Length Set", &rushParameter_.length, 1.0f, 0.0f, 100.0f);
+			ImGui::DragFloat("Speed", &rushParameter_.speed, 0.01f, 0.0f, 1.0f);			//スピード設定
+			ImGui::DragFloat("Length", &rushParameter_.length, 1.0f, 0.0f, 100.0f);			//突進距離設定
+			ImGui::TreePop();
+		}
+		//波状攻撃のパラメータ設定
+		if (ImGui::TreeNode("CIRCLESHOT PARAMETER"))
+		{
+			change_cube_num = ImGui::SliderInt("CUBE NUM", &circleShotParameter_.CUBE_NUM, 0, 20);				//キューブ数設定
+			ImGui::DragFloat("InitalVelocity", &circleShotParameter_.inital_velocity, 0.01f, 0.0f, 10.0f);		//初期速度設定
+			ImGui::DragFloat("Acceleration", &circleShotParameter_.acceleration, 0.001f, 0.0f, 1.0f);			//加速度設定
+			ImGui::DragFloat("Length", &circleShotParameter_.length, 1.0f, 0.0f, 100.0f);						//キューブを飛ばす距離設定
+			ImGui::SliderFloat("CUBE SIZE", &circleShotParameter_.cubeSize, 0.1f, 1.0f);
 			ImGui::TreePop();
 		}
 	}
 	//Imugui終了
 	ImGui::End();
 
+	//状態変更したとき
 	if (changeState)
 	{
 		//状態変更
@@ -223,6 +277,28 @@ void EnemyHige::DrawDebug()
 		changeState = false;
 		statePattern_->ChangeState();
 	}
+	//キューブの数を変更したとき
+	if (change_cube_num)
+	{
+		change_cube_num = false;
 
-	statePattern_->Display();
+		//キューブの数が変更されていたら
+		if (circleShotParameter_.CUBE_NUM != circleShotParameter_.OLD_CUBE_NUM)
+		{
+			//現在のキューブの数を設定
+			circleShotParameter_.OLD_CUBE_NUM = circleShotParameter_.CUBE_NUM;
+
+			delete[] circleShotParameter_.cube;
+			circleShotParameter_.cube = new Cube[circleShotParameter_.CUBE_NUM];
+
+			delete[] circleShotParameter_.vec;
+			circleShotParameter_.vec = new CircleVector[circleShotParameter_.CUBE_NUM];
+		}
+	}
+	if (reset_position)
+	{
+		reset_position = false;
+		SetPosition(0,0,0);
+	}
+	
 }

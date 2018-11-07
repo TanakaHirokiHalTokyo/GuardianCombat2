@@ -12,7 +12,15 @@ void StateEnemy_MoveToPlayer::Act(Enemy * enemy)
 	enemy->SetPosition(enemy->GetPosition() + enemy_vector->GetFront() * enemy->GetSpeed());
 }
 
+void StateEnemy_MoveToPlayer::BeginDisplay(Enemy * enemy)
+{
+}
+
 void StateEnemy_MoveToPlayer::Display(Enemy* enemy)
 {
 	
+}
+
+void StateEnemy_MoveToPlayer::EndDisplay(Enemy * enemy)
+{
 }

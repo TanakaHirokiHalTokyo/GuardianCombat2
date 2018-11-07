@@ -5,6 +5,13 @@
 class StatePattern_Enemy;
 class Sphere;
 class DebugSphere;
+class Cube;
+
+class CircleVector
+{
+public:
+	D3DXVECTOR3 vector;
+};
 
 namespace EnemyHigeRush							//突進状態のパラメータ
 {
@@ -12,6 +19,21 @@ namespace EnemyHigeRush							//突進状態のパラメータ
 	{
 		float speed = 0.5f;						//スピード
 		float length = 10.0f;					//突進距離
+	};
+}
+namespace EnemyHigeCircleShot					//波状攻撃の情報
+{
+	struct ENEMY_PARAMETER
+	{
+		int CUBE_NUM = 10;						//波状攻撃時のキューブの数
+		int OLD_CUBE_NUM = 10;					//前回のキューブの数
+		float inital_velocity = 0.1f;			//キューブの飛んでいく初速度
+		float acceleration = 0.001f;			//加速度
+		float speed = inital_velocity;			//現在のスピード
+		float length = 10.0f;					//キューブを飛ばす距離
+		float cubeSize = 1.0f;					//キューブのサイズ
+		Cube* cube = nullptr;					//キューブ情報
+		CircleVector* vec = nullptr;			//ベクトル情報
 	};
 }
 
@@ -23,12 +45,14 @@ public:
 	{
 		IDLE,					//待機状態
 		RUSH,					//突進
+		CIRCLESHOT,				//波状攻撃
 		STATE_MAX,
 	};
 	const char* StateWord[STATE_MAX]
 	{
 		"IDLE",
 		"RUSH",
+		"CIRCLESHOT",
 	};
 public:
 	EnemyHige();
@@ -52,13 +76,18 @@ public:
 	EnemyHigeRush::ENEMY_PARAMETER GetRushParameter();
 	void SetRushParameter(EnemyHigeRush::ENEMY_PARAMETER parameter);
 
-private:
-	void DrawDebug();										//Debug表示
-private:
-	StatePattern_Enemy* statePattern_ = nullptr;			//ステート状態管理
-	STATE state_ = IDLE;									//状態
-	Sphere* collision_ = nullptr;							//コリジョン情報
-	DebugSphere* debugCollision_ = nullptr;					//コリジョンを可視化するか
+	//波状攻撃のパラメータ取得・設定
+	EnemyHigeCircleShot::ENEMY_PARAMETER GetCircleShotParameter();
+	void SetCircleShotParameter(EnemyHigeCircleShot::ENEMY_PARAMETER parameter);
 
-	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};		//突進状態のパラメータ情報
+private:
+	void DrawDebug();													//Debug表示
+private:
+	StatePattern_Enemy* statePattern_ = nullptr;						//ステート状態管理
+	STATE state_ = IDLE;												//状態
+	Sphere* collision_ = nullptr;										//コリジョン情報
+	DebugSphere* debugCollision_ = nullptr;								//コリジョンを可視化するか
+
+	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};					//突進状態のパラメータ情報
+	EnemyHigeCircleShot::ENEMY_PARAMETER circleShotParameter_ = {};		//波状攻撃のパラメータ情報
 };

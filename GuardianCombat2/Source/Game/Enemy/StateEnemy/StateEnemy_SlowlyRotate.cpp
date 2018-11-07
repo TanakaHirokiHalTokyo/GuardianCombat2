@@ -126,7 +126,15 @@ void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 	
 }
 
+void StateEnemy_SlowlyRotate::BeginDisplay(Enemy * enemy)
+{
+}
+
 void StateEnemy_SlowlyRotate::Display(Enemy * enemy)
 {
 	
+}
+
+void StateEnemy_SlowlyRotate::EndDisplay(Enemy * enemy)
+{
 }

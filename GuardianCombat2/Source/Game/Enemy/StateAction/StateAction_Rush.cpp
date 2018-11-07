@@ -43,6 +43,10 @@ void StateAction_Rush::Action()
 	}
 }
 
+void StateAction_Rush::BeginDisplay()
+{
+}
+
 void StateAction_Rush::Display()
 {
 	EnemyHige* hige = (EnemyHige*)enemy_;
@@ -51,7 +55,7 @@ void StateAction_Rush::Display()
 	rush_->Display(hige);
 }
 
-void StateAction_Rush::SetEnemy(Enemy * enemy)
+void StateAction_Rush::EndDisplay()
 {
-	enemy_ = enemy;
 }
+

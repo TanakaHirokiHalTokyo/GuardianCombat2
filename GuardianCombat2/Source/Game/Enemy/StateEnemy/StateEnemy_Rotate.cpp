@@ -73,6 +73,14 @@ void StateEnemy_Rotate::Act(Enemy * enemy)
 	}
 }
 
+void StateEnemy_Rotate::BeginDisplay(Enemy * enemy)
+{
+}
+
 void StateEnemy_Rotate::Display(Enemy* enemy)
+{
+}
+
+void StateEnemy_Rotate::EndDisplay(Enemy * enemy)
 {
 }
