@@ -4,6 +4,7 @@
 #include "../../Cube/Cube.h"
 #include "../../Player/Player.h"
 #include "../../GameManager/GameManager.h"
+#include "../../Effect/Effect.h"
 
 void StateEnemy_Horming::Act(EnemyHige * enemy)
 {
@@ -58,6 +59,11 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 		if (transPositionValue_ >= parameter.radius)
 		{
 			setPosition_ = true;
+			//エフェクト初期化
+			for (int i = 0; i < parameter.CUBE_NUM; i++)
+			{
+				parameter.effect[i].Init();
+			}
 		}
 	}
 	else
@@ -133,6 +139,9 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 				}
 
 				parameter.cube[i].SetPosition(parameter.cube[i].GetPosition() + (parameter.vec[i].GetFront() * parameter.speed[i]));
+				//エフェクト更新
+				parameter.effect[i].CreateEffect(
+					parameter.cube[i].GetPosition() + parameter.vec[i].GetFront() * parameter.speed[i]);
 
 				parameter.speed[i] += parameter.acceleration;
 
@@ -149,6 +158,9 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 							parameter.speed[i] = parameter.inital_velocity;
 							spawn_ = false;
 							setPosition_ = false;
+
+							//エフェクト終了処理
+							parameter.effect[i].Uninit();
 						}
 						enemy->FinishState();
 					}
@@ -156,6 +168,12 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 			}
 		}
 	}
+	for (int i = 0; i < parameter.CUBE_NUM; i++)
+	{
+		parameter.cube[i].SetRotation(parameter.cube[i].GetRotate().x + 5.0f, parameter.cube[i].GetRotate().y + 5.0f, parameter.cube[i].GetRotate().z + 5.0f);
+		parameter.effect[i].Update();
+	}
+
 	enemy->SetHormingParameter(&parameter);
 }
 
@@ -178,6 +196,7 @@ void StateEnemy_Horming::Display(EnemyHige * enemy)
 	for (int i = 0; i < parameter.CUBE_NUM; i++)
 	{
 		parameter.cube[i].Draw();
+		parameter.effect[i].Draw();
 	}
 }
 

@@ -160,6 +160,7 @@
     <ClCompile Include="Source\Effekseer\Effekseer.cpp" />
     <ClCompile Include="Source\Game\Billboard\Billboard.cpp" />
     <ClCompile Include="Source\Game\Cube\Cube.cpp" />
+    <ClCompile Include="Source\Game\Effect\Effect.cpp" />
     <ClCompile Include="Source\Game\Enemy\Enemy.cpp" />
     <ClCompile Include="Source\Game\Enemy\Enemy_Hige.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_CircleShot.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Source\Effekseer\Effekseer.h" />
     <ClInclude Include="Source\Game\Billboard\Billboard.h" />
     <ClInclude Include="Source\Game\Cube\Cube.h" />
+    <ClInclude Include="Source\Game\Effect\Effect.h" />
     <ClInclude Include="Source\Game\Enemy\Enemy.h" />
     <ClInclude Include="Source\Game\Enemy\Enemy_Hige.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction.h" />

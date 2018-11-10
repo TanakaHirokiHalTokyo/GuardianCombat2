@@ -17,11 +17,13 @@
 #include "ResultScene.h"
 #include "PauseScene.h"
 #include "../Game/Cube/Cube.h"	
+#include "../Game/Effect/Effect.h"
 
 GameScene::GameScene()
 {
 	//SceneTag設定
 	GameManager::SetSceneTag("GameScene");
+	EffectManager::Init();
 
 	pauseScene_ = new PauseScene();		//ポーズシーン作成
 
@@ -59,6 +61,8 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	EffectManager::Uninit();
+
 	//ポーズシーン破棄
 	delete pauseScene_;
 	pauseScene_ = nullptr;

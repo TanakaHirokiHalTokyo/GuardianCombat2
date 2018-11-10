@@ -30,6 +30,7 @@ public:
 	float GetLife() { return life_; }								//体力取得
 	void SetSpeed(float value) { idleParameter_.speed = value; }	//スピード設定
 	float GetSpeed() { return idleParameter_.speed; }				//スピード取得
+	void JudgePause();
 
 	XModel* GetModel();												//モデル取得
 	Vector3* GetVector();											//ベクトル取得
@@ -45,6 +46,7 @@ protected:
 	Vector3* vector_ = nullptr;						//ベクトル情報
 	XModel* model_ = nullptr;						//モデル情報
 	bool debug_ = false;							//デバッグ状態にするか
+	bool enemypause_ = false;						//敵のポーズ状態
 	EnemyIdle::ENEMY_PARAMETER idleParameter_ = {};	//待機状態のパラメータ
 
 };

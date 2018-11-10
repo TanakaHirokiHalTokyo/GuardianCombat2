@@ -6,6 +6,7 @@ class StatePattern_Enemy;
 class Sphere;
 class DebugSphere;
 class Cube;
+class AdditionEffect;
 
 class ParameterVector
 {
@@ -59,6 +60,7 @@ namespace EnemyHigeHorming
 		Cube* cube = nullptr;					//キューブ情報
 		Vector3* vec = nullptr;					//ベクトル情報
 		ParameterVector* spawnvec = nullptr;	//スポーン時のベクトル情報
+		AdditionEffect* effect = nullptr;		//エフェクト情報
 	};
 }
 
@@ -121,9 +123,9 @@ private:
 	StatePattern_Enemy* statePattern_ = nullptr;						//ステート状態管理
 	STATE state_ = IDLE;												//状態
 	Sphere* collision_ = nullptr;										//コリジョン情報
-	DebugSphere* debugCollision_ = nullptr;								//コリジョンを可視化するか
 
 	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};					//突進状態のパラメータ情報
 	EnemyHigeCircleShot::ENEMY_PARAMETER circleShotParameter_ = {};		//波状攻撃のパラメータ情報
 	EnemyHigeHorming::ENEMY_PARAMETER hormingParameter_ = {};			//ホーミングのパラメータ情報
+	XModel* ring_ = nullptr;
 };
