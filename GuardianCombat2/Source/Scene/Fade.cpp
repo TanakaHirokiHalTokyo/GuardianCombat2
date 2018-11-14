@@ -61,9 +61,17 @@ void Fade::Update()
 	}
 }
 
+void Fade::BeginDraw()
+{
+}
+
 void Fade::Draw()
 {
 	tex_fade_->Draw();
+}
+
+void Fade::EndDraw()
+{
 }
 
 void Fade::FadeIn()

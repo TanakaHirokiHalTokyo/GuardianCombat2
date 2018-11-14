@@ -13,7 +13,7 @@
 #include "../Player/Player.h"
 #include "../Effect/Effect.h"
 
-const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0,-8.0f);
+const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0.0f,-8.0f);
 
 EnemyHige::EnemyHige()
 {
@@ -121,7 +121,8 @@ void EnemyHige::Update()
 
 		ring_->SetPosition(GetPosition());
 		ring_->SetPositionY(ring_->GetPosition().y + ring_->GetScale().x);
-		collision_->pos = ring_->GetPosition();
+		collision_->pos = GetPosition();
+		collision_->pos.y = collision_->pos.y + collision_->rad;
 	}
 	else
 	{
@@ -244,10 +245,9 @@ void EnemyHige::DrawDebug()
 	static bool changeState = false;				//状態を変更したか
 	static bool reset_position = false;				//敵のポジションリセットフラグ
 	static bool reset_parameter = false;			//パラメータリセットフラグ
-	
 
 	//Window位置固定
-	//ImGui::SetNextWindowPos(ImVec2(10,(float)ScreenHeight / 2.0f));
+	//ImGui::SetNextWindowPos(ImVec2(10,0.0f));
 	//敵のデバッグ情報
 	ImGui::Begin("Enemy Debug Info");
 	//敵の位置表示
@@ -287,18 +287,24 @@ void EnemyHige::DrawDebug()
 		//=======================================================================================================
 		{
 			static bool change_cube_num = false;			//キューブの数を変更したか
+			static bool change_effect_limit = true;			//エフェクトの生存時間を変更したか
+			static int effect_limit = 90;								//エフェクトの生存時間
+			static bool change_effect_color = false;			//エフェクトの色を変更したか
+			static float effect_color[3];								//エフェクトの色
+			static float effect_size = 1.0f;							//エフェクトのサイズ
 
 			//波状攻撃のパラメータ設定
 			if (ImGui::TreeNode("CIRCLESHOT PARAMETER"))
 			{
 				change_cube_num = ImGui::SliderInt("CUBE NUM", &circleShotParameter_.CUBE_NUM, 1, 20);				//キューブ数設定
-				ImGui::DragFloat("InitalVelocity", &circleShotParameter_.inital_velocity, 0.01f, 0.0f, 10.0f);		//初期速度設定
-				ImGui::DragFloat("Acceleration", &circleShotParameter_.acceleration, 0.001f, 0.0f, 1.0f);			//加速度設定
-				ImGui::DragFloat("Length", &circleShotParameter_.length, 1.0f, 0.0f, 100.0f);						//キューブを飛ばす距離設定
-				ImGui::SliderFloat("CUBE SIZE", &circleShotParameter_.cubeSize, 0.1f, 1.0f);
+				ImGui::DragFloat("InitalVelocity", &circleShotParameter_.inital_velocity, 0.01f, 0.0f, 10.0f);						//初期速度設定
+				ImGui::DragFloat("Acceleration", &circleShotParameter_.acceleration, 0.001f, 0.0f, 1.0f);							//加速度設定
+				ImGui::DragFloat("Length", &circleShotParameter_.length, 1.0f, 0.0f, 100.0f);												//キューブを飛ばす距離設定
+				ImGui::SliderFloat("CUBE SIZE", &circleShotParameter_.cubeSize, 0.1f, 1.0f);											//キューブのサイズ
+				change_effect_color = ImGui::ColorEdit3("EffectColor",effect_color);															//エフェクトのカラー設定
+
 				ImGui::TreePop();
 			}
-
 			//キューブの数を変更したとき
 			if (change_cube_num)
 			{
@@ -307,52 +313,66 @@ void EnemyHige::DrawDebug()
 				//キューブの数が変更されていたら
 				if (circleShotParameter_.CUBE_NUM != circleShotParameter_.OLD_CUBE_NUM)
 				{
+					change_effect_color = true;
+					change_effect_limit = true;
+
 					//現在のキューブの数を設定
 					circleShotParameter_.OLD_CUBE_NUM = circleShotParameter_.CUBE_NUM;
 
-					delete[] circleShotParameter_.cube;
-					circleShotParameter_.cube = new Cube[circleShotParameter_.CUBE_NUM];
-
-					delete[] circleShotParameter_.vec;
-					circleShotParameter_.vec = new ParameterVector[circleShotParameter_.CUBE_NUM];
+					//波状攻撃パラメータ再作成
+					ReCreateCircleParameter();
 
 					InitCircleParameterValue();
 					FinishState();
 				}
+				//エフェクトの色が変更されていたら
+				if (change_effect_color)
+				{
+					change_effect_color = false;
+					for (int i = 0; i < circleShotParameter_.CUBE_NUM; i++)
+					{
+						circleShotParameter_.effect[i].SetColor(effect_color[0], effect_color[1], effect_color[2]);
+					}
+				}
+				//エフェクトの生存時間変更されていたら
+				if (change_effect_limit)
+				{
+					change_effect_limit = false;
+					for (int i = 0; i < circleShotParameter_.CUBE_NUM; i++)
+					{
+						circleShotParameter_.effect[i].SetLimit(effect_limit);
+					}
+				}
 			}
 		}
-		
 		//====================================================================================================
 		//		Horming
 		//====================================================================================================
 		{
 			static bool change_hormingcube_num = false;		//ホーミングキューブの数を変更したか
 			static bool change_horming_effect_color = false;	//ホーミングのエフェクトカラーを変更したか。
-			static float horming_effect_color[3];
-			static float effect_size = 1.0f;
+			static float horming_effect_color[3];						//エフェクトカラー配列
+			static float effect_size = 1.0f;									//エフェクトサイズ
+			static int limit_time = 70;										//エフェクト生存時間
+			static bool change_limit = false;								//エフェクトの生存時間変更したか
+			static bool change_effect_size = false;					//エフェクトのサイズ変更したか
 
 			//ホーミングのパラメータ設定
 			if (ImGui::TreeNode("HORMING PARAMETER"))
 			{
 				change_hormingcube_num = ImGui::SliderInt("CUBE NUM", &hormingParameter_.CUBE_NUM, 0, 20);		//キューブ数設定
-				ImGui::SliderFloat("FanAngle", &hormingParameter_.fanangle, 60.0f, 180.0f, "%.1f", 1.0f);			//扇の角度設定
-				ImGui::DragFloat("InitalVelocity", &hormingParameter_.inital_velocity, 0.01f, 0.0f, 10.0f);		//初期速度設定
-				ImGui::DragFloat("Acceleration", &hormingParameter_.acceleration, 0.001f, 0.0f, 1.0f);			//加速度設定
-				ImGui::DragFloat("FanRadius", &hormingParameter_.radius, 0.1f, 1.0f, 10.0f);						//扇の半径
-				ImGui::SliderInt("NextShotCoolTime", &hormingParameter_.cooltime, 0, 120);							//次の弾を打つまでのクールタイム
-				ImGui::SliderInt("AliveTime", &hormingParameter_.alivetime, 1, 300);								//ホーミング生存時間
-				ImGui::DragFloat("HormingAccuracy", &hormingParameter_.horming_accuracy, 0.01f, 0.0f, 1.0f);		//ホーミング精度
-				ImGui::DragFloat("SetPositionSpeed", &hormingParameter_.setposition_speed, 0.01f, 1.0f);			//ポジションに向かうスピード
-				ImGui::SliderFloat("CUBE SIZE", &hormingParameter_.cubeSize, 0.1f, 1.0f);						//キューブのサイズ
-				change_horming_effect_color = ImGui::ColorEdit3("Effect Color", horming_effect_color);
-				if (ImGui::DragFloat("Effect Size", &effect_size,0.1f, 0.0f,20.0f,"%.2f"))
-				{
-					for (int i = 0; i < hormingParameter_.CUBE_NUM; i++)
-					{
-						hormingParameter_.effect[i].SetScale(effect_size);
-					}
-				}
-
+				ImGui::SliderFloat("FanAngle", &hormingParameter_.fanangle, 60.0f, 180.0f, "%.1f", 1.0f);								//扇の角度設定
+				ImGui::DragFloat("InitalVelocity", &hormingParameter_.inital_velocity, 0.01f, 0.0f, 10.0f);								//初期速度設定
+				ImGui::DragFloat("Acceleration", &hormingParameter_.acceleration, 0.001f, 0.0f, 1.0f);									//加速度設定
+				ImGui::DragFloat("FanRadius", &hormingParameter_.radius, 0.1f, 1.0f, 10.0f);													//扇の半径
+				ImGui::SliderInt("NextShotCoolTime", &hormingParameter_.cooltime, 0, 120);												//次の弾を打つまでのクールタイム
+				ImGui::SliderInt("AliveTime", &hormingParameter_.alivetime, 1, 300);																//ホーミング生存時間
+				ImGui::DragFloat("HormingAccuracy", &hormingParameter_.horming_accuracy, 0.01f, 0.0f, 1.0f);					//ホーミング精度
+				ImGui::DragFloat("SetPositionSpeed", &hormingParameter_.setposition_speed, 0.01f, 1.0f);							//ポジションに向かうスピード
+				ImGui::SliderFloat("CUBE SIZE", &hormingParameter_.cubeSize, 0.1f, 1.0f);													//キューブのサイズ
+				change_horming_effect_color = ImGui::ColorEdit3("Effect Color", horming_effect_color);								//エフェクトのカラー設定
+				change_limit = ImGui::SliderInt("Effect Limit Time", &limit_time, 70, 250);														//エフェクトの生存時間設定
+				change_effect_size = ImGui::DragFloat("Effect Size", &effect_size, 0.1f, 0.0f, 20.0f, "%.2f");							//エフェクトのサイズを設定
 				ImGui::TreePop();
 			}
 
@@ -363,32 +383,14 @@ void EnemyHige::DrawDebug()
 				//キューブの数が変更されていたら
 				if (hormingParameter_.CUBE_NUM != hormingParameter_.OLD_CUBE_NUM)
 				{
+					change_horming_effect_color = true;
+					change_limit = true;
+
 					//現在のキューブの数を設定
 					hormingParameter_.OLD_CUBE_NUM = hormingParameter_.CUBE_NUM;
 
-					delete[] hormingParameter_.cube;
-					hormingParameter_.cube = new Cube[hormingParameter_.CUBE_NUM];
-
-					delete[] hormingParameter_.vec;
-					hormingParameter_.vec = new Vector3[hormingParameter_.CUBE_NUM];
-
-					delete[] hormingParameter_.spawnvec;
-					hormingParameter_.spawnvec = new ParameterVector[hormingParameter_.CUBE_NUM];
-
-					delete[] hormingParameter_.shot;
-					hormingParameter_.shot = new bool[hormingParameter_.CUBE_NUM];
-
-					delete[] hormingParameter_.cooltimecount;
-					hormingParameter_.cooltimecount = new int[hormingParameter_.CUBE_NUM];
-
-					delete[] hormingParameter_.alivetimecount;
-					hormingParameter_.alivetimecount = new int[hormingParameter_.CUBE_NUM];
-
-					delete[] hormingParameter_.speed;
-					hormingParameter_.speed = new float[hormingParameter_.CUBE_NUM];
-
-					delete[] hormingParameter_.effect;
-					hormingParameter_.effect = new AdditionEffect[hormingParameter_.CUBE_NUM];
+					//ホーミングパラメータ再作成
+					ReCreateHormingParameter();
 
 					InitHormingParameterValue();
 					FinishState();
@@ -407,8 +409,25 @@ void EnemyHige::DrawDebug()
 						horming_effect_color[2]);
 				}
 			}
+			//生存時間変更されていたら更新
+			if (change_limit)
+			{
+				change_limit = false;
+				for (int i = 0; i < hormingParameter_.CUBE_NUM; i++)
+				{
+					hormingParameter_.effect[i].SetLimit(limit_time);
+				}
+			}
+			//エフェクトのサイズ更新されていたら更新
+			if(change_effect_size)
+			{
+				change_effect_size = false;
+				for (int i = 0; i < hormingParameter_.CUBE_NUM; i++)
+				{
+					hormingParameter_.effect[i].SetScale(effect_size);
+				}
+			}
 		}
-		
 	}
 	//Imugui終了
 	ImGui::End();
@@ -447,19 +466,27 @@ void EnemyHige::DrawDebug()
 		SetCircleShotParameter(&circleshotparameter);
 		SetHormingParameter(&hormingparameter);
 
-		InitParameter();
-		InitCircleParameterValue();
-		InitHormingParameterValue();
+		InitParameter();								//パラメータ情報初期化
+		InitCircleParameterValue();			//波状攻撃の情報初期化
+		InitHormingParameterValue();		//ホーミングの情報初期化
 	}
 }
 
 void EnemyHige::InitParameter()
 {
+	//==========================================================
+	//			波状攻撃　初期化
+	//==========================================================
 	//波状攻撃時のキューブ作成
 	circleShotParameter_.cube = new Cube[circleShotParameter_.CUBE_NUM];
 	//波状攻撃ベクトル作成
 	circleShotParameter_.vec = new ParameterVector[circleShotParameter_.CUBE_NUM];
+	//波状攻撃のエフェクト作成
+	circleShotParameter_.effect = new AdditionEffect[circleShotParameter_.CUBE_NUM];
 
+	//==========================================================
+	//			ホーミング初期化
+	//==========================================================
 	//ホーミングのキューブ作成
 	hormingParameter_.cube = new Cube[hormingParameter_.CUBE_NUM];
 	//ホーミングベクトル作成
@@ -475,6 +502,45 @@ void EnemyHige::InitParameter()
 	//ホーミングスピード変数作成
 	hormingParameter_.speed = new float[hormingParameter_.CUBE_NUM];	
 	//エフェクト作成
+	hormingParameter_.effect = new AdditionEffect[hormingParameter_.CUBE_NUM];
+}
+
+void EnemyHige::ReCreateCircleParameter()
+{
+	delete[] circleShotParameter_.cube;
+	circleShotParameter_.cube = new Cube[circleShotParameter_.CUBE_NUM];
+
+	delete[] circleShotParameter_.vec;
+	circleShotParameter_.vec = new ParameterVector[circleShotParameter_.CUBE_NUM];
+
+	delete[] circleShotParameter_.effect;
+	circleShotParameter_.effect = new AdditionEffect[circleShotParameter_.CUBE_NUM];
+}
+
+void EnemyHige::ReCreateHormingParameter()
+{
+	delete[] hormingParameter_.cube;
+	hormingParameter_.cube = new Cube[hormingParameter_.CUBE_NUM];
+
+	delete[] hormingParameter_.vec;
+	hormingParameter_.vec = new Vector3[hormingParameter_.CUBE_NUM];
+
+	delete[] hormingParameter_.spawnvec;
+	hormingParameter_.spawnvec = new ParameterVector[hormingParameter_.CUBE_NUM];
+
+	delete[] hormingParameter_.shot;
+	hormingParameter_.shot = new bool[hormingParameter_.CUBE_NUM];
+
+	delete[] hormingParameter_.cooltimecount;
+	hormingParameter_.cooltimecount = new int[hormingParameter_.CUBE_NUM];
+
+	delete[] hormingParameter_.alivetimecount;
+	hormingParameter_.alivetimecount = new int[hormingParameter_.CUBE_NUM];
+
+	delete[] hormingParameter_.speed;
+	hormingParameter_.speed = new float[hormingParameter_.CUBE_NUM];
+
+	delete[] hormingParameter_.effect;
 	hormingParameter_.effect = new AdditionEffect[hormingParameter_.CUBE_NUM];
 }
 

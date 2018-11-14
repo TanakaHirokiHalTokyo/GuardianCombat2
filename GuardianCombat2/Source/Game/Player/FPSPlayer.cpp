@@ -7,6 +7,7 @@
 #include "StatePlayer\FPSPlayer_Movement.h"
 #include "Weapon\Weapon_Shotgun.h"
 #include "UI\FPSPlayer_UI.h"
+#include "../../Collision/Collision.h"
 
 FPSPlayer::FPSPlayer()
 {
@@ -28,6 +29,9 @@ FPSPlayer::FPSPlayer()
 	//UI作成
 	playerUI_ = new FPSPlayer_UI();
 	playerUI_->Init();
+
+	collision_ = AddCollision();
+	collision_->object_ = this;
 }
 
 FPSPlayer::~FPSPlayer()
@@ -46,7 +50,10 @@ void FPSPlayer::Init()
 {
 	SetPosition(0.1f,0.0f, 8.0f);
 	SetRotation(0.0f,0.0f,0.0f);
-	SetScale(1.0f,1.0f,1.0f);
+	SetScale(1.0f, 1.0f, 1.0f);
+
+	collision_->pos = GetPosition();
+	collision_->rad = 0.25f;
 
 	//プレイヤーUI初期化
 	playerUI_->Init();
@@ -65,6 +72,10 @@ void FPSPlayer::Update()
 
 	//UI更新
 	playerUI_->Update();
+
+	//CollisionUpdate
+	collision_->pos = GetPosition();
+	collision_->pos.y = GetPosition().y + collision_->rad;
 }
 
 void FPSPlayer::BeginDraw()
@@ -77,6 +88,10 @@ void FPSPlayer::BeginDraw()
 	world_ = mtxScale;
 	world_ *= mtxRotate;
 	world_ *= mtxTrans;
+
+	ImGui::Begin("Player Position");
+	ImGui::Text("Position %f %f %f", GetPosition().x, GetPosition().y, GetPosition().z);
+	ImGui::End();
 }
 
 void FPSPlayer::Draw()
@@ -93,4 +108,11 @@ void FPSPlayer::EndDraw()
 Weapon * FPSPlayer::GetWeapon()
 {
 	return shotgun_;
+}
+
+Sphere* FPSPlayer::AddCollision()
+{
+	Sphere* collision = new Sphere();
+	playerCollision_.emplace_back(collision);
+	return collision;
 }

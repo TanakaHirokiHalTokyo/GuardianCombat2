@@ -7,6 +7,7 @@ class Camera;
 class FPSPlayerState;
 class Weapon;
 class FPSPlayer_UI;
+class Sphere;
 
 class FPSPlayer :public Player
 {
@@ -24,8 +25,11 @@ public:
 
 	Weapon* GetWeapon();
 
+	Sphere* AddCollision();
+
 private:
 	FPSPlayerState* movement_ = nullptr;	//プレイヤーの移動を制御
 	Weapon* shotgun_ = nullptr;				//ショットガン情報
 	FPSPlayer_UI* playerUI_ = nullptr;		//PlayerUI情報
+	Sphere* collision_ = nullptr;			//PlayerCollision
 };

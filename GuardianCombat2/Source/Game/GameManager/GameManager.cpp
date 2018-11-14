@@ -25,9 +25,9 @@ void GameManager::Init()
 	TextureManager::LoadAll();
 	SoundManager::Init();
 	ShaderManager::LoadAll();
-	/*fade_ = new Fade();
+	fade_ = new Fade();
 	fade_->Init();
-	fade_->FadeIn();*/
+	fade_->FadeIn();
 	SetScene(new TitleScene());
 }
 void GameManager::Uninit()
@@ -36,11 +36,12 @@ void GameManager::Uninit()
 	{
 		SetScene(NULL);
 	}
-	if (fade_ != NULL)
+	if (fade_ != nullptr)
 	{
 		fade_->Uninit();
 		SAFE_DELETE(fade_);
 	}
+	Object::CollisionReleaseAll();			//コリジョン解放
 	Object::GameObjectReleaseAll();			//ゲームオブジェクトすべて解放。
 	SoundManager::Uninit();					//サウンド終了処理
 	TextureManager::ReleaseAll();			//テクスチャ解放
@@ -48,10 +49,10 @@ void GameManager::Uninit()
 }
 void GameManager::Update()
 {
-	if (scene_ != NULL)
+	if (scene_ != nullptr)
 	{
 		scene_->Update();
-		//fade_->Update();
+		fade_->Update();
 	}
 	if (GetKeyboardTrigger(DIK_F9))
 	{
@@ -67,14 +68,14 @@ void GameManager::Update()
 }
 void GameManager::Draw()
 {
-	if (scene_ != NULL)
+	if (scene_ != nullptr)
 	{
 		scene_->BeginDraw();
 		CRendererDirectX::ResetRenderTarget();
 		scene_->Draw();
 		scene_->EndDraw();
+		fade_->Draw();
 	}
-	//fade_->Draw();
 }
 
 void GameManager::SetScene(Scene * scene)
@@ -101,7 +102,6 @@ Scene * GameManager::GetScene()
 
 Fade * GameManager::GetFade()
 {
-	fade_->Init();
 	return fade_;
 }
 

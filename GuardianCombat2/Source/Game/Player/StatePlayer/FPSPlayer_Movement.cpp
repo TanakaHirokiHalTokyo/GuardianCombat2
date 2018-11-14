@@ -7,6 +7,7 @@
 #include "../Weapon/Weapon.h"
 #include "../Weapon/Bullet/Bullet.h"
 #include "../../MeshField/MeshField.h"
+#include "../../../Imgui/ImguiManager.h"
 
 void FPSPlayerMovement::Act(FPSPlayer* player)
 {

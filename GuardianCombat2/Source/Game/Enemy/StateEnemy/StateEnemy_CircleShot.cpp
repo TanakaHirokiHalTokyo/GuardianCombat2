@@ -26,6 +26,8 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 		{
 			//初期化
 			parameter.cube[i].Init();
+			//キューブコリジョン有効化
+			parameter.cube[i].GetCollision()->enable_ = true;
 
 			//サイズ設定
 			parameter.cube[i].SetScale(parameter.cubeSize,parameter.cubeSize,parameter.cubeSize);
@@ -36,6 +38,7 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 			//キューブの位置を設定
 			parameter.cube[i].SetPosition(enemy_position);
 			parameter.cube[i].SetPositionY(enemy_position.y + 0.5f);
+			parameter.cube[i].GetCollision()->m_Pos = parameter.cube[i].GetPosition();
 
 			D3DXVECTOR3 vector;
 			vector = parameter.vec[i].vector;
@@ -55,6 +58,7 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 		{
 			//キューブの座標更新
 			parameter.cube[i].SetPosition(parameter.cube[i].GetPosition() + parameter.speed * parameter.vec[i].vector);
+			parameter.cube[i].GetCollision()->m_Pos = parameter.cube[i].GetPosition();
 			parameter.cube[i].SetRotationZ(parameter.cube[i].GetRotate().z + 5.0f);
 			parameter.cube[i].SetRotationX(parameter.cube[i].GetRotate().x + 5.0f);
 			parameter.cube[i].SetRotationY(parameter.cube[i].GetRotate().y + 5.0f);
@@ -73,6 +77,7 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 			{
 				parameter.cube[i].SetVisible(false);
 				parameter.speed = parameter.inital_velocity;
+				parameter.cube[i].GetCollision()->enable_ = false;
 			}
 			enemy->FinishState();
 		}

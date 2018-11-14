@@ -10,7 +10,6 @@
 
 #include "../Object.h"
 class OBB;
-
 //=================================================================================
 //		define
 //=================================================================================
@@ -18,8 +17,9 @@ class OBB;
 #define INDEX_NUM		(36)																	//インデックス数
 //=================================================================================
 
+class Vector3;
 
-class Cube:public Object
+class Cube :public Object
 {
 public:
 	struct VERTEX3D
@@ -41,13 +41,17 @@ public:
 	void EndDraw()override;
 
 	OBB* GetCollision();
+	void SetCollision(OBB* collision);
+
+	OBB* AddCollision();
+	
 
 private:
 	LPDIRECT3DTEXTURE9			pTexture_;
 	LPDIRECT3DVERTEXBUFFER9		pVertexBuffer_ = NULL;
 	LPDIRECT3DINDEXBUFFER9		pIndexBuffer_ = NULL;
 	D3DMATERIAL9				mat_;
-	OBB* collision_;
+	OBB* collision_ = nullptr;
 };
 
 

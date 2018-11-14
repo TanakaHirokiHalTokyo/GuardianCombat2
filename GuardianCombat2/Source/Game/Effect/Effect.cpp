@@ -96,7 +96,7 @@ LPDIRECT3DTEXTURE9 EffectManager::GetTexture()
 {
 	return texture_;
 }
-
+		
 LPDIRECT3DVERTEXBUFFER9& EffectManager::GetVertexBuffer()
 {
 	return vertexBuffer_;
@@ -114,7 +114,6 @@ EffectManager::VERTEX3D & EffectManager::GetVertex()
 
 AdditionEffect::AdditionEffect()
 {
-	limit_ = 150;
 	for (int i = 0; i < EFFECTNUM; i++)
 	{
 		color_[i].r = 1.0f;
@@ -163,10 +162,10 @@ void AdditionEffect::Update()
 		if (use_[i])
 		{
 			//割合計算
-			float ratio = (float)(count_[i] / limit_);
+			float ratio = (float)count_[i] / (float)limit_;
 
 			//α値更新
-			color_[i].a = 1.0f - ratio;
+			color_[i].a = (FLOAT)1.0f - (FLOAT)ratio;
 
 			if (ratio >= 1.0f)
 			{
@@ -195,10 +194,10 @@ void AdditionEffect::Draw()
 				0, 0, (void**)&vertex, D3DLOCK_DISCARD);
 
 			//カラー再セット
-			vertex[0].color = (D3DCOLOR)color_[i];
-			vertex[1].color = (D3DCOLOR)color_[i];
-			vertex[2].color = (D3DCOLOR)color_[i];
-			vertex[3].color = (D3DCOLOR)color_[i];
+			vertex[0].color = (D3DXCOLOR)color_[i];
+			vertex[1].color = (D3DXCOLOR)color_[i];
+			vertex[2].color = (D3DXCOLOR)color_[i];
+			vertex[3].color = (D3DXCOLOR)color_[i];
 
 			EffectManager::GetVertexBuffer()->Unlock();
 

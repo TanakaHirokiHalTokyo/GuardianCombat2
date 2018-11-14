@@ -53,6 +53,7 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 		for (int i = 0; i < parameter.CUBE_NUM; i++)
 		{
 			parameter.cube[i].SetPosition(parameter.cube[i].GetPosition() + (parameter.spawnvec[i].vector * parameter.setposition_speed));
+			parameter.cube[1].GetCollision()->m_Pos = parameter.cube[i].GetPosition();
 		}
 		transPositionValue_ += parameter.setposition_speed;
 
@@ -63,6 +64,7 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 			for (int i = 0; i < parameter.CUBE_NUM; i++)
 			{
 				parameter.effect[i].Init();
+				parameter.cube[i].GetCollision()->enable_ = true;
 			}
 		}
 	}
@@ -139,6 +141,8 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 				}
 
 				parameter.cube[i].SetPosition(parameter.cube[i].GetPosition() + (parameter.vec[i].GetFront() * parameter.speed[i]));
+				parameter.cube[i].GetCollision()->m_Pos = parameter.cube[i].GetPosition();
+
 				//エフェクト更新
 				parameter.effect[i].CreateEffect(
 					parameter.cube[i].GetPosition() + parameter.vec[i].GetFront() * parameter.speed[i]);
@@ -158,6 +162,7 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 							parameter.speed[i] = parameter.inital_velocity;
 							spawn_ = false;
 							setPosition_ = false;
+							parameter.cube[i].GetCollision()->enable_ = false;
 
 							//エフェクト終了処理
 							parameter.effect[i].Uninit();

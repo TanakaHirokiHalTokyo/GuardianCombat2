@@ -6,6 +6,12 @@
 #include "../Shader/OutlineShader.h"
 #include "../Shader/ShadowMapShader.h"
 #include "../Shader/ToonShader.h"
+#include "../../Imgui/ImguiManager.h"
+#include "../../Vector3/Vector3.h"
+
+const D3DXVECTOR3 X_VECTOR = D3DXVECTOR3(1.0f,0.0f,0.0f);
+const D3DXVECTOR3 Y_VECTOR = D3DXVECTOR3(0.0f,1.0f,0.0f);
+const D3DXVECTOR3 Z_VECTOR = D3DXVECTOR3(0.0f,0.0f,1.0f);
 
 Cube::Cube()
 {
@@ -16,9 +22,7 @@ Cube::Cube()
 	useShader_ = true;
 	HRESULT hr;
 
-
 	pTexture_ = TextureManager::GetTexture(TextureManager::Tex_Turret).pTex;
-
 
 	//マテリアル
 	ZeroMemory(&mat_, sizeof(mat_));
@@ -116,7 +120,17 @@ Cube::Cube()
 
 	pIndexBuffer_->Unlock();
 
-	
+	//コリジョン作成
+	collision_ = AddCollision();
+	collision_->enable_ = false;
+	collision_->m_Pos = GetPosition();
+	collision_->m_fLength[0] = 1.0f;
+	collision_->m_fLength[1] = 1.0f;
+	collision_->m_fLength[2] = 1.0f;
+	collision_->m_NormaDirect[0] = X_VECTOR;
+	collision_->m_NormaDirect[1] = Y_VECTOR;
+	collision_->m_NormaDirect[2] = Z_VECTOR;
+	collision_->object_ = this;
 }
 Cube::~Cube()
 {
@@ -145,6 +159,7 @@ void Cube::Uninit()
 }
 void Cube::Update()
 {
+	
 }
 void Cube::BeginDraw()
 {
@@ -161,14 +176,55 @@ void Cube::BeginDraw()
 		D3DXMatrixRotationX(&mtxRotateX, D3DXToRadian(Object::transform_.rotate.x));
 		D3DXMatrixRotationY(&mtxRotateY, D3DXToRadian(Object::transform_.rotate.y));
 		D3DXMatrixRotationZ(&mtxRotateZ, D3DXToRadian(Object::transform_.rotate.z));
-
 		D3DXMatrixIdentity(&world_);
 
-		world_ = mtxScale;
+		world_ = mtxScale; 
 		world_ *= mtxRotateX;
 		world_ *= mtxRotateY;
 		world_ *= mtxRotateZ;
 		world_ *= mtxTrans;
+
+		//======================================================================
+		//		OBBベクトル回転
+		//======================================================================
+		D3DXVECTOR3 VEC;
+		D3DXMATRIX rotate;
+		D3DXMatrixRotationX(&rotate,D3DXToRadian(transform_.rotate.x));
+		D3DXVec3TransformNormal(&VEC, &X_VECTOR, &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[0] = VEC;
+		D3DXVec3TransformNormal(&VEC, &Y_VECTOR, &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[1] = VEC;
+		D3DXVec3TransformNormal(&VEC, &Z_VECTOR, &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[2] = VEC;
+
+		D3DXMatrixIdentity(&rotate);
+		D3DXMatrixRotationY(&rotate, D3DXToRadian(transform_.rotate.y));
+		D3DXVec3TransformNormal(&VEC, &collision_->m_NormaDirect[0], &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[0] = VEC;
+		D3DXVec3TransformNormal(&VEC, &collision_->m_NormaDirect[1], &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[1] = VEC;
+		D3DXVec3TransformNormal(&VEC, &collision_->m_NormaDirect[2], &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[2] = VEC;
+
+		D3DXMatrixIdentity(&rotate);
+		D3DXMatrixRotationZ(&rotate, D3DXToRadian(transform_.rotate.z));
+		D3DXVec3TransformNormal(&VEC, &collision_->m_NormaDirect[0], &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[0] = VEC;
+		D3DXVec3TransformNormal(&VEC, &collision_->m_NormaDirect[1], &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[1] = VEC;
+		D3DXVec3TransformNormal(&VEC, &collision_->m_NormaDirect[2], &rotate);
+		D3DXVec3Normalize(&VEC, &VEC);
+		collision_->m_NormaDirect[2] = VEC;
+
+	
 
 		if (useShader_)
 		{
@@ -247,6 +303,8 @@ void Cube::Draw()
 
 void Cube::Draw(LPD3DXEFFECT effect, UINT pass)
 {
+	
+
 	if (GetUseShader())
 	{
 		if (GetVisible())
@@ -291,8 +349,6 @@ void Cube::Draw(LPD3DXEFFECT effect, UINT pass)
 				0,
 				12			//プリミティブ数
 			);
-
-
 			effect->EndPass();
 			effect->End();
 		}
@@ -303,8 +359,20 @@ void Cube::EndDraw()
 {
 }
 
-OBB * Cube::GetCollision()
+OBB* Cube::GetCollision()
 {
 	return collision_;
+}
+
+void Cube::SetCollision(OBB * collision)
+{
+	collision_ = collision;
+}
+
+OBB * Cube::AddCollision()
+{
+	OBB* collision = new OBB();
+	enemyHormingCollisions_.emplace_back(collision);
+	return collision;
 }
 

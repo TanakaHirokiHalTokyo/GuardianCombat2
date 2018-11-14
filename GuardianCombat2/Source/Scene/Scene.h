@@ -11,7 +11,9 @@ public:
 	virtual void BeginDraw() = 0;
 	virtual void Draw() = 0;
 	virtual void EndDraw() = 0;
-private:
-	
+
+	bool ChangeSceneUpdate();
+protected:
+	bool sceneChange_ = false;
 };
 

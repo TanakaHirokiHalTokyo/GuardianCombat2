@@ -37,7 +37,7 @@ void StateAction_Idle::BeginDisplay()
 void StateAction_Idle::Display()
 {
 	move_->Display(enemy_);			//デバッグ表示
-	rotate_->Display(enemy_);		//デバッグ表示
+	rotate_->Display(enemy_);			//デバッグ表示
 }
 
 void StateAction_Idle::EndDisplay()

@@ -159,12 +159,13 @@ public:
 			objects_.emplace_back(obj);
 			return obj;
 		}
-		
 	}
 
 protected:
 	static vector<Object*> gameObjects_;							//ゲームシーンオブジェクト動的配列（ゲーム終了時に解放処理　Load時間削減）
 	static vector<Object*> objects_;								//動的配列
+	static vector<OBB*> enemyHormingCollisions_;					//ホーミング弾のコリジョン
+	static vector<Sphere*> playerCollision_;						//プレイヤーのコリジョン
 
 	bool exist_ = true;												//存在しているか falseになったら消される。
 	bool visible_ = true;											//可視状態にするか

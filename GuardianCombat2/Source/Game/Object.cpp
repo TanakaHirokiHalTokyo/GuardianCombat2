@@ -1,11 +1,14 @@
 #include "Object.h"
 #include "../main.h"
+#include "../Collision/Collision.h"
+#include "../Imgui/ImguiManager.h"
 #define DEBUG_PLAYER	(false)
 
 
 vector<Object*> Object::objects_;
 vector<Object*> Object::gameObjects_;
-
+vector<OBB*> Object::enemyHormingCollisions_;
+vector<Sphere*> Object::playerCollision_;
 
 Object::Object()
 	: transform_{ D3DXVECTOR3(0,0,0),D3DXVECTOR3(1,1,1),D3DXVECTOR3(0,0,0) }
@@ -65,7 +68,7 @@ void Object::UpdateAll()
 	}
 	else
 	{
-		for (unsigned int i = 0; i < objects_.size();)
+		for (size_t i = 0; i < objects_.size();)
 		{
 			if (objects_[i]->exist_ != true)
 			{
@@ -92,7 +95,7 @@ void Object::BeginDrawAll()
 	//現在のシーンがゲームシーンかどうかを判断
 	if (GameManager::GetSceneTag() == "GameScene")
 	{
-		for (unsigned int i = 0; i < gameObjects_.size(); i++)
+		for (size_t i = 0; i < gameObjects_.size(); i++)
 		{
 			if (gameObjects_[i]->GetVisible())
 			{
@@ -103,7 +106,7 @@ void Object::BeginDrawAll()
 	}
 	else
 	{
-		for (unsigned int i = 0; i < objects_.size(); i++)
+		for (size_t i = 0; i < objects_.size(); i++)
 		{
 			if (objects_[i]->GetVisible())
 			{
@@ -118,7 +121,7 @@ void Object::DrawAll()
 	//現在のシーンがゲームシーンかどうかを判断
 	if (GameManager::GetSceneTag() == "GameScene")
 	{
-		for (unsigned int i = 0; i < gameObjects_.size(); i++)
+		for (size_t i = 0; i < gameObjects_.size(); i++)
 		{
 			if (gameObjects_[i]->GetVisible())
 			{
@@ -130,7 +133,7 @@ void Object::DrawAll()
 	}
 	else
 	{
-		for (unsigned int i = 0; i < objects_.size(); ++i)
+		for (size_t i = 0; i < objects_.size(); ++i)
 		{
 			if (objects_[i]->GetVisible())
 			{
@@ -146,7 +149,7 @@ void Object::EndDrawAll()
 	//現在のシーンがゲームシーンかどうかを判断
 	if (GameManager::GetSceneTag() == "GameScene")
 	{
-		for (unsigned int i = 0; i < gameObjects_.size(); i++)
+		for (size_t i = 0; i < gameObjects_.size(); i++)
 		{
 			if (gameObjects_[i]->GetVisible())
 			{
@@ -158,7 +161,7 @@ void Object::EndDrawAll()
 	}
 	else
 	{
-		for (unsigned int i = 0; i < objects_.size(); i++)
+		for (size_t i = 0; i < objects_.size(); i++)
 		{
 			if (objects_[i]->GetVisible())
 			{
@@ -171,13 +174,12 @@ void Object::EndDrawAll()
 }
 void Object::ReleaseAll()
 {
-	for (unsigned int i = 0; i < objects_.size(); )
+	for (size_t i = 0; i < objects_.size(); )
 	{
 		auto obj = objects_[i];
 		obj->Uninit();
 		SAFE_DELETE(obj);
 		objects_.erase(objects_.begin() + i);
-
 	}
 }
 void Object::GameObjectReleaseAll()
@@ -192,11 +194,37 @@ void Object::GameObjectReleaseAll()
 }
 void Object::JudgementAll()
 {
-	
+	for (size_t i = 0; i < enemyHormingCollisions_.size(); i++)
+	{
+		for (size_t j = 0; j < playerCollision_.size(); j++)
+		{
+			if (enemyHormingCollisions_[i]->enable_)
+			{
+				//Playerとキューブの当たり判定
+				if (isCollisionOBBtoSphere(*enemyHormingCollisions_[i], *playerCollision_[j]))
+				{
+					ImGui::Begin("DEBUG COLLISION");
+					ImGui::Text("Hit Cube!!!");
+					ImGui::End();
+				}
+			}
+		}
+	}
 }
 void Object::CollisionReleaseAll()
 {
-	
+	for (size_t i = 0; i < enemyHormingCollisions_.size();)
+	{
+		auto collision = enemyHormingCollisions_[i];
+		if(collision) delete collision;
+		enemyHormingCollisions_.erase(enemyHormingCollisions_.begin() + i);
+	}
+	for (size_t i = 0; i < playerCollision_.size();)
+	{
+		auto collision = playerCollision_[i];
+		if(collision) delete collision;
+		playerCollision_.erase(playerCollision_.begin() + i);
+	}
 }
 
 void Object::SetPauseAll(bool flag)

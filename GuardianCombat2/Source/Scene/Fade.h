@@ -12,7 +12,9 @@ public:
 	void Init()override;
 	void Uninit()override;
 	void Update()override;
+	void BeginDraw()override;
 	void Draw()override;
+	void EndDraw()override;
 
 	void FadeIn();
 	void FadeOut();
