@@ -63,7 +63,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);					//マウスカーソル
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);			//背景設定
 	wcex.lpszMenuName = NULL;									//メニューは使用しないのでNULL
-	wcex.lpszClassName = (LPCWSTR)CLASS_NAME;					//クラス登録名
+	wcex.lpszClassName = CLASS_NAME;					//クラス登録名
 	wcex.hIconSm = NULL;										//NULLで問題なし
 
 

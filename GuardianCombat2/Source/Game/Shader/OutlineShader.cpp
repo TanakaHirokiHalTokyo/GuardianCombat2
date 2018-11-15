@@ -23,10 +23,10 @@ void OutlineShader::SetInfo(D3DXMATRIX world)
 	}
 
 	//Camera 情報
-	CAMERA_INFO& camInfo = Camera::GetCameraInfo();
+	CAMERA_INFO camInfo = Camera::GetCameraInfo();
 
 	D3DXMATRIX& World = world;	//ワールド座標
-	D3DXMATRIX wvp = world * camInfo.view * camInfo.proj;	//ワールドビュープロジェクション
+	D3DXMATRIX wvp = World * camInfo.view * camInfo.proj;	//ワールドビュープロジェクション
 
 	effect_->SetMatrix("mWVP",&wvp);
 }

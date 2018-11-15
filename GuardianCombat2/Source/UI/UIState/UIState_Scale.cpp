@@ -15,8 +15,6 @@ void UIState_Scale::Update(UI * ui)
 {
 	if (updateScale_)
 	{
-		//Get Texture
-		auto texture = ui->GetTexture();
 		//Get UIDrawSize
 		const auto& ui_position = ui->GetScale();
 		//GetCountMove

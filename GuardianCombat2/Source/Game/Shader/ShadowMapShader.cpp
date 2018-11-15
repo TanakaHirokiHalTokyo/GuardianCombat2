@@ -75,7 +75,7 @@ void ShadowMapShader::SetInfo(D3DXMATRIX world)
 	} 
 
 	//Camera 情報
-	CAMERA_INFO& camInfo = Camera::GetCameraInfo();
+	CAMERA_INFO camInfo = Camera::GetCameraInfo();
 	D3DXMATRIX wv = world * camInfo.view;
 	D3DXMATRIX wvp = world * camInfo.view * camInfo.proj;	//ワールドビュープロジェクション
 	DirectionalLight* light = GameManager::GetDirectionalLight();
@@ -109,7 +109,8 @@ void ShadowMapShader::SetInfo(D3DXMATRIX world)
 	{
 		effect_->SetFloat("Margin", 0.0002f);
 	}
-	effect_->SetVector("Ambient",&light->GetAmbient());
+	D3DXVECTOR4 light_ambient = light->GetAmbient();
+	effect_->SetVector("Ambient",&light_ambient);
 }
 
 void ShadowMapShader::Uninit()
@@ -134,7 +135,8 @@ void ShadowMapShader::CreateShadowMap()
 		rt->Release();
 		pDevice->SetDepthStencilSurface(ShadowDepthStencil);
 	}
-	effect_->SetVector("LightColor", &D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f));
+	D3DXVECTOR4 LightColor = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
+	effect_->SetVector("LightColor", &LightColor);
 	effect_->SetTexture("ShadowTex", ShadowTexture);
 }
 

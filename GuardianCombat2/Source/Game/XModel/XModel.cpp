@@ -145,7 +145,8 @@ void XModel::Draw(LPD3DXEFFECT effect,UINT pass)
 	//‘O–Êƒ‚ƒfƒ‹•`‰æ
 	for (unsigned int i = 0; i < xmodel[this->modelType_].nMaterialNum; i++)
 	{
-		effect->SetVector("Diffuse", &D3DXVECTOR4(pMaterial[i].MatD3D.Diffuse.r, pMaterial[i].MatD3D.Diffuse.g, pMaterial[i].MatD3D.Diffuse.b, pMaterial[i].MatD3D.Diffuse.a));
+		D3DXVECTOR4 diffuse = D3DXVECTOR4(pMaterial[i].MatD3D.Diffuse.r, pMaterial[i].MatD3D.Diffuse.g, pMaterial[i].MatD3D.Diffuse.b, pMaterial[i].MatD3D.Diffuse.a);
+		effect->SetVector("Diffuse", &diffuse);
 		effect->SetTexture("MeshTex", xmodel[this->modelType_].pMeshTextures[i]);
 		effect->CommitChanges();
 		this->xmodel[this->modelType_].pMesh->DrawSubset(i);

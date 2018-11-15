@@ -71,9 +71,9 @@ class EnemyHige :public Enemy
 public:
 	enum STATE
 	{
-		IDLE,					//待機状態
-		RUSH,					//突進
-		CIRCLESHOT,				//波状攻撃
+		IDLE,						//待機状態
+		RUSH,						//突進
+		CIRCLESHOT,			//波状攻撃
 		HORMING,				//ホーミング弾
 		STATE_MAX,
 	};
@@ -115,13 +115,13 @@ public:
 	void SetHormingParameter(EnemyHigeHorming::ENEMY_PARAMETER* parameter);
 
 private:
-	void DrawDebug();													//Debug表示
-	void InitParameter();												//パラメータ初期化
-	void ReCreateCircleParameter();							//波状攻撃パラメータ再作成
-	void ReCreateHormingParameter();						//ホーミングパラメータ再作成
-	void InitCircleParameterValue();								//波状パラメータ初期化
-	void InitHormingParameterValue();						//パラメータの詳細を初期化
-	void DestParameter();												//パラメータデストラクタ
+	void DrawDebug();															//Debug表示
+	void InitParameter();														//パラメータ初期化
+	void ReCreateCircleParameter();									//波状攻撃パラメータ再作成
+	void ReCreateHormingParameter();								//ホーミングパラメータ再作成
+	void InitCircleParameterValue();										//波状パラメータ初期化
+	void InitHormingParameterValue();								//パラメータの詳細を初期化
+	void DestParameter();														//パラメータデストラクタ
 private:
 	StatePattern_Enemy* statePattern_ = nullptr;				//ステート状態管理
 	STATE state_ = IDLE;														//状態

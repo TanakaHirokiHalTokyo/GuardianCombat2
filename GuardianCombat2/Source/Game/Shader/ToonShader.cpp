@@ -28,7 +28,7 @@ void ToonShader::SetInfo(D3DXMATRIX world)
 	}
 
 	//Camera 情報
-	CAMERA_INFO& camInfo = Camera::GetCameraInfo();
+	CAMERA_INFO camInfo = Camera::GetCameraInfo();
 
 	D3DXMATRIX& World = world;	//ワールド座標
 	D3DXMATRIX wvp = world * camInfo.view * camInfo.proj;	//ワールドビュープロジェクション
@@ -37,13 +37,15 @@ void ToonShader::SetInfo(D3DXMATRIX world)
 	D3DXVECTOR4 Ambient = light->GetAmbient();
 	LPDIRECT3DTEXTURE9 toonTex = TextureManager::GetTexture(TextureManager::Tex_Toon).pTex;
 
+	D3DXVECTOR4 Light_Vec = (D3DXVECTOR4)lightVec;
+	D3DXVECTOR4 Ink_Color = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);
 	//各情報セット
-	toon_->SetMatrix("World", &world);
+	toon_->SetMatrix("World", &World);
 	toon_->SetMatrix("WView", &camInfo.view);
 	toon_->SetMatrix("WVProj", &wvp);
-	toon_->SetVector("Light", &(D3DXVECTOR4)lightVec);
+	toon_->SetVector("Light", &Light_Vec);
 	toon_->SetVector("Ambient", &Ambient);
 	toon_->SetTexture("ToonTex", toonTex);
-	toon_->SetVector("InkColor", &D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f));
+	toon_->SetVector("InkColor", &Ink_Color);
 	toon_->SetFloat("InkSize", 1.0f);
 }

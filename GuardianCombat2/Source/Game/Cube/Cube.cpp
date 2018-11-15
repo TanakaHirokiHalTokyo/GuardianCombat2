@@ -152,6 +152,8 @@ void Cube::Init()
 	this->transform_.pos = D3DXVECTOR3(0, 0, 0);
 	this->transform_.rotate = D3DXVECTOR3(0, 0, 0);
 	this->transform_.scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+
+	isHit = false;
 }
 void Cube::Uninit()
 {
@@ -165,6 +167,11 @@ void Cube::BeginDraw()
 {
 	if (GetVisible())
 	{
+		//コリジョンの大きさ更新
+		collision_->m_fLength[0] = GetScale().x;
+		collision_->m_fLength[1] = GetScale().y;
+		collision_->m_fLength[2] = GetScale().z;
+
 		D3DXMATRIX mtxTrans, mtxScale, mtxRotateX, mtxRotateY, mtxRotateZ;
 		
 		D3DXMatrixIdentity(&mtxRotateX);
@@ -322,8 +329,10 @@ void Cube::Draw(LPD3DXEFFECT effect, UINT pass)
 			//各種行列の設定
 			pDevice->SetTransform(D3DTS_WORLD, &world_);
 
-			effect->SetVector("Diffuse", &D3DXVECTOR4(mat_.Diffuse.r, mat_.Diffuse.g, mat_.Diffuse.b, mat_.Diffuse.a));
-			effect->SetVector("Ambient", &D3DXVECTOR4(mat_.Ambient.r, mat_.Ambient.g, mat_.Ambient.b, mat_.Ambient.a));
+			D3DXVECTOR4 diffuse = D3DXVECTOR4(mat_.Diffuse.r, mat_.Diffuse.g, mat_.Diffuse.b, mat_.Diffuse.a);
+			effect->SetVector("Diffuse", &diffuse);
+			D3DXVECTOR4 ambient = D3DXVECTOR4(mat_.Ambient.r, mat_.Ambient.g, mat_.Ambient.b, mat_.Ambient.a);
+			effect->SetVector("Ambient", &ambient);
 			effect->SetTexture("MeshTex", pTexture_);
 			effect->CommitChanges();
 
@@ -372,7 +381,22 @@ void Cube::SetCollision(OBB * collision)
 OBB * Cube::AddCollision()
 {
 	OBB* collision = new OBB();
-	enemyHormingCollisions_.emplace_back(collision);
+	enemycubeCollisions_.emplace_back(collision);
 	return collision;
+}
+
+float Cube::GetAttackValue()
+{
+	return attack_;
+}
+
+bool Cube::GetHit()
+{
+	return isHit;
+}
+
+void Cube::Hit()
+{
+	isHit = true;
 }
 

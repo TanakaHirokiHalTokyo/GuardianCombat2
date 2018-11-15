@@ -25,3 +25,17 @@ Camera * Player::GetCamera()
 {
 	return camera_;
 }
+
+float Player::GetLife()
+{
+	return life_;
+}
+
+void Player::DecreaseLife(float value)
+{
+	life_ -= value;
+	if (life_ < 0.0f)
+	{
+		life_ = 0.0f;
+	}
+}

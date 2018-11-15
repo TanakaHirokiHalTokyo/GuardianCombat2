@@ -22,6 +22,7 @@ class Vector3;
 class Cube :public Object
 {
 public:
+
 	struct VERTEX3D
 	{
 		D3DXVECTOR3 pos;
@@ -44,14 +45,19 @@ public:
 	void SetCollision(OBB* collision);
 
 	OBB* AddCollision();
-	
-
+	float GetAttackValue();
+	bool GetHit();
+	void Hit();
 private:
+	const float ATTACK_VALUE = 10.0f;
+
 	LPDIRECT3DTEXTURE9			pTexture_;
 	LPDIRECT3DVERTEXBUFFER9		pVertexBuffer_ = NULL;
 	LPDIRECT3DINDEXBUFFER9		pIndexBuffer_ = NULL;
 	D3DMATERIAL9				mat_;
 	OBB* collision_ = nullptr;
+	float attack_ = ATTACK_VALUE;
+	bool isHit = false;
 };
 
 

@@ -4,6 +4,7 @@
 #include "../../Cube/Cube.h"
 #include "../../../Vector3/Vector3.h"
 #include "../../../Imgui/ImguiManager.h"
+#include "../../Effect/Effect.h"
 
 void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 {
@@ -34,11 +35,13 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 
 			//キューブ可視化
 			parameter.cube[i].SetVisible(true);
+			parameter.effect[i].Init();
 
 			//キューブの位置を設定
 			parameter.cube[i].SetPosition(enemy_position);
 			parameter.cube[i].SetPositionY(enemy_position.y + 0.5f);
 			parameter.cube[i].GetCollision()->m_Pos = parameter.cube[i].GetPosition();
+			parameter.effect[i].CreateEffect(parameter.cube[i].GetPosition());
 
 			D3DXVECTOR3 vector;
 			vector = parameter.vec[i].vector;
@@ -63,6 +66,8 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 			parameter.cube[i].SetRotationX(parameter.cube[i].GetRotate().x + 5.0f);
 			parameter.cube[i].SetRotationY(parameter.cube[i].GetRotate().y + 5.0f);
 			parameter.cube[i].SetRotation(parameter.cube[i].GetRotate());
+			parameter.effect[i].CreateEffect(parameter.cube[i].GetPosition());
+			parameter.effect[i].Update();
 		}
 		//進んだ距離更新
 		length += parameter.speed;
@@ -77,6 +82,7 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 			{
 				parameter.cube[i].SetVisible(false);
 				parameter.speed = parameter.inital_velocity;
+				parameter.effect[i].Uninit();
 				parameter.cube[i].GetCollision()->enable_ = false;
 			}
 			enemy->FinishState();
@@ -104,6 +110,7 @@ void StateEnemy_CircleShot::Display(EnemyHige * enemy)
 	for (int i = 0; i < parameter.CUBE_NUM; i++)
 	{
 		parameter.cube[i].Draw();
+		parameter.effect[i].Draw();
 	}
 }
 

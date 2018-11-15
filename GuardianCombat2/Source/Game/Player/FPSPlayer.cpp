@@ -8,6 +8,7 @@
 #include "Weapon\Weapon_Shotgun.h"
 #include "UI\FPSPlayer_UI.h"
 #include "../../Collision/Collision.h"
+#include "PlayerLifeBar.h"
 
 FPSPlayer::FPSPlayer()
 {
@@ -30,8 +31,12 @@ FPSPlayer::FPSPlayer()
 	playerUI_ = new FPSPlayer_UI();
 	playerUI_->Init();
 
+	//コリジョン作成
 	collision_ = AddCollision();
 	collision_->object_ = this;
+
+	//ライフバー作成
+	lifeBar_ = Object::Create<PlayerLifeBar>(this);
 }
 
 FPSPlayer::~FPSPlayer()
@@ -53,7 +58,7 @@ void FPSPlayer::Init()
 	SetScale(1.0f, 1.0f, 1.0f);
 
 	collision_->pos = GetPosition();
-	collision_->rad = 0.25f;
+	collision_->rad = 0.01f;
 
 	//プレイヤーUI初期化
 	playerUI_->Init();

@@ -261,8 +261,10 @@ void MeshField::Draw(LPD3DXEFFECT effect, UINT pass)
 	effect->Begin(NULL, 0);
 	effect->BeginPass(pass);
 
-	effect->SetVector("Diffuse", &D3DXVECTOR4(mat_.Diffuse.r, mat_.Diffuse.g, mat_.Diffuse.b, mat_.Diffuse.a));
-	effect->SetVector("Ambient", &D3DXVECTOR4(mat_.Ambient.r, mat_.Ambient.g, mat_.Ambient.b, mat_.Ambient.a));
+	D3DXVECTOR4 diffuse = D3DXVECTOR4(mat_.Diffuse.r, mat_.Diffuse.g, mat_.Diffuse.b, mat_.Diffuse.a);
+	D3DXVECTOR4 ambient = D3DXVECTOR4(mat_.Ambient.r, mat_.Ambient.g, mat_.Ambient.b, mat_.Ambient.a);
+	effect->SetVector("Diffuse", &diffuse);
+	effect->SetVector("Ambient", &ambient);
 	effect->SetTexture("MeshTex", this->pTexture_);
 
 	effect->CommitChanges();

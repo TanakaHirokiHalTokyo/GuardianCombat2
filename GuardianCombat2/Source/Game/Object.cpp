@@ -2,12 +2,15 @@
 #include "../main.h"
 #include "../Collision/Collision.h"
 #include "../Imgui/ImguiManager.h"
+#include "Enemy\Enemy_Hige.h"
+#include "Player\Player.h"
+#include "Cube\Cube.h"
 #define DEBUG_PLAYER	(false)
 
 
 vector<Object*> Object::objects_;
 vector<Object*> Object::gameObjects_;
-vector<OBB*> Object::enemyHormingCollisions_;
+vector<OBB*> Object::enemycubeCollisions_;
 vector<Sphere*> Object::playerCollision_;
 
 Object::Object()
@@ -194,30 +197,44 @@ void Object::GameObjectReleaseAll()
 }
 void Object::JudgementAll()
 {
-	for (size_t i = 0; i < enemyHormingCollisions_.size(); i++)
+	//無敵状態の場合当たり判定を行わない
+	if (!DEBUG_PLAYER)
 	{
-		for (size_t j = 0; j < playerCollision_.size(); j++)
+		for (size_t i = 0; i < enemycubeCollisions_.size(); i++)
 		{
-			if (enemyHormingCollisions_[i]->enable_)
+			for (size_t j = 0; j < playerCollision_.size(); j++)
 			{
-				//Playerとキューブの当たり判定
-				if (isCollisionOBBtoSphere(*enemyHormingCollisions_[i], *playerCollision_[j]))
+				if (enemycubeCollisions_[i]->enable_)
 				{
-					ImGui::Begin("DEBUG COLLISION");
-					ImGui::Text("Hit Cube!!!");
-					ImGui::End();
+					//Playerとキューブの当たり判定
+					if (isCollisionOBBtoSphere(*enemycubeCollisions_[i], *playerCollision_[j]))
+					{
+						//敵の弾の情報取得
+						Cube* cube = (Cube*)enemycubeCollisions_[i]->object_;
+						//プレイヤー情報取得
+						Player* player = (Player*)playerCollision_[j]->object_;
+						if (!cube->GetHit())
+						{
+							cube->Hit();
+							player->DecreaseLife(cube->GetAttackValue());
+						}
+						ImGui::Begin("DEBUG COLLISION");
+						ImGui::Text("Hit Cube!!!");
+						ImGui::End();
+					}
 				}
 			}
 		}
 	}
+	
 }
 void Object::CollisionReleaseAll()
 {
-	for (size_t i = 0; i < enemyHormingCollisions_.size();)
+	for (size_t i = 0; i < enemycubeCollisions_.size();)
 	{
-		auto collision = enemyHormingCollisions_[i];
+		auto collision = enemycubeCollisions_[i];
 		if(collision) delete collision;
-		enemyHormingCollisions_.erase(enemyHormingCollisions_.begin() + i);
+		enemycubeCollisions_.erase(enemycubeCollisions_.begin() + i);
 	}
 	for (size_t i = 0; i < playerCollision_.size();)
 	{

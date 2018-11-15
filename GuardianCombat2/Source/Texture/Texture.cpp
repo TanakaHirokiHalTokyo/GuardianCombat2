@@ -7,13 +7,14 @@ LPDIRECT3DTEXTURE9 TextureManager::pTexture_[TextureManager::Tex_Max];
 //テクスチャ情報構造体
 const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 {
-	"resource/texture/0.png",						29, 31,29,31,
+	"resource/texture/0.png",							29, 31,29,31,
 	"resource/texture/Dot.png",						1, 1,1,1,
 	"resource/texture/ToonPaint.png",				256, 256,256,256,
-	"resource/texture/Mission.png",					395, 70,395,70,
+	"resource/texture/Mission.png",				395, 70,395,70,
 	"resource/texture/reticle.png",					400, 400,400,400,
-	"resource/texture/pauseWord.png",				400, 300,400,300,
+	"resource/texture/pauseWord.png",			400, 300,400,300,
 	"resource/texture/turret.png",					200, 200,200,200,
+	"resource/texture/SliderBar.png",				200, 100,200,100,
 };
 void TextureManager::LoadAll()
 {
@@ -64,12 +65,22 @@ TextureManager::TexInfo TextureManager::GetTexture(TextureManager::TextureList t
 {
 	TexInfo texture;
 
-	texture.texcoordX = texInfo_[type].texcoordX;
-	texture.texcoordY = texInfo_[type].texcoordY;
-	texture.height = texInfo_[type].height;
-	texture.width = texInfo_[type].width;
-	texture.pTex = pTexture_[type];
-
+	if (type == Tex_Max)
+	{
+		texture.texcoordX = 0;
+		texture.texcoordY = 0;
+		texture.height = ScreenHeight;
+		texture.width = ScreenWidth;
+		texture.pTex = nullptr;
+	}
+	else
+	{
+		texture.texcoordX = texInfo_[type].texcoordX;
+		texture.texcoordY = texInfo_[type].texcoordY;
+		texture.height = texInfo_[type].height;
+		texture.width = texInfo_[type].width;
+		texture.pTex = pTexture_[type];
+	}
 	return texture;
 }
 
@@ -86,13 +97,7 @@ Texture::Texture(TextureManager::TextureList type)
 	this->texcoord_ = D3DXVECTOR2((float)0, (float)0);
 	this->affine_ = false;
 	this->color_ = D3DCOLOR_RGBA(255, 255, 255, 255);
-}
-Texture::~Texture()
-{
-	
-}
-void Texture::Init()
-{
+
 	LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
 	HRESULT hr;
 
@@ -108,6 +113,14 @@ void Texture::Init()
 	{
 		MessageBoxA(NULL, "頂点バッファが作られませんでした。", "ERROR", MB_OK);
 	}
+}
+Texture::~Texture()
+{
+	
+}
+void Texture::Init()
+{
+	
 }
 void Texture::Uninit()
 {

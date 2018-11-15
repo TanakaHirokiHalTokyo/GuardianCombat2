@@ -327,7 +327,7 @@ void SkinMeshFile::DrawMeshContainer(LPD3DXEFFECT effect, UINT pass, LPD3DXFRAME
 				if (matrix_index != UINT_MAX)
 				{
 					//Camera 情報
-					CAMERA_INFO& camInfo = Camera::GetCameraInfo();
+					CAMERA_INFO camInfo = Camera::GetCameraInfo();
 					D3DXMATRIX wv = matrix * camInfo.view;
 					D3DXMATRIX wvp = matrix * camInfo.view * camInfo.proj;	//ワールドビュープロジェクション
 
@@ -342,13 +342,13 @@ void SkinMeshFile::DrawMeshContainer(LPD3DXEFFECT effect, UINT pass, LPD3DXFRAME
 				}
 				
 			}
-
-			effect->SetVector("Diffuse", &D3DXVECTOR4(
+			D3DXVECTOR4 diffuse = D3DXVECTOR4(
 				original_container->pMaterials[bone_buffer[i].AttribId].MatD3D.Diffuse.r,
 				original_container->pMaterials[bone_buffer[i].AttribId].MatD3D.Diffuse.g,
 				original_container->pMaterials[bone_buffer[i].AttribId].MatD3D.Diffuse.b,
 				original_container->pMaterials[bone_buffer[i].AttribId].MatD3D.Diffuse.a
-			));
+			);
+			effect->SetVector("Diffuse", &diffuse);
 			effect->SetTexture("MeshTex", original_container->m_TextureList[bone_buffer[i].AttribId]);
 			effect->CommitChanges();
 
@@ -365,7 +365,7 @@ void SkinMeshFile::DrawMeshContainer(LPD3DXEFFECT effect, UINT pass, LPD3DXFRAME
 			effect->SetMatrix("World", &frame_data->m_CombinedTransformationMatrix);
 		}
 		//Camera 情報
-		CAMERA_INFO& camInfo = Camera::GetCameraInfo();
+		CAMERA_INFO camInfo = Camera::GetCameraInfo();
 		D3DXMATRIX wv = frame_data->m_CombinedTransformationMatrix * camInfo.view;
 		D3DXMATRIX wvp = frame_data->m_CombinedTransformationMatrix * camInfo.view * camInfo.proj;	//ワールドビュープロジェクション
 
@@ -376,10 +376,11 @@ void SkinMeshFile::DrawMeshContainer(LPD3DXEFFECT effect, UINT pass, LPD3DXFRAME
 		// メッシュの描画
 		for (UINT i = 0; i < original_container->NumMaterials; i++)
 		{
-			effect->SetVector("Diffuse", &D3DXVECTOR4(original_container->pMaterials[i].MatD3D.Diffuse.r,
+			D3DXVECTOR4 diffuse = D3DXVECTOR4(original_container->pMaterials[i].MatD3D.Diffuse.r,
 				original_container->pMaterials[i].MatD3D.Diffuse.g,
 				original_container->pMaterials[i].MatD3D.Diffuse.b,
-				original_container->pMaterials[i].MatD3D.Diffuse.a));
+				original_container->pMaterials[i].MatD3D.Diffuse.a);
+			effect->SetVector("Diffuse", &diffuse);
 			effect->SetTexture("MeshTex", original_container->m_TextureList[i]);
 			effect->CommitChanges();
 
