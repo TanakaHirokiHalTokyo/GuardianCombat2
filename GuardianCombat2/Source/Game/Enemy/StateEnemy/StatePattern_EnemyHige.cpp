@@ -5,6 +5,7 @@
 #include "../StateAction/StateAction_Rush.h"
 #include "../StateAction/StateAction_CircleShot.h"
 #include "../StateAction/StateAction_Horming.h"
+#include "../StateAction/StateAction_Teleportation.h"
 #include "../Enemy_Hige.h"
 
 StatePattern_EnemyHige::StatePattern_EnemyHige(EnemyHige * enemy)
@@ -62,7 +63,11 @@ void StatePattern_EnemyHige::ChangeState()
 	case EnemyHige::STATE::HORMING:
 		action_ = new StateAction_Horming(enemy_);		//ホーミング作製
 		break;
+	case EnemyHige::STATE::TELEPORTETION:
+		action_ = new StateAction_Teleportation(enemy_);	//テレポート作成
+		break;
 	default:
+		action_ = new StateAction_Idle(enemy_);			//待機状態作成
 		break;
 	}
 }

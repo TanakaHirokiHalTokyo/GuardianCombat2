@@ -167,12 +167,14 @@
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Horming.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Idle.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Rush.cpp" />
+    <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Teleportation.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_CircleShot.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_Horming.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_MoveToPlayer.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rotate.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rush.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_SlowlyRotate.cpp" />
+    <ClCompile Include="Source\Game\Enemy\StateEnemy\StateEnemy_Teleportation.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateEnemy\StatePattern_EnemyHige.cpp" />
     <ClCompile Include="Source\Game\GameManager\GameManager.cpp" />
     <ClCompile Include="Source\Game\MeshField\MeshField.cpp" />
@@ -237,6 +239,7 @@
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Horming.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Idle.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Rush.h" />
+    <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Teleportation.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemyHige.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_CircleShot.h" />
@@ -245,6 +248,7 @@
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rotate.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_Rush.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_SlowlyRotate.h" />
+    <ClInclude Include="Source\Game\Enemy\StateEnemy\StateEnemy_Teleportation.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StatePattern_Enemy.h" />
     <ClInclude Include="Source\Game\Enemy\StateEnemy\StatePattern_EnemyHige.h" />
     <ClInclude Include="Source\Game\GameManager\GameManager.h" />

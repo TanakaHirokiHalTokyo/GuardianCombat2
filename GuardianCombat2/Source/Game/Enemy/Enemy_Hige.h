@@ -7,13 +7,13 @@ class Sphere;
 class DebugSphere;
 class Cube;
 class AdditionEffect;
+class CEffekseer;
 
 class ParameterVector
 {
 public:
 	D3DXVECTOR3 vector;
 };
-
 namespace EnemyHigeRush				//突進状態のパラメータ
 {
 	struct ENEMY_PARAMETER
@@ -64,6 +64,14 @@ namespace EnemyHigeHorming
 		AdditionEffect* effect = nullptr;							//エフェクト情報
 	};
 }
+namespace EnemyHigeTeleportation
+{
+	struct ENEMY_PARAMETER
+	{
+		CEffekseer* effect = nullptr;							//テレポートエフェクト
+		float distance = 1.0f;										//Playerとの距離
+	};
+}
 
 
 class EnemyHige :public Enemy
@@ -75,6 +83,7 @@ public:
 		RUSH,						//突進
 		CIRCLESHOT,			//波状攻撃
 		HORMING,				//ホーミング弾
+		TELEPORTETION,	//テレポート
 		STATE_MAX,
 	};
 	const char* StateWord[STATE_MAX]
@@ -83,6 +92,7 @@ public:
 		"RUSH",
 		"CIRCLESHOT",
 		"HORMING",
+		"TELEPORTETION",
 	};
 public:
 	EnemyHige();
@@ -114,6 +124,10 @@ public:
 	EnemyHigeHorming::ENEMY_PARAMETER GetHormingParameter();
 	void SetHormingParameter(EnemyHigeHorming::ENEMY_PARAMETER* parameter);
 
+	//テレポートのパラメータ取得・設定
+	EnemyHigeTeleportation::ENEMY_PARAMETER GetTeleportParameter();
+	void SetTeleportParameter(EnemyHigeTeleportation::ENEMY_PARAMETER* parameter);
+
 private:
 	void DrawDebug();															//Debug表示
 	void InitParameter();														//パラメータ初期化
@@ -121,14 +135,16 @@ private:
 	void ReCreateHormingParameter();								//ホーミングパラメータ再作成
 	void InitCircleParameterValue();										//波状パラメータ初期化
 	void InitHormingParameterValue();								//パラメータの詳細を初期化
+	void InitTeleportParameterValue();									//テレポートのパラメータ初期化
 	void DestParameter();														//パラメータデストラクタ
 private:
 	StatePattern_Enemy* statePattern_ = nullptr;				//ステート状態管理
 	STATE state_ = IDLE;														//状態
 	Sphere* collision_ = nullptr;											//コリジョン情報
 
-	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};							//突進状態のパラメータ情報
-	EnemyHigeCircleShot::ENEMY_PARAMETER circleShotParameter_ = {};		//波状攻撃のパラメータ情報
-	EnemyHigeHorming::ENEMY_PARAMETER hormingParameter_ = {};				//ホーミングのパラメータ情報
+	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};								//突進状態のパラメータ情報
+	EnemyHigeCircleShot::ENEMY_PARAMETER circleShotParameter_ = {};			//波状攻撃のパラメータ情報
+	EnemyHigeHorming::ENEMY_PARAMETER hormingParameter_ = {};					//ホーミングのパラメータ情報
+	EnemyHigeTeleportation::ENEMY_PARAMETER teleportationParameter_ = {};	//テレポートのパラメータ初期化
 	XModel* ring_ = nullptr;
 };

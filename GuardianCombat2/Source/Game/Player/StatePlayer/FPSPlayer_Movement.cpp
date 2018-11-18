@@ -64,4 +64,6 @@ void FPSPlayerMovement::Act(FPSPlayer* player)
 	D3DXVec3Normalize(&transvector_,&transvector_);
 	player->SetPosition(player_position + transvector_ * player->FPSPLAYER_DEF_SPEED);
 	player->SetPositionY(MeshField::GetHeight(player->GetPosition()));
+
+
 }

@@ -150,11 +150,7 @@ void MeshField::Init()
 }
 void MeshField::Uninit()
 {
-	/*if (Vertex != nullptr)
-	{
-		delete[] Vertex;
-		Vertex = nullptr;
-	}*/
+
 }
 void MeshField::Update()
 {
@@ -362,7 +358,6 @@ void MeshField::SetMeshField(float SizeX, float SizeY, int SpliteX, int SpliteY,
 			nz.z = -vz.y;
 
 			n = nx + nz;
-			//D3DXVec3Cross(&n,&vx,&vz);
 			D3DXVec3Normalize(&n, &n);
 			Vertex[i].vec = n;
 		}
@@ -523,8 +518,6 @@ float MeshField::GetHeight(D3DXVECTOR3 position)
 				float y = Vertex[p3].pos.y - ((n.x * (position.x - Vertex[p3].pos.x) + n.z * (position.z - Vertex[p3].pos.z)) / n.y);
 
 				return y;
-
-
 			}
 
 		}

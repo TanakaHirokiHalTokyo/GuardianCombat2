@@ -12,6 +12,8 @@
 #include "../Cube/Cube.h"
 #include "../Player/Player.h"
 #include "../Effect/Effect.h"
+#include "../../Effekseer/Effekseer.h"
+#include "../../Game/MeshField/MeshField.h"
 
 const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0.0f,-8.0f);
 
@@ -113,6 +115,21 @@ void EnemyHige::Update()
 	{
 		//ステート制御実行
 		statePattern_->Act();
+
+		//範囲内に収める
+		float lengthX = fabsf(GetPosition().x);
+		float lengthZ = fabsf(GetPosition().z);
+
+		if (lengthX > FIELD_SIZE)
+		{
+			if (GetPosition().x > 0) { SetPositionX(FIELD_SIZE); }
+			else { SetPositionX(-FIELD_SIZE); }
+		}
+		if (lengthZ > FIELD_SIZE)
+		{
+			if (GetPosition().z > 0) { SetPositionZ(FIELD_SIZE); }
+			else { SetPositionZ(-FIELD_SIZE); }
+		}
 
 		//モデル情報更新
 		model_->SetRotation(GetRotate());
@@ -238,6 +255,14 @@ EnemyHigeHorming::ENEMY_PARAMETER EnemyHige::GetHormingParameter()
 void EnemyHige::SetHormingParameter(EnemyHigeHorming::ENEMY_PARAMETER * parameter)
 {
 	hormingParameter_ = *parameter;		//ホーミングパラメータ設定
+}
+EnemyHigeTeleportation::ENEMY_PARAMETER EnemyHige::GetTeleportParameter()
+{
+	return teleportationParameter_;
+}
+void EnemyHige::SetTeleportParameter(EnemyHigeTeleportation::ENEMY_PARAMETER * parameter)
+{
+	teleportationParameter_ = *parameter;
 }
 void EnemyHige::DrawDebug()
 {
@@ -451,6 +476,17 @@ void EnemyHige::DrawDebug()
 			}
 
 		}
+		//====================================================================================================
+		//		Teleportation
+		//====================================================================================================
+		{
+
+			if (ImGui::TreeNode("TELEPORTATION PARAMETER"))
+			{
+				ImGui::DragFloat("Distance between Player",&teleportationParameter_.distance,0.1f,0.0f,2.0f);		//プレイヤーとの距離を設定
+				ImGui::TreePop();
+			}
+		}
 	}
 	//Imugui終了
 	ImGui::End();
@@ -526,6 +562,11 @@ void EnemyHige::InitParameter()
 	hormingParameter_.speed = new float[hormingParameter_.CUBE_NUM];	
 	//エフェクト作成
 	hormingParameter_.effect = new AdditionEffect[hormingParameter_.CUBE_NUM];
+
+	//=========================================================
+	//			テレポート初期化
+	//=========================================================
+	teleportationParameter_.effect = new CEffekseer(CEffekseer::Effect_Teleport);
 }
 
 void EnemyHige::ReCreateCircleParameter()
@@ -594,6 +635,15 @@ void EnemyHige::InitHormingParameterValue()
 		hormingParameter_.vec[i] = *vector_;
 	}
 }
+void EnemyHige::InitTeleportParameterValue()
+{
+	teleportationParameter_.distance = 1.0f;
+	teleportationParameter_.effect->Init();
+	teleportationParameter_.effect->RepeatEffect(false);
+	teleportationParameter_.effect->SetVisible(false);
+	teleportationParameter_.effect->SetPosition(GetPosition());
+	teleportationParameter_.effect->SetScale(1.0f, 1.0f, 1.0f);
+}
 void EnemyHige::DestParameter()
 {
 	if (circleShotParameter_.cube)
@@ -639,5 +689,9 @@ void EnemyHige::DestParameter()
 	if (hormingParameter_.effect)
 	{
 		delete[] hormingParameter_.effect;
+	}
+	if (teleportationParameter_.effect)
+	{
+		delete teleportationParameter_.effect;
 	}
 }

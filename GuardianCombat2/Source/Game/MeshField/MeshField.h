@@ -4,6 +4,7 @@
 #include	<d3dx9.h>
 #include	"../Object.h"
 
+const float FIELD_SIZE = 9.7f;
 
 typedef struct
 {

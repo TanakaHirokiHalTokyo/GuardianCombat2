@@ -9,6 +9,7 @@
 #include "UI\FPSPlayer_UI.h"
 #include "../../Collision/Collision.h"
 #include "PlayerLifeBar.h"
+#include "../MeshField/MeshField.h"
 
 FPSPlayer::FPSPlayer()
 {
@@ -77,6 +78,21 @@ void FPSPlayer::Update()
 
 	//UIXV
 	playerUI_->Update();
+
+	//”ÍˆÍ“à‚ÉŽû‚ß‚é
+	float lengthX = fabsf(GetPosition().x);
+	float lengthZ = fabsf(GetPosition().z);
+
+	if (lengthX > FIELD_SIZE)
+	{
+		if (GetPosition().x > 0) { SetPositionX(FIELD_SIZE); }
+		else { SetPositionX(-FIELD_SIZE); }
+	}
+	if (lengthZ > FIELD_SIZE)
+	{
+		if (GetPosition().z > 0) { SetPositionZ(FIELD_SIZE); }
+		else { SetPositionZ(-FIELD_SIZE); }
+	}
 
 	//CollisionUpdate
 	collision_->pos = GetPosition();
