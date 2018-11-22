@@ -13,6 +13,10 @@ D3DDISPLAYMODE	CRendererDirectX::d3ddm_;
 LPDIRECT3DSURFACE9 CRendererDirectX::renderTarget_ = NULL;
 LPDIRECT3DSURFACE9 CRendererDirectX::depthStencil_ = NULL;
 LPDIRECT3DVERTEXBUFFER9 CRendererDirectX::VertexBuffer = NULL;
+LPDIRECT3DTEXTURE9 CRendererDirectX::blurTexture1 = nullptr;				//ブラーテクスチャ１
+LPDIRECT3DSURFACE9 CRendererDirectX::blurSurface1 = nullptr;				//ブラーサーフェイス１
+LPDIRECT3DTEXTURE9 CRendererDirectX::blurTexture2 = nullptr;				//ブラーテクスチャ２
+LPDIRECT3DSURFACE9 CRendererDirectX::blurSurface2 = nullptr;				//ブラーサーフェイス２
 
 BOOL CRendererDirectX::Init(HWND hWnd, BOOL bWindow)
 {
@@ -57,6 +61,15 @@ BOOL CRendererDirectX::Init(HWND hWnd, BOOL bWindow)
 		MessageBoxA(hWnd, "デバイス生成に失敗しました。", "ERROR", MB_OK);
 		return false;
 	};
+	D3DXCreateTexture(pD3DDevice_, ScreenWidth, ScreenHeight, 1,
+		D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8,
+		D3DPOOL_DEFAULT, &blurTexture1);
+	blurTexture1->GetSurfaceLevel(0, &blurSurface1);
+
+	D3DXCreateTexture(pD3DDevice_, ScreenWidth, ScreenHeight, 1,
+		D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8,
+		D3DPOOL_DEFAULT, &blurTexture2);
+	blurTexture2->GetSurfaceLevel(0, &blurSurface2);
 
 	pD3DDevice_->GetRenderTarget(0,&renderTarget_);
 	pD3DDevice_->GetDepthStencilSurface(&depthStencil_);
@@ -126,64 +139,40 @@ void CRendererDirectX::ResetRenderTarget()
 	pD3DDevice_->SetRenderTarget(0,renderTarget_);
 	pD3DDevice_->SetDepthStencilSurface(depthStencil_);
 }
-void CRendererDirectX::DrawQuad(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float u0, float v0, float u1, float v1, D3DCOLOR diffuse)
-{
-	// 頂点バッファをデバイスに設定
-	LPDIRECT3DVERTEXBUFFER9 vb = VertexBuffer;
-	pD3DDevice_->SetStreamSource(0, vb, 0, sizeof(VERTEX));
-	pD3DDevice_->SetFVF(D3DFVF_VERTEX);
-
-	// 頂点バッファのロック
-	VERTEX* v;
-	if (SUCCEEDED(
-		vb->Lock(0, 4 * sizeof(VERTEX), (void**)&v, 0)
-	)) {
-		// 頂点座標の設定
-		v[0].X = x0; v[0].Y = y0;
-		v[1].X = x1; v[1].Y = y1;
-		v[2].X = x2; v[2].Y = y2;
-		v[3].X = x3; v[3].Y = y3;
-
-		// テクスチャ座標の設定
-		v[0].U0 = v[0].U1 = u0; v[0].V0 = v[0].V1 = v0;
-		v[1].U0 = v[1].U1 = u1; v[1].V0 = v[1].V1 = v0;
-		v[2].U0 = v[2].U1 = u0; v[2].V0 = v[2].V1 = v1;
-		v[3].U0 = v[3].U1 = u1; v[3].V0 = v[3].V1 = v1;
-
-		// Z, RHW, 頂点色の設定
-		for (int i = 0; i < 4; i++) {
-			v[i].Z = 0;
-			v[i].RHW = 1;
-			v[i].Diffuse = diffuse;
-		}
-
-		// 頂点バッファの解放
-		vb->Unlock();
-
-		// レンダリング条件の設定
-		pD3DDevice_->SetRenderState(D3DRS_ZENABLE, FALSE);
-		pD3DDevice_->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-
-		// プリミティブの描画
-		pD3DDevice_->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-
-		// レンダリング条件の復帰
-		pD3DDevice_->SetRenderState(D3DRS_ZENABLE, TRUE);
-		pD3DDevice_->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-	}
-}
-void CRendererDirectX::DrawQuad(ID3DXEffect * effect, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3, float u0, float v0, float u1, float v1, D3DCOLOR diffuse)
-{
-	UINT p, np;
-	effect->Begin(&np, 0);
-	for (p = 0; p<np; p++) {
-		effect->BeginPass(p);
-		DrawQuad(x0, y0, x1, y1, x2, y2, x3, y3, u0, v0, u1, v1, diffuse);
-		effect->EndPass();
-	}
-	effect->End();
-}
 LPDIRECT3DDEVICE9 CRendererDirectX::GetDevice()
 {
 	return pD3DDevice_;
+}
+
+LPDIRECT3DTEXTURE9 CRendererDirectX::GetBlurTexture1()
+{
+	return blurTexture1;
+}
+LPDIRECT3DTEXTURE9 CRendererDirectX::GetBlurTexture2()
+{
+	return blurTexture2;
+}
+LPDIRECT3DSURFACE9 CRendererDirectX::GetBlurSurface1()
+{
+	return blurSurface1;
+}
+LPDIRECT3DSURFACE9 CRendererDirectX::GetBlurSurface2()
+{
+	return blurSurface2;
+}
+LPDIRECT3DSURFACE9 CRendererDirectX::GetBackBuffer()
+{
+	return renderTarget_;
+}
+void CRendererDirectX::ReplaceBlur()
+{
+	LPDIRECT3DTEXTURE9 texture;
+	texture = blurTexture1;
+	blurTexture1 = blurTexture2;
+	blurTexture2 = texture;
+
+	LPDIRECT3DSURFACE9 surface;
+	surface = blurSurface1;
+	blurSurface1 = blurSurface2;
+	blurSurface2 = surface;
 }

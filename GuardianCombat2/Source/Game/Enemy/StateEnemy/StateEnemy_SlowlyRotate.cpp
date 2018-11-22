@@ -52,10 +52,6 @@ void StateEnemy_SlowlyRotate::Act(Enemy * enemy)
 	D3DXVECTOR3 vecEnemy = enemy->GetVector()->GetFront();
 	float ReverceDot = D3DXVec3Dot(&vecEnemy, &vec_player);
 
-	ImGui::Begin("ReverceDot");
-	ImGui::Text("Dot : %f", ReverceDot);
-	ImGui::End();
-
 	//‹tŒü‚«‚ğŒ©‚Ä‚¢‚½‚ÉƒvƒŒƒCƒ„[‚Ì‚Ù‚¤‚ÉŒü‚©‚¹‚é
 	if (ReverceDot < 0.0f)
 	{

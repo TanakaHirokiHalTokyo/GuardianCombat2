@@ -24,6 +24,7 @@ const XFILENAME g_aXFileName[] =
 	{ "resource/Xmodel/Ring.x" },
 	{ "resource/Xmodel/cube_line.x" },
 	{ "resource/Xmodel/hasira.x" },
+	{ "resource/Xmodel/wall.x" },
 };
 
 class XModel :public Object
@@ -37,6 +38,7 @@ public:
 		MODEL_RING,
 		MODEL_CUBELINE,
 		MODEL_HASIRA,
+		MODEL_WALL,
 		MODEL_MAX
 	};
 

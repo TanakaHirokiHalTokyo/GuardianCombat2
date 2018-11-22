@@ -6,6 +6,8 @@
 #include "../StateAction/StateAction_CircleShot.h"
 #include "../StateAction/StateAction_Horming.h"
 #include "../StateAction/StateAction_Teleportation.h"
+#include "../StateAction/StateAction_Summons.h"
+#include "../Enemy_HigeAvater.h"
 #include "../Enemy_Hige.h"
 
 StatePattern_EnemyHige::StatePattern_EnemyHige(EnemyHige * enemy)
@@ -66,6 +68,24 @@ void StatePattern_EnemyHige::ChangeState()
 	case EnemyHige::STATE::TELEPORTETION:
 		action_ = new StateAction_Teleportation(enemy_);	//テレポート作成
 		break;
+	case EnemyHige::STATE::SUMMONSAVATER:
+	{
+		//パラメータ取得
+		EnemyHigeSummons::ENEMY_PARAMETER parameter = enemy_->GetSummonsParameter();
+		if (parameter.avater_alive > 0)
+		{
+			for (size_t i = 0; i < parameter.summons_max; i++)
+			{
+				parameter.avater[i].Init();
+				parameter.avater[i].SetVisible(false);
+			}
+		}
+		action_ = new StateAction_Summons(enemy_);		//分身召喚作成
+		parameter.avater_alive = parameter.summons_num;
+		enemy_->SetSummonsParameter(&parameter);
+		break;
+	}
+	
 	default:
 		action_ = new StateAction_Idle(enemy_);			//待機状態作成
 		break;

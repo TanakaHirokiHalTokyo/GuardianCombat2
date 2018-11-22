@@ -8,6 +8,8 @@ class DebugSphere;
 class Cube;
 class AdditionEffect;
 class CEffekseer;
+class Texture;
+class EnemyHige_Avater;
 
 class ParameterVector
 {
@@ -39,7 +41,7 @@ namespace EnemyHigeCircleShot					//波状攻撃の情報
 	};
 }
 
-namespace EnemyHigeHorming
+namespace EnemyHigeHorming									//追跡弾情報
 {
 	struct ENEMY_PARAMETER
 	{
@@ -64,12 +66,26 @@ namespace EnemyHigeHorming
 		AdditionEffect* effect = nullptr;							//エフェクト情報
 	};
 }
-namespace EnemyHigeTeleportation
+namespace EnemyHigeTeleportation						//テレポート情報
 {
 	struct ENEMY_PARAMETER
 	{
 		CEffekseer* effect = nullptr;							//テレポートエフェクト
 		float distance = 1.0f;										//Playerとの距離
+	};
+}
+namespace EnemyHigeSummons							//分身召喚情報
+{
+	struct ENEMY_PARAMETER
+	{
+		int summons_max = 20;																//召喚する最大数
+		int summons_num = 6;																//分身召喚する数
+		float trans_length = 3.0f;																//分身が移動する距離
+		float trans_speed = 0.1f;																//分身が移動するスピード
+		EnemyHige_Avater* avater = {};													//分身情報
+		int avater_old_num = summons_num;										//分身の前回までの数
+		D3DXVECTOR3 move_position = D3DXVECTOR3(0,0,0);			//移動する場所
+		int avater_alive = 0;																		//敵が生きている数
 	};
 }
 
@@ -79,11 +95,12 @@ class EnemyHige :public Enemy
 public:
 	enum STATE
 	{
-		IDLE,						//待機状態
-		RUSH,						//突進
-		CIRCLESHOT,			//波状攻撃
-		HORMING,				//ホーミング弾
-		TELEPORTETION,	//テレポート
+		IDLE,							//待機状態
+		RUSH,							//突進
+		CIRCLESHOT,				//波状攻撃
+		HORMING,					//ホーミング弾
+		TELEPORTETION,		//テレポート
+		SUMMONSAVATER,	//分身召喚
 		STATE_MAX,
 	};
 	const char* StateWord[STATE_MAX]
@@ -93,6 +110,7 @@ public:
 		"CIRCLESHOT",
 		"HORMING",
 		"TELEPORTETION",
+		"SUMMONSAVATER",
 	};
 public:
 	EnemyHige();
@@ -128,14 +146,20 @@ public:
 	EnemyHigeTeleportation::ENEMY_PARAMETER GetTeleportParameter();
 	void SetTeleportParameter(EnemyHigeTeleportation::ENEMY_PARAMETER* parameter);
 
+	//召喚のパラメータ取得・設定
+	EnemyHigeSummons::ENEMY_PARAMETER GetSummonsParameter();
+	void SetSummonsParameter(EnemyHigeSummons::ENEMY_PARAMETER* parameter);
+
 private:
 	void DrawDebug();															//Debug表示
 	void InitParameter();														//パラメータ初期化
 	void ReCreateCircleParameter();									//波状攻撃パラメータ再作成
 	void ReCreateHormingParameter();								//ホーミングパラメータ再作成
+	void ReCreateSummonsParameter();								//分身召喚パラメータ再作成
 	void InitCircleParameterValue();										//波状パラメータ初期化
 	void InitHormingParameterValue();								//パラメータの詳細を初期化
 	void InitTeleportParameterValue();									//テレポートのパラメータ初期化
+	void InitSummonsParameterValue();								//分身召喚パラメータ初期化
 	void DestParameter();														//パラメータデストラクタ
 private:
 	StatePattern_Enemy* statePattern_ = nullptr;				//ステート状態管理
@@ -146,5 +170,6 @@ private:
 	EnemyHigeCircleShot::ENEMY_PARAMETER circleShotParameter_ = {};			//波状攻撃のパラメータ情報
 	EnemyHigeHorming::ENEMY_PARAMETER hormingParameter_ = {};					//ホーミングのパラメータ情報
 	EnemyHigeTeleportation::ENEMY_PARAMETER teleportationParameter_ = {};	//テレポートのパラメータ初期化
+	EnemyHigeSummons::ENEMY_PARAMETER summonsParameter_ = {};				//分身召喚のパラメータ初期化
 	XModel* ring_ = nullptr;
 };

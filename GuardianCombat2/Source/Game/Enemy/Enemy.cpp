@@ -28,6 +28,26 @@ Vector3 * Enemy::GetVector()
 	return vector_;
 }
 
+void Enemy::SetVector(Vector3  vector)
+{
+	vector_ = &vector;
+}
+
+void Enemy::SetFront(D3DXVECTOR3 front)
+{
+	vector_->SetFront(front);
+}
+
+void Enemy::SetUp(D3DXVECTOR3 up)
+{
+	vector_->SetUp(up);
+}
+
+void Enemy::SetRight(D3DXVECTOR3 right)
+{
+	vector_->SetRight(right);
+}
+
 EnemyIdle::ENEMY_PARAMETER Enemy::GetIdleParameter()
 {
 	return idleParameter_;

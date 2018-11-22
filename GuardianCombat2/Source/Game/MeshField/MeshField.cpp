@@ -8,6 +8,7 @@
 #include "../../Imgui/ImguiManager.h"
 #include "../Shader/ShadowMapShader.h"
 #include "../Shader/ShadowVolume.h"
+#include "../XModel/XModel.h"
 
 constexpr bool USE_SHADER = true;
 
@@ -38,6 +39,12 @@ MeshField::MeshField()
 	type_ = MeshField::Field_Ground;
 
 	useShader_ = true;
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		wall_[i] = Object::Create<XModel>();
+		wall_[i]->SetModelType(XModel::MODEL_WALL);
+	}
 }
 MeshField::~MeshField()
 {
@@ -147,6 +154,20 @@ void MeshField::Init()
 	SetScale(1.0f, 1.0f, 1.0f);
 
 	file.close();
+
+	wall_[0]->SetPosition(FIELD_SIZE + 0.1f,GetScale().y,0.0f);
+	wall_[1]->SetPosition(-FIELD_SIZE - 0.1f,GetScale().y,0.0f);
+	wall_[2]->SetPosition(0.0f,GetScale().y,FIELD_SIZE + 0.1f);
+	wall_[3]->SetPosition(0.0f,GetScale().y ,-FIELD_SIZE - 0.1f);
+
+	wall_[0]->SetRotationY(90.0f);
+	wall_[1]->SetRotationY(90.0f);
+
+	for (size_t i = 0; i < 4; i++)
+	{
+		wall_[i]->SetScale(FIELD_SIZE * 1.1f,1.0f,0.1f);
+	}
+
 }
 void MeshField::Uninit()
 {

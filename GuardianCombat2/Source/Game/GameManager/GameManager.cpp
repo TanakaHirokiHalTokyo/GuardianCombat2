@@ -12,6 +12,7 @@
 #include "../Shader/ShaderManager.h"
 #include "../../DirectXRenderer.h"	
 #include "../../Light/Light.h"
+#include "../Blur/Blur.h"
 
 Scene* GameManager::scene_ = NULL;
 Fade* GameManager::fade_ = NULL;
@@ -19,6 +20,7 @@ DirectionalLight* GameManager::light_ = NULL;
 std::string GameManager::sceneTag_ = "None";
 bool GameManager::gameObjectLoaded_ = false;
 Player* GameManager::player_ = nullptr;
+Blur* GameManager::blur_ = nullptr;
 
 void GameManager::Init()
 {
@@ -29,6 +31,8 @@ void GameManager::Init()
 	fade_->Init();
 	fade_->FadeIn();
 	SetScene(new TitleScene());
+
+	blur_ = new Blur();
 }
 void GameManager::Uninit()
 {
@@ -40,6 +44,11 @@ void GameManager::Uninit()
 	{
 		fade_->Uninit();
 		SAFE_DELETE(fade_);
+	}
+	if (blur_)
+	{
+		delete blur_;
+		blur_ = nullptr;
 	}
 	Object::CollisionReleaseAll();			//コリジョン解放
 	Object::GameObjectReleaseAll();			//ゲームオブジェクトすべて解放。
@@ -144,4 +153,9 @@ Player* GameManager::SetPlayer(Player * player)
 Player * GameManager::GetPlayer()
 {
 	return player_;
+}
+
+Blur * GameManager::GetBlur()
+{
+	return blur_;
 }

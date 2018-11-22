@@ -34,6 +34,10 @@ public:
 
 	XModel* GetModel();											//モデル取得
 	Vector3* GetVector();											//ベクトル取得
+	void SetVector(Vector3 vector);							//ベクトル設定
+	void SetFront(D3DXVECTOR3 front);
+	void SetUp(D3DXVECTOR3 up);
+	void SetRight(D3DXVECTOR3 right);
 
 	void SetDebugMode(bool flag) { debug_ = flag; }					//デバッグモード設定
 	bool GetDebugMode() { return debug_; }						//デバッグモード取得
@@ -41,12 +45,14 @@ public:
 	EnemyIdle::ENEMY_PARAMETER GetIdleParameter();
 	void SetIdleParameter(EnemyIdle::ENEMY_PARAMETER* parameter);
 
+	inline float GetMoveSpeedToPoint() { return moveSpeedToPoint_; }
+
 protected:
-	float life_ = 100.0f;										//体力
+	float life_ = 100.0f;											//体力
 	Vector3* vector_ = nullptr;								//ベクトル情報
 	XModel* model_ = nullptr;								//モデル情報
 	bool debug_ = false;										//デバッグ状態にするか
 	bool enemypause_ = false;								//敵のポーズ状態
 	EnemyIdle::ENEMY_PARAMETER idleParameter_ = {};	//待機状態のパラメータ
-
+	float moveSpeedToPoint_ = 0.1f;					//移動地点に移動するスピード
 };

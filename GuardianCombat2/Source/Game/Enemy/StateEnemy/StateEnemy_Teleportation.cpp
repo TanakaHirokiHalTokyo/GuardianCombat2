@@ -4,6 +4,7 @@
 #include "../../GameManager/GameManager.h"
 #include "../../../Vector3/Vector3.h"
 #include "../../../Effekseer/Effekseer.h"
+#include "../../Blur/Blur.h"
 
 void StateEnemy_Teleportation::Act(EnemyHige * enemy)
 {
@@ -15,6 +16,9 @@ void StateEnemy_Teleportation::Act(EnemyHige * enemy)
 		setVector_ = true;
 		player_ = GameManager::GetPlayer();
 		teleportVector_ = player_->GetVector()->GetFront() * -1.0f;			//ベクトルをセット
+		GameManager::GetBlur()->SetUseBlur(true);									//ブラーを使う設定
+		GameManager::GetBlur()->SetAlpha(150);										//ブラーのα値を設定
+		GameManager::GetBlur()->SetStrength(1.1f);									//ブラーの強さを設定
 	}
 	else
 	{
@@ -35,6 +39,7 @@ void StateEnemy_Teleportation::Act(EnemyHige * enemy)
 				if (!parameter.effect->GetPlaying())
 				{
 					enemy->FinishState();
+					GameManager::GetBlur()->SetUseBlur(false);
 				}
 			}
 		}

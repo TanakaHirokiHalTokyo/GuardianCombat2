@@ -14,6 +14,9 @@
 #include "../Effect/Effect.h"
 #include "../../Effekseer/Effekseer.h"
 #include "../../Game/MeshField/MeshField.h"
+#include "../../DirectXRenderer.h"	
+#include "../../Texture/Texture.h"
+#include "Enemy_HigeAvater.h"
 
 const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0.0f,-8.0f);
 
@@ -38,7 +41,7 @@ EnemyHige::EnemyHige()
 	ring_ = Object::Create<XModel>();
 	ring_->SetModelType(XModel::MODEL_RING);
 	ring_->SetScale(0.5f, 0.5f, 0.5f);
-	
+
 	//パラメータ初期化
 	InitParameter();
 }
@@ -61,7 +64,6 @@ EnemyHige::~EnemyHige()
 		delete collision_;
 		collision_ = nullptr;
 	}
-
 	DestParameter();
 }
 
@@ -83,12 +85,13 @@ void EnemyHige::Init()
 	D3DXVECTOR3 front = player->GetPosition() - GetPosition();
 	D3DXVec3Normalize(&front,&front);
 	vector_->SetFront(front);
+	vector_->SetUp(0, 1.0f, 0);
 	D3DXVECTOR3 right;
 	//右ベクトル
 	D3DXVec3Cross(&right, &vector_->GetUp(), &vector_->GetFront());
 	D3DXVec3Normalize(&right, &right);
 	vector_->SetRight(right);
-	vector_->SetUp(0,1.0f,0);
+	
 
 	//Collision初期化
 	collision_->rad = 0.5f;
@@ -140,6 +143,11 @@ void EnemyHige::Update()
 		ring_->SetPositionY(ring_->GetPosition().y + ring_->GetScale().x);
 		collision_->pos = GetPosition();
 		collision_->pos.y = collision_->pos.y + collision_->rad;
+
+		for (size_t i = 0; i < summonsParameter_.summons_num; i++)
+		{
+			summonsParameter_.avater[i].Update();
+		}
 	}
 	else
 	{
@@ -174,6 +182,11 @@ void EnemyHige::BeginDraw()
 
 	statePattern_->BeginDisplay();
 
+	for (size_t i = 0; i < summonsParameter_.summons_num; i++)
+	{
+		summonsParameter_.avater[i].BeginDraw();
+	}
+
 	//シェーダー処理
 	if (model_->GetUseShader())
 	{	
@@ -191,7 +204,6 @@ void EnemyHige::Draw()
 	if (model_->GetUseShader())
 	{
 		LPD3DXEFFECT effect;
-
 		//アウトライン描画
 		effect = OutlineShader::GetEffect();
 		OutlineShader::SetInfo(world_);
@@ -203,6 +215,11 @@ void EnemyHige::Draw()
 		ToonShader::SetInfo(world_);
 		effect->SetTechnique("ToonPaintInk");
 		model_->Draw(effect, 0);
+
+	}
+	for (size_t i = 0; i < summonsParameter_.summons_num; i++)
+	{
+		summonsParameter_.avater[i].Draw();
 	}
 
 	if (debug_)
@@ -215,6 +232,11 @@ void EnemyHige::Draw()
 
 void EnemyHige::EndDraw()
 {
+	for (size_t i = 0; i < summonsParameter_.summons_num; i++)
+	{
+		summonsParameter_.avater[i].EndDraw();
+	}
+
 	statePattern_->EndDisplay();
 }
 
@@ -264,6 +286,14 @@ void EnemyHige::SetTeleportParameter(EnemyHigeTeleportation::ENEMY_PARAMETER * p
 {
 	teleportationParameter_ = *parameter;
 }
+EnemyHigeSummons::ENEMY_PARAMETER EnemyHige::GetSummonsParameter()
+{
+	return summonsParameter_;
+}
+void EnemyHige::SetSummonsParameter(EnemyHigeSummons::ENEMY_PARAMETER * parameter)
+{
+	summonsParameter_ = *parameter;
+}
 void EnemyHige::DrawDebug()
 {
 	static int listbox_item_current = 1;			//リストボックスの初期選択番号
@@ -272,7 +302,8 @@ void EnemyHige::DrawDebug()
 	static bool reset_parameter = false;			//パラメータリセットフラグ
 
 	//Window位置固定
-	//ImGui::SetNextWindowPos(ImVec2(10,0.0f));
+	ImGui::SetNextWindowPos(ImVec2(0.0f,0.0f));
+	ImGui::SetNextWindowSize(ImVec2((float)ScreenWidth/ 3.0f,(float)ScreenHeight));
 	//敵のデバッグ情報
 	ImGui::Begin("Enemy Debug Info");
 	//敵の位置表示
@@ -480,11 +511,35 @@ void EnemyHige::DrawDebug()
 		//		Teleportation
 		//====================================================================================================
 		{
-
 			if (ImGui::TreeNode("TELEPORTATION PARAMETER"))
 			{
 				ImGui::DragFloat("Distance between Player",&teleportationParameter_.distance,0.1f,0.0f,2.0f);		//プレイヤーとの距離を設定
 				ImGui::TreePop();
+			}
+		}
+		//=====================================================================================================
+		//			SummonsAvater
+		//=====================================================================================================
+		{
+			static bool change_summon_num = false;
+
+			if (ImGui::TreeNode("SUMMONS PARAMETER"))
+			{
+				change_summon_num = ImGui::SliderInt("Summon Avater Num",&summonsParameter_.summons_num,0,summonsParameter_.summons_max);
+				ImGui::DragFloat("Trans Length",&summonsParameter_.trans_length,0.01f,0.0f,7.0f);
+				ImGui::DragFloat("Trans Speed",&moveSpeedToPoint_,0.01f,0.01f,summonsParameter_.trans_length);
+				ImGui::TreePop();
+			}
+			if (change_summon_num)
+			{
+				change_summon_num = false;
+				if (summonsParameter_.summons_num != summonsParameter_.avater_old_num)
+				{
+					summonsParameter_.avater_old_num = summonsParameter_.summons_num;
+					ReCreateSummonsParameter();
+					InitSummonsParameterValue();
+					FinishState();
+				}
 			}
 		}
 	}
@@ -515,6 +570,7 @@ void EnemyHige::DrawDebug()
 		EnemyHigeCircleShot::ENEMY_PARAMETER circleshotparameter;
 		EnemyHigeRush::ENEMY_PARAMETER rushparameter;
 		EnemyHigeHorming::ENEMY_PARAMETER hormingparameter;
+		EnemyHigeSummons::ENEMY_PARAMETER summonsparameter;
 
 		//パラメータ解放
 		DestParameter();
@@ -524,10 +580,12 @@ void EnemyHige::DrawDebug()
 		SetRushParameter(&rushparameter);
 		SetCircleShotParameter(&circleshotparameter);
 		SetHormingParameter(&hormingparameter);
+		SetSummonsParameter(&summonsparameter);
 
 		InitParameter();								//パラメータ情報初期化
 		InitCircleParameterValue();			//波状攻撃の情報初期化
 		InitHormingParameterValue();		//ホーミングの情報初期化
+		InitSummonsParameterValue();
 	}
 }
 
@@ -567,6 +625,18 @@ void EnemyHige::InitParameter()
 	//			テレポート初期化
 	//=========================================================
 	teleportationParameter_.effect = new CEffekseer(CEffekseer::Effect_Teleport);
+
+	//=========================================================
+	//			分身召喚の初期化
+	//=========================================================
+	summonsParameter_.avater = new EnemyHige_Avater[summonsParameter_.summons_max];
+	for (size_t i = 0; i < summonsParameter_.summons_max; i++)
+	{
+		summonsParameter_.avater[i].Init();
+		summonsParameter_.avater[i].SetVisible(false);
+		summonsParameter_.trans_length = 3.0f;
+		summonsParameter_.trans_speed = 0.1f;
+	}
 }
 
 void EnemyHige::ReCreateCircleParameter()
@@ -608,6 +678,15 @@ void EnemyHige::ReCreateHormingParameter()
 	hormingParameter_.effect = new AdditionEffect[hormingParameter_.CUBE_NUM];
 }
 
+void EnemyHige::ReCreateSummonsParameter()
+{
+	for (size_t i = 0; i < summonsParameter_.summons_max; i++)
+	{
+		summonsParameter_.avater[i].Init();
+		summonsParameter_.avater[i].SetVisible(false);
+	}
+}
+
 void EnemyHige::InitCircleParameterValue()
 {
 	//波状攻撃初期化
@@ -644,54 +723,68 @@ void EnemyHige::InitTeleportParameterValue()
 	teleportationParameter_.effect->SetPosition(GetPosition());
 	teleportationParameter_.effect->SetScale(1.0f, 1.0f, 1.0f);
 }
+void EnemyHige::InitSummonsParameterValue()
+{
+	for (size_t i = 0; i < summonsParameter_.summons_num; i++)
+	{
+		summonsParameter_.avater[i].Init();
+		summonsParameter_.avater[i].SetVisible(false);
+		summonsParameter_.trans_length = 3.0f;
+		summonsParameter_.trans_speed = 0.1f;
+	}
+}
 void EnemyHige::DestParameter()
 {
 	if (circleShotParameter_.cube)
 	{
-		delete[] circleShotParameter_.cube;
+		SAFE_DELETE_ARRAY(circleShotParameter_.cube);
 	}
 	if (circleShotParameter_.vec)
 	{
-		delete[] circleShotParameter_.vec;
+		SAFE_DELETE_ARRAY(circleShotParameter_.vec);
 	}
 	if (circleShotParameter_.effect)
 	{
-		delete[] circleShotParameter_.effect;
+		SAFE_DELETE_ARRAY(circleShotParameter_.effect);
 	}
 	if (hormingParameter_.cube)
 	{
-		delete[] hormingParameter_.cube;
+		SAFE_DELETE_ARRAY(hormingParameter_.cube);
 	}
 	if (hormingParameter_.vec)
 	{
-		delete[] hormingParameter_.vec;
+		SAFE_DELETE_ARRAY(hormingParameter_.vec);
 	}
 	if (hormingParameter_.spawnvec)
 	{
-		delete[] hormingParameter_.spawnvec;
+		SAFE_DELETE_ARRAY(hormingParameter_.spawnvec);
 	}
 	if (hormingParameter_.shot)
 	{
-		delete[] hormingParameter_.shot;
+		SAFE_DELETE_ARRAY(hormingParameter_.shot);
 	}
 	if (hormingParameter_.cooltimecount)
 	{
-		delete[] hormingParameter_.cooltimecount;
+		SAFE_DELETE_ARRAY(hormingParameter_.cooltimecount);
 	}
 	if (hormingParameter_.alivetimecount)
 	{
-		delete[] hormingParameter_.alivetimecount;
+		SAFE_DELETE_ARRAY(hormingParameter_.alivetimecount);
 	}
 	if (hormingParameter_.speed)
 	{
-		delete[] hormingParameter_.speed;
+		SAFE_DELETE_ARRAY(hormingParameter_.speed);
 	}
 	if (hormingParameter_.effect)
 	{
-		delete[] hormingParameter_.effect;
+		SAFE_DELETE_ARRAY(hormingParameter_.effect);
 	}
 	if (teleportationParameter_.effect)
 	{
-		delete teleportationParameter_.effect;
+		SAFE_DELETE(teleportationParameter_.effect);
+	}
+	if (summonsParameter_.avater)
+	{
+		SAFE_DELETE_ARRAY(summonsParameter_.avater);
 	}
 }

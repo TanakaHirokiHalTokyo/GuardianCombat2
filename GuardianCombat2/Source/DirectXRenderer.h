@@ -10,6 +10,12 @@ private:
 	static D3DPRESENT_PARAMETERS d3dpp_;			//デバイスのプレゼンテーションパラメータの作成
 	static D3DDISPLAYMODE		d3ddm_;				//現在のディスプレイモードを取得	
 	static LPDIRECT3DVERTEXBUFFER9 VertexBuffer;
+	static LPDIRECT3DSURFACE9 renderTarget_;
+	static LPDIRECT3DSURFACE9 depthStencil_;
+	static LPDIRECT3DTEXTURE9 blurTexture1;				//ブラーテクスチャ１
+	static LPDIRECT3DSURFACE9 blurSurface1;				//ブラーサーフェイス１
+	static LPDIRECT3DTEXTURE9 blurTexture2;				//ブラーテクスチャ２
+	static LPDIRECT3DSURFACE9 blurSurface2;				//ブラーサーフェイス２
 
 public:
 	// 構造体
@@ -33,34 +39,13 @@ public:
 	static void Clear();
 	static void ClearZ();
 	static void ResetRenderTarget();
-
-	// 四角形の描画
-	static void DrawQuad(
-		float x0, float y0, float x1, float y1,
-		float x2, float y2, float x3, float y3,
-		float u0, float v0, float u1, float v1,
-		D3DCOLOR diffuse
-	);
-	static void DrawQuad(
-		ID3DXEffect* effect,
-		float x0, float y0, float x1, float y1,
-		float x2, float y2, float x3, float y3,
-		float u0, float v0, float u1, float v1,
-		D3DCOLOR diffuse
-	);
-	static void DrawRect(
-		ID3DXEffect* effect,
-		float x0, float y0, float x1, float y1,
-		float u0, float v0, float u1, float v1,
-		D3DCOLOR diffuse
-	) {
-		DrawQuad(
-			effect, x0, y0, x1, y0, x0, y1,
-			x1, y1, u0, v0, u1, v1, diffuse);
-	}
-public:
 	static LPDIRECT3DDEVICE9 GetDevice();
-	static LPDIRECT3DSURFACE9 renderTarget_;
-	static LPDIRECT3DSURFACE9 depthStencil_;
+	static LPDIRECT3DTEXTURE9 GetBlurTexture1();
+	static LPDIRECT3DTEXTURE9 GetBlurTexture2();
+	static LPDIRECT3DSURFACE9 GetBlurSurface1();
+	static LPDIRECT3DSURFACE9 GetBlurSurface2();
+	static LPDIRECT3DSURFACE9 GetBackBuffer();
+	static void ReplaceBlur();
+	
 	
 };

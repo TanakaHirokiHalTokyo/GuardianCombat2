@@ -62,23 +62,25 @@ void XModel::Update()
 }
 void XModel::BeginDraw()
 {
-	if (!hieral_)
+	if (GetVisible())
 	{
-		D3DXMATRIX mtxTrans, mtxScale, mtxRotateX, mtxRotateY, mtxRotateZ;
-		D3DXMatrixIdentity(&world_);
-		D3DXMatrixTranslation(&mtxTrans, Object::transform_.pos.x, Object::transform_.pos.y, Object::transform_.pos.z);
-		D3DXMatrixScaling(&mtxScale, Object::transform_.scale.x, Object::transform_.scale.y, Object::transform_.scale.z);
-		D3DXMatrixRotationX(&mtxRotateX, D3DXToRadian(Object::transform_.rotate.x));
-		D3DXMatrixRotationY(&mtxRotateY, D3DXToRadian(Object::transform_.rotate.y));
-		D3DXMatrixRotationZ(&mtxRotateZ, D3DXToRadian(Object::transform_.rotate.z));
+		if (!hieral_)
+		{
+			D3DXMATRIX mtxTrans, mtxScale, mtxRotateX, mtxRotateY, mtxRotateZ;
+			D3DXMatrixIdentity(&world_);
+			D3DXMatrixTranslation(&mtxTrans, Object::transform_.pos.x, Object::transform_.pos.y, Object::transform_.pos.z);
+			D3DXMatrixScaling(&mtxScale, Object::transform_.scale.x, Object::transform_.scale.y, Object::transform_.scale.z);
+			D3DXMatrixRotationX(&mtxRotateX, D3DXToRadian(Object::transform_.rotate.x));
+			D3DXMatrixRotationY(&mtxRotateY, D3DXToRadian(Object::transform_.rotate.y));
+			D3DXMatrixRotationZ(&mtxRotateZ, D3DXToRadian(Object::transform_.rotate.z));
 
-		world_ = mtxScale;
-		world_ *= mtxRotateX;
-		world_ *= mtxRotateY;
-		world_ *= mtxRotateZ;
-		world_ *= mtxTrans;
+			world_ = mtxScale;
+			world_ *= mtxRotateX;
+			world_ *= mtxRotateY;
+			world_ *= mtxRotateZ;
+			world_ *= mtxTrans;
+		}
 	}
-
 }
 void XModel::EndDraw()
 {
@@ -97,7 +99,36 @@ void XModel::SetHieral(bool flag)
 }
 void XModel::Draw()
 {
-	if (!useShader_)
+	if (GetVisible())
+	{
+		if (!useShader_)
+		{
+			LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
+
+			//FVFの設定
+			pDevice->SetFVF(this->xmodel[this->modelType_].pMesh->GetFVF());
+
+			//ライティング
+			pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+			//各種行列の設定
+			pDevice->SetTransform(D3DTS_WORLD, &world_);
+
+			//マテリアルの取得
+			LPD3DXMATERIAL pMaterial = (LPD3DXMATERIAL)this->xmodel[this->modelType_].pMaterial->GetBufferPointer();
+
+			//前面モデル描画
+			for (unsigned int i = 0; i < xmodel[this->modelType_].nMaterialNum; i++)
+			{
+				pDevice->SetMaterial(&pMaterial[i].MatD3D);
+				pDevice->SetTexture(0, xmodel[this->modelType_].pMeshTextures[i]);
+				this->xmodel[this->modelType_].pMesh->DrawSubset(i);
+			}
+		}
+	}
+}
+void XModel::Draw(LPD3DXEFFECT effect,UINT pass)
+{
+	if (GetVisible())
 	{
 		LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
 
@@ -106,54 +137,29 @@ void XModel::Draw()
 
 		//ライティング
 		pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+
 		//各種行列の設定
 		pDevice->SetTransform(D3DTS_WORLD, &world_);
 
 		//マテリアルの取得
 		LPD3DXMATERIAL pMaterial = (LPD3DXMATERIAL)this->xmodel[this->modelType_].pMaterial->GetBufferPointer();
 
+		effect->Begin(NULL, 0);
+		effect->BeginPass(pass);
+
 		//前面モデル描画
 		for (unsigned int i = 0; i < xmodel[this->modelType_].nMaterialNum; i++)
 		{
-			pDevice->SetMaterial(&pMaterial[i].MatD3D);
-			pDevice->SetTexture(0, xmodel[this->modelType_].pMeshTextures[i]);
+			D3DXVECTOR4 diffuse = D3DXVECTOR4(pMaterial[i].MatD3D.Diffuse.r, pMaterial[i].MatD3D.Diffuse.g, pMaterial[i].MatD3D.Diffuse.b, pMaterial[i].MatD3D.Diffuse.a);
+			effect->SetVector("Diffuse", &diffuse);
+			effect->SetTexture("MeshTex", xmodel[this->modelType_].pMeshTextures[i]);
+			effect->CommitChanges();
 			this->xmodel[this->modelType_].pMesh->DrawSubset(i);
 		}
+
+		effect->EndPass();
+		effect->End();
 	}
-	
-	
-}
-void XModel::Draw(LPD3DXEFFECT effect,UINT pass)
-{
-	LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
-
-	//FVFの設定
-	pDevice->SetFVF(this->xmodel[this->modelType_].pMesh->GetFVF());
-
-	//ライティング
-	pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-
-	//各種行列の設定
-	pDevice->SetTransform(D3DTS_WORLD, &world_);
-
-	//マテリアルの取得
-	LPD3DXMATERIAL pMaterial = (LPD3DXMATERIAL)this->xmodel[this->modelType_].pMaterial->GetBufferPointer();
-
-	effect->Begin(NULL,0);
-	effect->BeginPass(pass);
-
-	//前面モデル描画
-	for (unsigned int i = 0; i < xmodel[this->modelType_].nMaterialNum; i++)
-	{
-		D3DXVECTOR4 diffuse = D3DXVECTOR4(pMaterial[i].MatD3D.Diffuse.r, pMaterial[i].MatD3D.Diffuse.g, pMaterial[i].MatD3D.Diffuse.b, pMaterial[i].MatD3D.Diffuse.a);
-		effect->SetVector("Diffuse", &diffuse);
-		effect->SetTexture("MeshTex", xmodel[this->modelType_].pMeshTextures[i]);
-		effect->CommitChanges();
-		this->xmodel[this->modelType_].pMesh->DrawSubset(i);
-	}
-
-	effect->EndPass();
-	effect->End();
 }
 bool XModel::LoadXFile(XModel::XMODEL modelType)
 {

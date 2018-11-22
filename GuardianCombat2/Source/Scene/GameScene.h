@@ -5,7 +5,7 @@
 class Player;
 class PauseScene;
 class Cube;
-
+class Texture;
 class GameScene:public Scene
 {
 public:
@@ -22,4 +22,5 @@ private:
 	Player* player_ = nullptr;				//プレイヤー情報
 	PauseScene* pauseScene_ = nullptr;		//ポーズシーン情報
 	Cube* cube_ = nullptr;
+	Texture* blurTex_ = nullptr;
 };

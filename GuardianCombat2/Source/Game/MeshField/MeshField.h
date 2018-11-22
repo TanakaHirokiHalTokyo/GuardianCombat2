@@ -4,7 +4,9 @@
 #include	<d3dx9.h>
 #include	"../Object.h"
 
-const float FIELD_SIZE = 9.7f;
+const float FIELD_SIZE = 11.0f;
+
+class XModel;
 
 typedef struct
 {
@@ -55,7 +57,7 @@ public:
 	void Update()override;
 	void BeginDraw()override;
 	void Draw()override;
-	void Draw(LPD3DXEFFECT effect,UINT pass);
+	void Draw(LPD3DXEFFECT effect, UINT pass);
 	void EndDraw()override;
 
 	float GetSizeX();
@@ -81,4 +83,6 @@ private:
 	MeshF meshf_[MeshField::MeshField_Type::Field_Max];												//ワールド行列
 	MeshField_Type type_;
 	D3DXMATRIX world_;
+
+	XModel* wall_[4] = {};											//壁のモデル
 };

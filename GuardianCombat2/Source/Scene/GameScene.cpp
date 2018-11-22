@@ -18,6 +18,7 @@
 #include "PauseScene.h"
 #include "../Game/Cube/Cube.h"	
 #include "../Game/Effect/Effect.h"
+#include "../Game/Blur/Blur.h"
 
 GameScene::GameScene()
 {
@@ -49,6 +50,7 @@ GameScene::GameScene()
 		ui->SetStartPosition(-200.0f, (float)ScreenHeight / 2.0f);					//UI‰ŠúÀ•WÝ’è
 		ui->MoveTexture(0.0f, 5.0f, 0, (float)ScreenHeight / 2.0f);				//UIˆÚ“®Ý’è
 		ui->ScalingTexture(0.0f, 5.0f, 200.0f, 40.0f);										//UIŠg‘åÝ’è
+
 
 		GameManager::SetGameObjectLoad(true);										//GameObject‚ð“Ç‚Ýž‚ñ‚¾Ý’è
 	}
@@ -134,7 +136,9 @@ void GameScene::BeginDraw()
 
 void GameScene::Draw()
 {
+	GameManager::GetBlur()->BeginDraw();
 	Object::DrawAll();
+	GameManager::GetBlur()->EndDraw();
 	pauseScene_->Draw();
 }
 
