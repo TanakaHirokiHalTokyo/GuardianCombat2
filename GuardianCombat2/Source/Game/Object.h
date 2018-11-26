@@ -166,6 +166,7 @@ protected:
 	static vector<Object*> objects_;								//動的配列
 	static vector<OBB*> enemycubeCollisions_;					//ホーミング弾のコリジョン
 	static vector<Sphere*> playerCollision_;						//プレイヤーのコリジョン
+	static OBB* enemyBurstCollision_;									//バーストショットの当たり判定				
 
 	bool exist_ = true;												//存在しているか falseになったら消される。
 	bool visible_ = true;											//可視状態にするか

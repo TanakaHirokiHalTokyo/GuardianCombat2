@@ -23,6 +23,11 @@ XModel::~XModel()
 		this->xmodel[modelType_].pMaterial->Release();
 		this->xmodel[modelType_].pMaterial = NULL;
 	}
+	if (xmodel[modelType_].normalmapTexture)
+	{
+		xmodel[modelType_].normalmapTexture->Release();
+		xmodel[modelType_].normalmapTexture = NULL;
+	}
 	for (unsigned int n = 0; n < xmodel[modelType_].nMaterialNum; n++)
 	{
 		this->xmodel[modelType_].pMeshTextures[n]->Release();
@@ -92,6 +97,74 @@ void XModel::SetWorld(D3DXMATRIX world)
 LPD3DXMESH XModel::GetMesh(XMODEL modelType)
 {
 	return xmodel[modelType].pMesh;
+}
+bool XModel::AddTangentSpace()
+{
+	LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
+	LPD3DXMESH		tempMesh;
+	LPD3DXMESH		outMesh;
+	HRESULT			hr;
+
+	const D3DVERTEXELEMENT9 Decl[] =
+	{
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },				// 位置情報
+		{ 0, 12, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },				// テクスチャ座標
+		{ 0, 20, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },				// 法線
+		{ 0, 32, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },				// 接ベクトル
+		{ 0, 44, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL, 0 },				// 従法線ベクトル
+		D3DDECL_END()
+	};
+
+	// 指定フォーマットのクローンメッシュを作る
+	hr = xmodel[modelType_].pMesh->CloneMesh(xmodel[modelType_].pMesh->GetOptions(), Decl, pDevice, &tempMesh);
+	if (FAILED(hr)) {
+		MessageBox(NULL, "ERROR!!", "CloneMeshエラー", MB_OK);
+		return false;
+	}
+	// 法線ベクトルを計算
+	hr = D3DXComputeNormals(tempMesh, NULL);
+	if (FAILED(hr)) {
+		tempMesh->Release();
+		MessageBox(NULL, "ERROR!!", "D3DXComputeNormalsエラー", MB_OK);
+		return false;
+	}
+
+	// 従法線、接ベクトルをもつメッシュを作成する
+	hr = D3DXComputeTangentFrameEx(tempMesh,
+		D3DDECLUSAGE_TEXCOORD, 0,		// 0番目のテクスチャ座標を使用する 
+		D3DDECLUSAGE_TANGENT, 0,		// 0番目の接ベクトルを計算する
+		D3DDECLUSAGE_BINORMAL, 0,		// 0番目の従法線ベクトルを計算する
+		D3DDECLUSAGE_NORMAL, 0,			// 0番目の法線ベクトルを計算する
+		0,								// 計算のオプション
+		NULL,							// 
+		-1.01f,							// 隣接する３角形の閾値
+		-0.01f,							// 単独とみなされる頂点の閾値
+		-1.01f,							// 法線の閾値
+		&outMesh,						// 生成されたメッシュ
+		NULL);							//  
+	if (FAILED(hr)) {
+		tempMesh->Release();
+		MessageBox(NULL, "ERROR!!", "D3DXComputeTangentFrameExエラー", MB_OK);
+		return false;
+	}
+
+	xmodel[modelType_].pMesh->Release();
+	xmodel[modelType_].pMesh = outMesh;
+
+	return true;
+}
+bool XModel::LoadNormalmapTexture(const char * filename)
+{
+	HRESULT hr;
+	LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
+	hr = D3DXCreateTextureFromFile(pDevice,
+		filename,
+		&xmodel[modelType_].normalmapTexture);
+	if (FAILED(hr)) {
+			return false;
+	}
+
+	return true;
 }
 void XModel::SetHieral(bool flag)
 {
@@ -174,14 +247,14 @@ bool XModel::LoadXFile(XModel::XMODEL modelType)
 	LPD3DXBUFFER pAdjacency;
 
 	hr = D3DXLoadMeshFromXA(
-		g_aXFileName[modelType].fileName,				//ファイル名
-		D3DXMESH_SYSTEMMEM,								//メッシュの設定ﾌﾗｸﾞ
-		pDevice,										//メッシュに関連づけるデバイス
-		&pAdjacency,									//隣接データを含むバッファを受け取る
-		&this->xmodel[modelType].pMaterial,			//マテリアルデータを受け取る
-		NULL,											//エフェクトの初期化に使う状態情報
-		&this->xmodel[modelType].nMaterialNum,		//マテリアル数を受け取る
-		&this->xmodel[modelType].pMesh				//読み込んだメッシュを受け取る変数へのポインタ
+		g_aXFileName[modelType].fileName,						//ファイル名
+		D3DXMESH_SYSTEMMEM,									//メッシュの設定ﾌﾗｸﾞ
+		pDevice,																	//メッシュに関連づけるデバイス
+		&pAdjacency,															//隣接データを含むバッファを受け取る
+		&this->xmodel[modelType].pMaterial,					//マテリアルデータを受け取る
+		NULL,																		//エフェクトの初期化に使う状態情報
+		&this->xmodel[modelType].nMaterialNum,			//マテリアル数を受け取る
+		&this->xmodel[modelType].pMesh						//読み込んだメッシュを受け取る変数へのポインタ
 	);
 
 	if (FAILED(hr))
@@ -228,8 +301,6 @@ bool XModel::LoadXFile(XModel::XMODEL modelType)
 		(DWORD*)pAdjacency->GetBufferPointer(), NULL, NULL, NULL
 	);
 
-
-
 	if (pAdjacency != NULL)
 	{
 		pAdjacency->Release();
@@ -250,8 +321,6 @@ bool XModel::LoadXFile(XModel::XMODEL modelType)
 		this->xmodel[modelType].pMesh->Release();
 		this->xmodel[modelType].pMesh = pTempMesh;
 	}
-	
-
 
 	return true;
 }

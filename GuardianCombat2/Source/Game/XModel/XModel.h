@@ -6,10 +6,11 @@
 
 struct XMODEL_TYPE
 {
-	LPD3DXMESH		pMesh;				//メッシュを受け取る変数
-	DWORD			nMaterialNum;			//マテリアルの総数
-	LPD3DXBUFFER	pMaterial;			//マテリアルの情報を受けとる変数
-	LPDIRECT3DTEXTURE9*	pMeshTextures;	// テクスチャ配列　メモリ動的確保
+	LPD3DXMESH		pMesh;												//メッシュを受け取る変数
+	DWORD			nMaterialNum;											//マテリアルの総数
+	LPD3DXBUFFER	pMaterial;												//マテリアルの情報を受けとる変数
+	LPDIRECT3DTEXTURE9*	pMeshTextures;						// テクスチャ配列　メモリ動的確保
+	LPDIRECT3DTEXTURE9 normalmapTexture = nullptr;
 };
 
 struct XFILENAME
@@ -61,7 +62,8 @@ public:
 	void SetWorld(D3DXMATRIX world);
 	D3DXMATRIX GetWorld() { return world_; }
 	LPD3DXMESH GetMesh(XMODEL modelType);
-
+	bool AddTangentSpace();
+	bool LoadNormalmapTexture(const char* filename);
 	void SetHieral(bool flag);
 
 protected:
@@ -69,6 +71,7 @@ protected:
 	XMODEL modelType_;
 	bool hieral_ = false;		//階層構造を使うか
 	
+
 private:
 	bool LoadXFile(XModel::XMODEL modelType);
 };

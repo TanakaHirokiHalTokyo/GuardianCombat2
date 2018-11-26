@@ -10,6 +10,7 @@ class AdditionEffect;
 class CEffekseer;
 class Texture;
 class EnemyHige_Avater;
+class OBB;
 
 class ParameterVector
 {
@@ -78,28 +79,44 @@ namespace EnemyHigeSummons							//分身召喚情報
 {
 	struct ENEMY_PARAMETER
 	{
-		int summons_max = 20;																//召喚する最大数
+		int summons_max = 10;																//召喚する最大数
 		int summons_num = 6;																//分身召喚する数
 		float trans_length = 3.0f;																//分身が移動する距離
 		float trans_speed = 0.1f;																//分身が移動するスピード
 		EnemyHige_Avater* avater = {};													//分身情報
+		float cube_size = 1.0f;																	//キューブの大きさ
 		int avater_old_num = summons_num;										//分身の前回までの数
 		D3DXVECTOR3 move_position = D3DXVECTOR3(0,0,0);			//移動する場所
 		int avater_alive = 0;																		//敵が生きている数
 	};
 }
-
+namespace EnemyHigeBurstShot
+{
+	struct ENEMY_PARAMETER
+	{
+		
+		CEffekseer* effect = nullptr;										//エフェクト
+		float effect_size = 1.0f;												//エフェクトのサイズ
+		OBB* collision = nullptr;												//コリジョン
+		float dps = 20.0f;															//damage per second
+	};
+}
 
 class EnemyHige :public Enemy
 {
 public:
-	enum STATE
+	static const float BURSTX;
+	static const float BURSTY;
+	static const float BURSTZ;
+
+	enum STATE					//さいしょに通常攻撃を記述すること。後ろに特殊攻撃を記述。
 	{
-		IDLE,							//待機状態
+		IDLE = 0,						//待機状態
 		RUSH,							//突進
 		CIRCLESHOT,				//波状攻撃
 		HORMING,					//ホーミング弾
 		TELEPORTETION,		//テレポート
+		BURSTSHOT,				//バーストショット
 		SUMMONSAVATER,	//分身召喚
 		STATE_MAX,
 	};
@@ -110,6 +127,7 @@ public:
 		"CIRCLESHOT",
 		"HORMING",
 		"TELEPORTETION",
+		"BURSTSHOT",
 		"SUMMONSAVATER",
 	};
 public:
@@ -150,6 +168,10 @@ public:
 	EnemyHigeSummons::ENEMY_PARAMETER GetSummonsParameter();
 	void SetSummonsParameter(EnemyHigeSummons::ENEMY_PARAMETER* parameter);
 
+	//バーストショットのパラメータ取得・設定
+	EnemyHigeBurstShot::ENEMY_PARAMETER GetBurstParameter();
+	void SetBurstParameter(EnemyHigeBurstShot::ENEMY_PARAMETER* parameter);
+
 private:
 	void DrawDebug();															//Debug表示
 	void InitParameter();														//パラメータ初期化
@@ -160,6 +182,7 @@ private:
 	void InitHormingParameterValue();								//パラメータの詳細を初期化
 	void InitTeleportParameterValue();									//テレポートのパラメータ初期化
 	void InitSummonsParameterValue();								//分身召喚パラメータ初期化
+	void InitBurstShotParameterValue();								//バーストショットの情報初期化
 	void DestParameter();														//パラメータデストラクタ
 private:
 	StatePattern_Enemy* statePattern_ = nullptr;				//ステート状態管理
@@ -169,7 +192,8 @@ private:
 	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};								//突進状態のパラメータ情報
 	EnemyHigeCircleShot::ENEMY_PARAMETER circleShotParameter_ = {};			//波状攻撃のパラメータ情報
 	EnemyHigeHorming::ENEMY_PARAMETER hormingParameter_ = {};					//ホーミングのパラメータ情報
-	EnemyHigeTeleportation::ENEMY_PARAMETER teleportationParameter_ = {};	//テレポートのパラメータ初期化
-	EnemyHigeSummons::ENEMY_PARAMETER summonsParameter_ = {};				//分身召喚のパラメータ初期化
+	EnemyHigeTeleportation::ENEMY_PARAMETER teleportationParameter_ = {};	//テレポートのパラメータ情報
+	EnemyHigeSummons::ENEMY_PARAMETER summonsParameter_ = {};				//分身召喚のパラメータ情報
+	EnemyHigeBurstShot::ENEMY_PARAMETER burstParameter_ = {};					//バーストショットのパラメータ情報
 	XModel* ring_ = nullptr;
 };

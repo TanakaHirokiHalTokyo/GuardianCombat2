@@ -5,13 +5,15 @@
 #include "Enemy\Enemy_Hige.h"
 #include "Player\Player.h"
 #include "Cube\Cube.h"
+
 #define DEBUG_PLAYER	(false)
 
 
-vector<Object*> Object::objects_;
-vector<Object*> Object::gameObjects_;
-vector<OBB*> Object::enemycubeCollisions_;
-vector<Sphere*> Object::playerCollision_;
+vector<Object*> Object::objects_ = {};
+vector<Object*> Object::gameObjects_ = {};
+vector<OBB*> Object::enemycubeCollisions_ = {};
+vector<Sphere*> Object::playerCollision_ = {};
+OBB* Object::enemyBurstCollision_ = nullptr;
 
 Object::Object()
 	: transform_{ D3DXVECTOR3(0,0,0),D3DXVECTOR3(1,1,1),D3DXVECTOR3(0,0,0) }
@@ -216,12 +218,37 @@ void Object::JudgementAll()
 						if (!cube->GetHit())
 						{
 							cube->Hit();
-							player->DecreaseLife(cube->GetAttackValue());
+							if (!player->GetInvincible())
+							{
+								player->DecreaseLife(cube->GetAttackValue());
+							}
 						}
+
 						ImGui::Begin("DEBUG COLLISION");
 						ImGui::Text("Hit Cube!!!");
 						ImGui::End();
 					}
+				}
+			}
+		}
+
+		for (size_t i = 0; i < playerCollision_.size(); i++)
+		{
+			if (enemyBurstCollision_->enable_)
+			{
+				if (isCollisionOBBtoSphere(*enemyBurstCollision_, *playerCollision_[i]))
+				{
+					//“G‚Ìî•ñŽæ“¾
+					EnemyHige* enemy = (EnemyHige*)enemyBurstCollision_->object_;
+					//ƒvƒŒƒCƒ„[î•ñŽæ“¾
+					Player* player = (Player*)playerCollision_[i]->object_;
+					if (!player->GetInvincible())
+					{
+						player->DecreaseLife(enemy->GetBurstParameter().dps / (float)GameFPS);
+					}
+					ImGui::Begin("DEBUG COLLISION");
+					ImGui::Text("Hit Burst!!!");
+					ImGui::End();
 				}
 			}
 		}

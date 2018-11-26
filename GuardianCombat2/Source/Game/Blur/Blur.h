@@ -19,10 +19,12 @@ public:
 	void SetUseBlur(bool flag);					//ブラーを使うかのセット
 	bool GetUseBlur();								//ブラーを使っているかの取得
 	void SetAlpha(int value);						//ブラーテクスチャのぼかし具合設定
+	void SetColor(int r,int g,int b);				//ブラー画面の色設定
 	void SetStrength(float value);				//ブラーの強さ設定
 private:
 	bool useBlur_ = false;							//現在ブラーを使っているのか
 	Texture* blurTex_ = nullptr;				//ブラーテクスチャ
 	int alpha_ = 150;									//ブラーテクスチャα
 	float strength_ = 1.0f;							//ブラーの強さ
+	size_t color_[3] = {255};						//ブラーの色
 };

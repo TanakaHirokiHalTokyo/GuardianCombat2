@@ -25,11 +25,13 @@ public:
 	{
 		Effect_Bullet,
 		Effect_Teleport,
+		Effect_Burst,
 		Effect_Max
 	};
 	const EffectFile fileName_[Effect_Max]{
-		L"resource/Effekseer/Bullet.efk",
+		L"resource/Effekseer/simple_bullet.efk",
 		L"resource/Effekseer/teleportation.efk",
+		L"resource/Effekseer/burstshot.efk",
 	};
 
 

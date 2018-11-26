@@ -19,9 +19,17 @@
 #include "Enemy_HigeAvater.h"
 
 const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0.0f,-8.0f);
+const float EnemyHige::BURSTX = 3.5f;
+const float EnemyHige::BURSTY = 3.5f;
+const float EnemyHige::BURSTZ = 8.5f;
 
 EnemyHige::EnemyHige()
 {
+	enemyType_ = ENEMY_HIGE;
+
+	normalAttackNum_ = 4;
+	specialAttackNum_ = 2;
+
 	//モデル作成
 	model_ = Object::Create<XModel>();
 	model_->SetModelType(XModel::XMODEL::MODEL_HIGE);
@@ -247,10 +255,13 @@ EnemyHige::STATE EnemyHige::GetState()
 
 void EnemyHige::SetState(STATE state)
 {
+	idleParameter_.idle__counter = 0;
 	state_ = state;		//状態設定
+	statePattern_->ChangeState();
 }
 void EnemyHige::FinishState()
 {
+	enemyBurstCollision_->enable_ = false;
 	state_ = IDLE;
 	statePattern_->ChangeState();
 }
@@ -294,6 +305,14 @@ void EnemyHige::SetSummonsParameter(EnemyHigeSummons::ENEMY_PARAMETER * paramete
 {
 	summonsParameter_ = *parameter;
 }
+EnemyHigeBurstShot::ENEMY_PARAMETER EnemyHige::GetBurstParameter()
+{
+	return burstParameter_;
+}
+void EnemyHige::SetBurstParameter(EnemyHigeBurstShot::ENEMY_PARAMETER* parameter)
+{
+	burstParameter_ = *parameter;
+}
 void EnemyHige::DrawDebug()
 {
 	static int listbox_item_current = 1;			//リストボックスの初期選択番号
@@ -316,17 +335,97 @@ void EnemyHige::DrawDebug()
 	reset_position = ImGui::Button("Reset Enemy Position");
 	//パラメータ初期化
 	reset_parameter = ImGui::Button("Reset Parameter");
+	//オートアタックをしてくるのか
+	ImGui::Checkbox("AutoAttack?",&autoAttack_);
+	//敵のライフセット
+	ImGui::SliderFloat("Enemy Life",&life_,0.0f,ENEMY_MAX_LIFE);
 	//今現在のSTATE名
 	ImGui::Text("STATE : %s",StateWord[state_]);
 	//次に設定するSTATE
 	changeState = ImGui::ListBox("listbox\n(single select)", &listbox_item_current, StateWord, IM_ARRAYSIZE(StateWord), 4);
 
-	//待機状態のパラメータ設定
-	if (ImGui::TreeNode("IDLE PARAMETER"))
+	if (ImGui::CollapsingHeader("ATTACK LUCK PARAMETER"))
 	{
-		ImGui::DragFloat("Speed Set", &idleParameter_.speed, 0.001f, 0.0f, 0.1f);			//スピード設定
-		ImGui::DragFloat("RotateAngle", &idleParameter_.rot_angle, 0.01f, 0.01f, 6.0f);		//回転スピード設定
-		ImGui::TreePop();
+		std::array<double, 5> normal = idleParameter_.normalAttackLuck;
+		if (ImGui::InputDouble("1 : NormalAttackLuck", &normal[0]))
+		{
+			if (normal[0] >= 0.0 && normal[0] <= 1.0) { idleParameter_.normalAttackLuck[0] = normal[0]; }
+		}
+		if (ImGui::InputDouble("2 : NormalAttackLuck", &normal[1]))
+		{
+			if (normal[1] >= 0.0 && normal[1] <= 1.0) { idleParameter_.normalAttackLuck[1] = normal[1]; }
+		}
+		if (ImGui::InputDouble("3 : NormalAttackLuck", &normal[2]))
+		{
+			if (normal[2] >= 0.0 && normal[2] <= 1.0) { idleParameter_.normalAttackLuck[2] = normal[2]; }
+		}
+		if (ImGui::InputDouble("4 : NormalAttackLuck", &normal[3]))
+		{
+			if (normal[3] >= 0.0 && normal[3] <= 1.0) { idleParameter_.normalAttackLuck[3] = normal[3]; }
+		}
+		if (ImGui::InputDouble("5 : NormalAttackLuck", &normal[4]))
+		{
+			if (normal[4] >= 0.0 && normal[4] <= 1.0) { idleParameter_.normalAttackLuck[4] = normal[4]; }
+		}
+		for (size_t i = 0; i < idleParameter_.specialAttackLuck.size(); i++)
+		{
+			idleParameter_.specialAttackLuck[i] = 1.0 - idleParameter_.normalAttackLuck[i];
+		}
+	}
+	if (ImGui::CollapsingHeader("HP RATIO PARAMETER"))
+	{
+		//敵の状態変化させるHPの割合設定
+		std::array<float, 4> value;
+
+		value = idleParameter_.hp_ratio_;
+		if (ImGui::InputFloat("1 : Hp ratio", &value[0]))
+		{
+			if (value[0] > idleParameter_.hp_ratio_[1] && value[0] <= 1.0f) { idleParameter_.hp_ratio_[0] = value[0]; }
+		}
+		if (ImGui::InputFloat("2 : Hp ratio", &value[1]))
+		{
+			if (value[1] > idleParameter_.hp_ratio_[2] && value[1] < idleParameter_.hp_ratio_[0]) { idleParameter_.hp_ratio_[1] = value[1]; }
+		}
+		if (ImGui::InputFloat("3 : Hp ratio", &value[2]))
+		{
+			if (value[2] > idleParameter_.hp_ratio_[3] && value[2] < idleParameter_.hp_ratio_[1]) { idleParameter_.hp_ratio_[2] = value[2]; }
+		}
+		if (ImGui::InputFloat("4 : Hp ratio", &value[3]))
+		{
+			if (value[3] < idleParameter_.hp_ratio_[2] && value[3] >= 0.0f) { idleParameter_.hp_ratio_[3] = value[3]; }
+		}
+	}
+	if (ImGui::CollapsingHeader("IDLE"))
+	{
+		//待機状態のパラメータ設定
+		if (ImGui::TreeNode("IDLE PARAMETER"))
+		{
+			ImGui::DragFloat("Speed Set", &idleParameter_.speed, 0.001f, 0.0f, 0.1f);			//スピード設定
+			ImGui::DragFloat("RotateAngle", &idleParameter_.rot_angle, 0.01f, 0.01f, 6.0f);		//回転スピード設定
+			std::array<int, 5> count;
+			count = idleParameter_.count;
+			if (ImGui::InputInt("1 : Idle Count", &count[0]))
+			{
+				if (count[0] >= 0) { idleParameter_.count[0] = count[0]; }
+			}
+			if (ImGui::InputInt("2 : Idle Count", &count[1]))
+			{
+				if (count[1] >= 0) { idleParameter_.count[1] = count[1]; }
+			}
+			if (ImGui::InputInt("3 : Idle Count", &count[2]))
+			{
+				if (count[2] >= 0) { idleParameter_.count[2] = count[2]; }
+			}
+			if (ImGui::InputInt("4 : Idle Count", &count[3]))
+			{
+				if (count[3] >= 0) { idleParameter_.count[3] = count[3]; }
+			}
+			if (ImGui::InputInt("5 : Idle Count", &count[4]))
+			{
+				if (count[4] >= 0) { idleParameter_.count[4] = count[4]; }
+			}
+			ImGui::TreePop();
+		}
 	}
 	//通常攻撃パラメータ設定
 	if (ImGui::CollapsingHeader("NORMAL ATTACK"))
@@ -517,6 +616,9 @@ void EnemyHige::DrawDebug()
 				ImGui::TreePop();
 			}
 		}
+	}
+	if (ImGui::CollapsingHeader("SPECIAL ATTACK"))
+	{
 		//=====================================================================================================
 		//			SummonsAvater
 		//=====================================================================================================
@@ -525,9 +627,20 @@ void EnemyHige::DrawDebug()
 
 			if (ImGui::TreeNode("SUMMONS PARAMETER"))
 			{
-				change_summon_num = ImGui::SliderInt("Summon Avater Num",&summonsParameter_.summons_num,0,summonsParameter_.summons_max);
-				ImGui::DragFloat("Trans Length",&summonsParameter_.trans_length,0.01f,0.0f,7.0f);
-				ImGui::DragFloat("Trans Speed",&moveSpeedToPoint_,0.01f,0.01f,summonsParameter_.trans_length);
+				if (ImGui::Button("Destroy All Avater"))
+				{
+					for (size_t i = 0; i < summonsParameter_.summons_max; i++)
+					{
+						summonsParameter_.avater_alive = 0;
+						summonsParameter_.avater[i].Init();
+						summonsParameter_.avater[i].SetVisible(false);
+						summonsParameter_.avater[i].GetCube()->GetCollision()->enable_ = false;
+					}
+				}
+				change_summon_num = ImGui::SliderInt("Summon Avater Num", &summonsParameter_.summons_num, 0, summonsParameter_.summons_max);
+				ImGui::DragFloat("Trans Length", &summonsParameter_.trans_length, 0.01f, 0.0f, 7.0f);
+				ImGui::DragFloat("Trans Speed", &moveSpeedToPoint_, 0.01f, 0.01f, summonsParameter_.trans_length);
+				ImGui::SliderFloat("Cube Size",&summonsParameter_.cube_size,0.0f,3.0f);
 				ImGui::TreePop();
 			}
 			if (change_summon_num)
@@ -542,6 +655,18 @@ void EnemyHige::DrawDebug()
 				}
 			}
 		}
+		//=====================================================================================================
+		//			BurstShot
+		//=====================================================================================================
+		{
+			if (ImGui::TreeNode("BURSTSHOT PARAMETER"))
+			{
+				ImGui::DragFloat("Burstshot Size", &burstParameter_.effect_size, 0.01f, 0.1f, 3.0f);
+				ImGui::DragFloat("DamagePerSecond", &burstParameter_.dps, 0.1f, 0.0f, 100.0f);
+				ImGui::TreePop();
+			}
+		}
+
 	}
 	//Imugui終了
 	ImGui::End();
@@ -591,6 +716,11 @@ void EnemyHige::DrawDebug()
 
 void EnemyHige::InitParameter()
 {
+	for (size_t i = 0; i < idleParameter_.specialAttackLuck.size(); i++)
+	{
+		idleParameter_.specialAttackLuck[i] = 1.0 - idleParameter_.normalAttackLuck[i];
+	}
+
 	//==========================================================
 	//			波状攻撃　初期化
 	//==========================================================
@@ -600,6 +730,8 @@ void EnemyHige::InitParameter()
 	circleShotParameter_.vec = new ParameterVector[circleShotParameter_.CUBE_NUM];
 	//波状攻撃のエフェクト作成
 	circleShotParameter_.effect = new AdditionEffect[circleShotParameter_.CUBE_NUM];
+
+	InitCircleParameterValue();
 
 	//==========================================================
 	//			ホーミング初期化
@@ -621,10 +753,13 @@ void EnemyHige::InitParameter()
 	//エフェクト作成
 	hormingParameter_.effect = new AdditionEffect[hormingParameter_.CUBE_NUM];
 
+	InitHormingParameterValue();
+
 	//=========================================================
 	//			テレポート初期化
 	//=========================================================
 	teleportationParameter_.effect = new CEffekseer(CEffekseer::Effect_Teleport);
+	InitTeleportParameterValue();
 
 	//=========================================================
 	//			分身召喚の初期化
@@ -632,11 +767,21 @@ void EnemyHige::InitParameter()
 	summonsParameter_.avater = new EnemyHige_Avater[summonsParameter_.summons_max];
 	for (size_t i = 0; i < summonsParameter_.summons_max; i++)
 	{
+		summonsParameter_.avater[i].SetParent(this);
 		summonsParameter_.avater[i].Init();
 		summonsParameter_.avater[i].SetVisible(false);
 		summonsParameter_.trans_length = 3.0f;
 		summonsParameter_.trans_speed = 0.1f;
+
 	}
+	InitSummonsParameterValue();
+	//=========================================================
+	//			バーストショット初期化
+	//=========================================================
+	burstParameter_.effect = new CEffekseer(CEffekseer::Effect_Burst);
+	burstParameter_.collision = new OBB();
+	enemyBurstCollision_ = burstParameter_.collision;
+	InitBurstShotParameterValue();
 }
 
 void EnemyHige::ReCreateCircleParameter()
@@ -716,6 +861,7 @@ void EnemyHige::InitHormingParameterValue()
 }
 void EnemyHige::InitTeleportParameterValue()
 {
+	
 	teleportationParameter_.distance = 1.0f;
 	teleportationParameter_.effect->Init();
 	teleportationParameter_.effect->RepeatEffect(false);
@@ -732,6 +878,21 @@ void EnemyHige::InitSummonsParameterValue()
 		summonsParameter_.trans_length = 3.0f;
 		summonsParameter_.trans_speed = 0.1f;
 	}
+}
+void EnemyHige::InitBurstShotParameterValue()
+{
+	burstParameter_.effect->Init();
+	burstParameter_.effect->SetVisible(false);
+
+	burstParameter_.collision->enable_ = false;
+	burstParameter_.collision->m_fLength[0] = BURSTX;
+	burstParameter_.collision->m_fLength[1] = BURSTY;
+	burstParameter_.collision->m_fLength[2] = BURSTZ;
+	burstParameter_.collision->m_NormaDirect[0] = D3DXVECTOR3(1.0f,0.0f,0.0f);
+	burstParameter_.collision->m_NormaDirect[1] = D3DXVECTOR3(0.0f,1.0f,0.0f);
+	burstParameter_.collision->m_NormaDirect[2] = D3DXVECTOR3(0.0f,0.0f,1.0f);
+	burstParameter_.collision->object_ = this;
+	burstParameter_.collision->m_Pos = GetPosition();
 }
 void EnemyHige::DestParameter()
 {
@@ -786,5 +947,14 @@ void EnemyHige::DestParameter()
 	if (summonsParameter_.avater)
 	{
 		SAFE_DELETE_ARRAY(summonsParameter_.avater);
+	}
+	if (burstParameter_.effect)
+	{
+		burstParameter_.effect->Uninit();
+		SAFE_DELETE(burstParameter_.effect);
+	}
+	if (burstParameter_.collision)
+	{
+		SAFE_DELETE(burstParameter_.collision);
 	}
 }

@@ -2,7 +2,11 @@
 #include "../StateEnemy/StateEnemy.h"
 #include "../StateEnemy/StateEnemy_MoveToPlayer.h"
 #include "../StateEnemy/StateEnemy_SlowlyRotate.h"
-
+#include "../Enemy_Hige.h"
+#include "../Enemy.h"
+#include <stdio.h>
+#include <stdlib.h> 
+#include <time.h>  
 StateAction_Idle::StateAction_Idle(Enemy* enemy)
 {
 	SetEnemy(enemy);
@@ -26,8 +30,69 @@ StateAction_Idle::~StateAction_Idle()
 
 void StateAction_Idle::Action()
 {
+	//ParameteréÊìæ
+	EnemyIdle::ENEMY_PARAMETER parameter = enemy_->GetIdleParameter();
+	if (enemy_->GetAutoAttack())
+	{
+		
+		float rate = enemy_->GetLife() / ENEMY_MAX_LIFE;
+		size_t i = 0;
+		for (i = 0; i < parameter.hp_ratio_.size() + 1; i++)
+		{
+			if (i == parameter.hp_ratio_.size())break;
+			if (rate >= parameter.hp_ratio_[i])
+			{
+				break;
+			}
+		}
+		parameter.idle__counter++;
+		if (parameter.idle__counter >= parameter.count[i])
+		{
+			double probability = parameter.normalAttackLuck[i];
+
+			if ((double)rand() / RAND_MAX < probability) {
+				//í èÌçUåÇÇÃèÍçá
+				int number = rand() % enemy_->GetNormalAttackNum() + 1;
+
+				if (enemy_->GetEnemyType() == Enemy::ENEMY_HIGE)
+				{
+					EnemyHige* enemy = (EnemyHige*)enemy_;
+					enemy->SetState((EnemyHige::STATE)number);
+					return;
+				}
+			}
+			else
+			{
+				if (enemy_->GetEnemyType() == Enemy::ENEMY_HIGE)
+				{
+					//ì¡éÍçUåÇÇÃèÍçá
+					int number = rand() % enemy_->GetSpecialAttackNum();
+
+					EnemyHige* enemy = (EnemyHige*)enemy_;
+					if (!enemy->GetSummonsParameter().avater_alive > 0)
+					{
+						number = enemy->GetNormalAttackNum() + number + 1;
+						enemy->SetState((EnemyHige::STATE)number);
+					}
+					else
+					{
+						//ì¡éÍçUåÇÇÃèÍçá
+						int number = rand() % (enemy_->GetSpecialAttackNum() - 1);
+						number = enemy->GetNormalAttackNum() + number + 1;
+						enemy->SetState((EnemyHige::STATE)number);
+					}
+					return;
+				}
+			}
+			
+		}
+	}
+	enemy_->SetIdleParameter(&parameter);
+
 	move_->Act(enemy_);				//ìÆÇ´Çêßå‰
 	rotate_->Act(enemy_);			//âÒì]êßå‰
+
+	
 }
 
 void StateAction_Idle::BeginDisplay()

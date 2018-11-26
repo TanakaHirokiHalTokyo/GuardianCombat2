@@ -41,7 +41,7 @@ void Blur::EndDraw()
 		blurTex_->SetTexture(blurtexture, ScreenWidth * strength_, ScreenHeight * strength_);
 		blurTex_->SetDrawSize(ScreenWidth * strength_, ScreenHeight * strength_);
 		blurTex_->SetTexcoordSize(ScreenWidth * strength_, ScreenHeight * strength_);
-		blurTex_->SetColor(D3DCOLOR_RGBA(255, 255, 255, alpha_));
+		blurTex_->SetColor(D3DCOLOR_RGBA(color_[0], color_[1], color_[2], alpha_));
 		blurTex_->Draw();
 
 		LPDIRECT3DSURFACE9 backbuffer = CRendererDirectX::GetBackBuffer();
@@ -52,7 +52,7 @@ void Blur::EndDraw()
 		blurTex_->SetTexture(blurtexture1, ScreenWidth, ScreenHeight);
 		blurTex_->SetDrawSize(ScreenWidth, ScreenHeight);
 		blurTex_->SetTexcoordSize(ScreenWidth, ScreenHeight);
-		blurTex_->SetColor(D3DCOLOR_RGBA(255, 255, 255, 255));
+		blurTex_->SetColor(D3DCOLOR_RGBA(color_[0], color_[1], color_[2], 255));
 		blurTex_->Draw();
 
 		CRendererDirectX::ReplaceBlur();
@@ -75,6 +75,13 @@ void Blur::SetAlpha(int value)
 	{
 		alpha_ = value;
 	}
+}
+
+void Blur::SetColor(int r, int g, int b)
+{
+	if (r >= 0 && r >= 255){	color_[0] = r;	}
+	if (g >= 0 && g >= 255) { color_[1] = g; }
+	if (b >= 0 && b >= 255) { color_[2] = b; }
 }
 
 void Blur::SetStrength(float value)

@@ -7,6 +7,7 @@
 #include "../StateAction/StateAction_Horming.h"
 #include "../StateAction/StateAction_Teleportation.h"
 #include "../StateAction/StateAction_Summons.h"
+#include "../StateAction/StateAction_Burst.h"
 #include "../Enemy_HigeAvater.h"
 #include "../Enemy_Hige.h"
 
@@ -85,7 +86,9 @@ void StatePattern_EnemyHige::ChangeState()
 		enemy_->SetSummonsParameter(&parameter);
 		break;
 	}
-	
+	case EnemyHige::STATE::BURSTSHOT:
+		action_ = new StateAction_Burst(enemy_);
+		break;
 	default:
 		action_ = new StateAction_Idle(enemy_);			//‘Ò‹@ó‘Ôì¬
 		break;

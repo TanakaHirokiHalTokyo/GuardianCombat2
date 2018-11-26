@@ -8,6 +8,8 @@
 #include "../../Vector3/Vector3.h"
 #include "../GameManager/GameManager.h"
 #include "../../Game/Player/Player.h"
+#include "../Cube/Cube.h"
+#include "StateEnemy\StateEnemyAvater_Attack.h"
 
 EnemyHige_Avater::EnemyHige_Avater()
 {
@@ -32,6 +34,11 @@ EnemyHige_Avater::EnemyHige_Avater()
 
 	//回転制御作成
 	rotate_ = new StateEnemy_Rotate();
+	attack_ = new StateEnemyAvater_Attack();
+
+	//キューブ作成
+	cube_ = Object::Create<Cube>();
+
 }
 
 EnemyHige_Avater::~EnemyHige_Avater()
@@ -40,6 +47,16 @@ EnemyHige_Avater::~EnemyHige_Avater()
 	{
 		delete rotate_;
 		rotate_ = nullptr;
+	}
+	if (vector_)
+	{
+		delete vector_;
+		vector_ = nullptr;
+	}
+	if (attack_)
+	{
+		delete attack_;
+		attack_ = nullptr;
 	}
 }
 
@@ -53,6 +70,11 @@ void EnemyHige_Avater::Init()
 	
 	//進んだ距離リセット
 	distance_ = 0.0f;
+
+	//キューブ情報初期化
+	cube_->SetPosition(GetPosition());
+	cube_->SetRotation(GetRotate());
+	cube_->SetVisible(false);
 }
 
 void EnemyHige_Avater::Uninit()
@@ -63,7 +85,10 @@ void EnemyHige_Avater::Update()
 {
 	if (GetVisible())
 	{
+		cube_->SetScale(parent_->GetSummonsParameter().cube_size, parent_->GetSummonsParameter().cube_size, parent_->GetSummonsParameter().cube_size);
+
 		rotate_->Act(this);
+		attack_->Action(this);
 	}
 }
 
@@ -91,6 +116,7 @@ void EnemyHige_Avater::BeginDraw()
 		SetWorld(&world_);
 
 		rotate_->BeginDisplay(this);
+		attack_->BeginDisplay(this);
 
 		//シェーダー処理
 		if (model_->GetUseShader())
@@ -125,6 +151,7 @@ void EnemyHige_Avater::Draw()
 			model_->Draw(effect, 0);
 		}
 		rotate_->Display(this);
+		attack_->Display(this);
 	}
 	
 }
@@ -134,6 +161,7 @@ void EnemyHige_Avater::EndDraw()
 	if (GetVisible())
 	{
 		rotate_->EndDisplay(this);
+		attack_->EndDisplay(this);
 	}
 }
 
@@ -150,4 +178,14 @@ void EnemyHige_Avater::SetSpawnVector(float x, float y, float z)
 D3DXVECTOR3 EnemyHige_Avater::GetSpawnVector()
 {
 	return spawnVec_;
+}
+
+Cube * EnemyHige_Avater::GetCube()
+{
+	return cube_;
+}
+
+void EnemyHige_Avater::SetParent(EnemyHige * hige)
+{
+	parent_ = hige;
 }

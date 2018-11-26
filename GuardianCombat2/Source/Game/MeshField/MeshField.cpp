@@ -44,6 +44,8 @@ MeshField::MeshField()
 	{
 		wall_[i] = Object::Create<XModel>();
 		wall_[i]->SetModelType(XModel::MODEL_WALL);
+		
+		
 	}
 }
 MeshField::~MeshField()
@@ -166,6 +168,8 @@ void MeshField::Init()
 	for (size_t i = 0; i < 4; i++)
 	{
 		wall_[i]->SetScale(FIELD_SIZE * 1.1f,1.0f,0.1f);
+		//wall_[i]->LoadNormalmapTexture("resource/Xmodel/wall_Material.001_Normal.png");
+		//wall_[i]->AddTangentSpace();
 	}
 
 }

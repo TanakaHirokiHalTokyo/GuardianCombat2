@@ -47,6 +47,7 @@ public:
 	OBB* AddCollision();
 	float GetAttackValue();
 	bool GetHit();
+	void SetHit(bool flag);
 	void Hit();
 private:
 	const float ATTACK_VALUE = 10.0f;

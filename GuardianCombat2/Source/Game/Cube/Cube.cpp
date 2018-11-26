@@ -161,7 +161,13 @@ void Cube::Uninit()
 }
 void Cube::Update()
 {
-	
+	//コリジョンスケール値更新
+	collision_->m_fLength[0] = GetScale().x;
+	collision_->m_fLength[1] = GetScale().y;
+	collision_->m_fLength[2] = GetScale().z;
+
+	//コリジョン位置更新
+	collision_->m_Pos = GetPosition();
 }
 void Cube::BeginDraw()
 {
@@ -393,6 +399,11 @@ float Cube::GetAttackValue()
 bool Cube::GetHit()
 {
 	return isHit;
+}
+
+void Cube::SetHit(bool flag)
+{
+	isHit = flag;
 }
 
 void Cube::Hit()

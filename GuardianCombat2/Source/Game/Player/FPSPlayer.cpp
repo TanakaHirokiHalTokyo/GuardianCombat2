@@ -10,6 +10,7 @@
 #include "../../Collision/Collision.h"
 #include "PlayerLifeBar.h"
 #include "../MeshField/MeshField.h"
+#include "../../main.h"
 
 FPSPlayer::FPSPlayer()
 {
@@ -59,7 +60,8 @@ void FPSPlayer::Init()
 	SetScale(1.0f, 1.0f, 1.0f);
 
 	collision_->pos = GetPosition();
-	collision_->rad = 0.01f;
+	collision_->rad = 0.1f;
+	collision_->pos.y += collision_->rad / 2.0f;
 
 	//プレイヤーUI初期化
 	playerUI_->Init();
@@ -119,6 +121,10 @@ void FPSPlayer::Draw()
 {
 	//プレイヤーUI描画
 	playerUI_->Draw();
+
+	ImGui::Begin("Player Debug Info");
+	ImGui::Checkbox("Player Invincible", &invincible_);
+	ImGui::End();
 }
 
 void FPSPlayer::EndDraw()
