@@ -9,6 +9,8 @@
 #define _3DPOLYGON_H_
 
 #include "../Object.h"
+#include <iostream>
+#include <fstream>
 class OBB;
 //=================================================================================
 //		define
@@ -41,24 +43,26 @@ public:
 	void Draw(LPD3DXEFFECT effect, UINT pass);
 	void EndDraw()override;
 
-	OBB* GetCollision();
-	void SetCollision(OBB* collision);
+	OBB* GetCollision();								//コリジョン取得
+	void SetCollision(OBB* collision);			//コリジョン設定
 
-	OBB* AddCollision();
-	float GetAttackValue();
-	bool GetHit();
-	void SetHit(bool flag);
-	void Hit();
+	OBB* AddCollision();								//コリジョン追加
+	float GetAttackValue();							//攻撃力取得
+	bool GetHit();											//すでに当たっているのかを取得
+	void SetHit(bool flag);								//当たった判定設定
+	void Hit();												//当たった時に呼び出し
+	void SaveParameter(const std::string filename);		//メンバ変数ファイルかき出し
+	void LoadParameter(const std::string filename);		//変数ファイルに書き出したデータ読み込み
 private:
-	const float ATTACK_VALUE = 10.0f;
+	const float ATTACK_VALUE = 10.0f;				//基本攻撃力
 
-	LPDIRECT3DTEXTURE9			pTexture_;
-	LPDIRECT3DVERTEXBUFFER9		pVertexBuffer_ = NULL;
-	LPDIRECT3DINDEXBUFFER9		pIndexBuffer_ = NULL;
-	D3DMATERIAL9				mat_;
-	OBB* collision_ = nullptr;
-	float attack_ = ATTACK_VALUE;
-	bool isHit = false;
+	LPDIRECT3DTEXTURE9			pTexture_ = nullptr;									//テクスチャポインタ
+	LPDIRECT3DVERTEXBUFFER9		pVertexBuffer_ = NULL;					//頂点バッファ
+	LPDIRECT3DINDEXBUFFER9		pIndexBuffer_ = NULL;					//インデックスバッファ
+	D3DMATERIAL9				mat_ = {};														//マテリアル情報
+	OBB* collision_ = nullptr;																		//コリジョン
+	float attack_ = ATTACK_VALUE;															//攻撃力
+	bool isHit = false;																					//すでに当たったか
 };
 
 

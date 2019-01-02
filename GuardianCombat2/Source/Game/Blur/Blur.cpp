@@ -79,9 +79,9 @@ void Blur::SetAlpha(int value)
 
 void Blur::SetColor(int r, int g, int b)
 {
-	if (r >= 0 && r >= 255){	color_[0] = r;	}
-	if (g >= 0 && g >= 255) { color_[1] = g; }
-	if (b >= 0 && b >= 255) { color_[2] = b; }
+	if (r >= 0 &&  r <= 255){	color_[0] = r;	}
+	if (g >= 0 && g <= 255) { color_[1] = g; }
+	if (b >= 0 && b <= 255) { color_[2] = b; }
 }
 
 void Blur::SetStrength(float value)

@@ -4,7 +4,6 @@
 class SceneSkinMesh;
 class Vector3;
 class Camera;
-class PlayerLifeBar;
 
 const float PLAYER_DEFAULT_SPEED = 0.005f;
 const float PLAYER_DEFAULT_LIFE = 100.0f;
@@ -34,14 +33,14 @@ public:
 	float GetLife();															//Life取得
 	void DecreaseLife(float value);								//Life減算
 
-	inline bool GetInvincible() { return invincible_; }
+	inline void SetInvincible(bool flag) { invincible_ = flag; }		//無敵状態設定
+	inline bool GetInvincible() { return invincible_; }					//無敵状態取得
 protected:
 	bool invincible_ = false;											//無敵
 	Camera* camera_ = nullptr;									//カメラ情報
 	SceneSkinMesh* animModel_ = nullptr;				//アニメーション付きモデル
 	float speed_ = PLAYER_DEFAULT_SPEED;			//プレイヤースピード
 	float life_ = PLAYER_DEFAULT_LIFE;					//プレイヤー体力
-	PlayerLifeBar* lifeBar_ = nullptr;							//ライフバーポインタ
 	Vector3* vector_ = nullptr;										//プレイヤーベクトル
 	bool onLand_ = true;												//地面に乗っているか
 };

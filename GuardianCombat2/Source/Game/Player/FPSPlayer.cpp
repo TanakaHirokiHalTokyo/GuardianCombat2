@@ -8,25 +8,29 @@
 #include "Weapon\Weapon_Shotgun.h"
 #include "UI\FPSPlayer_UI.h"
 #include "../../Collision/Collision.h"
-#include "PlayerLifeBar.h"
 #include "../MeshField/MeshField.h"
+#include "UI\FPSPlayer_UI.h"
 #include "../../main.h"
 
 FPSPlayer::FPSPlayer()
 {
-	//ベクトル格納先作成
-	vector_ = new Vector3();
-
-	//移動制御作成
-	movement_ = new FPSPlayerMovement();
-
 	//カメラ作成
 	camera_ = Object::Create<FPSCamera>();
 	FPSCamera*  FpsCamera = (FPSCamera*)camera_;
 	FpsCamera->SetPlayer(this);
 
+	//ベクトル格納先作成
+	vector_ = new Vector3();
+	vector_->SetFront(camera_->GetFront());
+	vector_->SetRight(camera_->GetRight());
+	vector_->SetUp(camera_->GetUp());
+
+	//移動制御作成
+	movement_ = new FPSPlayerMovement();
+
 	//武器作成
-	shotgun_ = Object::Create<Weapon_Shotgun>();
+	shotgun_ = new Weapon_Shotgun();
+	shotgun_->Init();
 	shotgun_->SetPlayer(this);
 
 	//UI作成
@@ -36,9 +40,6 @@ FPSPlayer::FPSPlayer()
 	//コリジョン作成
 	collision_ = AddCollision();
 	collision_->object_ = this;
-
-	//ライフバー作成
-	lifeBar_ = Object::Create<PlayerLifeBar>(this);
 }
 
 FPSPlayer::~FPSPlayer()
@@ -51,10 +52,19 @@ FPSPlayer::~FPSPlayer()
 
 	//UI破棄
 	delete playerUI_;
+
+	if (shotgun_)
+	{
+		shotgun_->Uninit();
+		delete shotgun_;
+		shotgun_ = nullptr;
+	}
 }
 
 void FPSPlayer::Init()
 {
+	life_ = 100.0f;
+
 	SetPosition(0.1f,0.0f, 8.0f);
 	SetRotation(0.0f,0.0f,0.0f);
 	SetScale(1.0f, 1.0f, 1.0f);
@@ -65,16 +75,28 @@ void FPSPlayer::Init()
 
 	//プレイヤーUI初期化
 	playerUI_->Init();
+
+	shotgun_->Init();
 }
 
 void FPSPlayer::Uninit()
 {
 	//プレイヤーUI終了処理
 	playerUI_->Uninit();
+
+	shotgun_->Uninit();
 }
 
 void FPSPlayer::Update()
 {
+	if (life_ <= 0.0f)
+	{
+		GameManager::GameOver(true);
+		return;
+	}
+
+	shotgun_->Update();
+
 	//移動処理更新
 	movement_->Act(this);
 
@@ -96,6 +118,8 @@ void FPSPlayer::Update()
 		else { SetPositionZ(-FIELD_SIZE); }
 	}
 
+	
+
 	//CollisionUpdate
 	collision_->pos = GetPosition();
 	collision_->pos.y = GetPosition().y + collision_->rad;
@@ -112,6 +136,8 @@ void FPSPlayer::BeginDraw()
 	world_ *= mtxRotate;
 	world_ *= mtxTrans;
 
+	shotgun_->BeginDraw();
+
 	ImGui::Begin("Player Position");
 	ImGui::Text("Position %f %f %f", GetPosition().x, GetPosition().y, GetPosition().z);
 	ImGui::End();
@@ -122,6 +148,8 @@ void FPSPlayer::Draw()
 	//プレイヤーUI描画
 	playerUI_->Draw();
 
+	shotgun_->Draw();
+
 	ImGui::Begin("Player Debug Info");
 	ImGui::Checkbox("Player Invincible", &invincible_);
 	ImGui::End();
@@ -129,7 +157,7 @@ void FPSPlayer::Draw()
 
 void FPSPlayer::EndDraw()
 {
-
+	shotgun_->EndDraw();
 }
 
 Weapon * FPSPlayer::GetWeapon()

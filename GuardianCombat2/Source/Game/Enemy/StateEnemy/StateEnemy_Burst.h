@@ -15,6 +15,6 @@ public:
 	void Display(EnemyHige* enemy)override;
 	void EndDisplay(EnemyHige* enemy)override;
 private:
-	int count_ = 0;
-	bool init_ = false;
+	int count_ = 0;					//カウンタ
+	bool init_ = false;			//初期化フラグ
 };

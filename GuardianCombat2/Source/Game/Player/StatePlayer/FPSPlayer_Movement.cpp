@@ -40,23 +40,26 @@ void FPSPlayerMovement::Act(FPSPlayer* player)
 
 	transvector_ = D3DXVECTOR3(0,0,0);
 
+	float controllerLX = (float)X_CONTROLLER::GetXcontrollerLStickX(1);
+	float controllerLY = (float)X_CONTROLLER::GetXcontrollerLStickY(1);
+
 	//‘O•ûŒüˆÚ“®
-	if (GetKeyboardPress(DIK_W))
+	if (GetKeyboardPress(DIK_W) || controllerLY > 0)
 	{
 		transvector_ += player_front;
 	}
 	//Œã‚ë•ûŒüˆÚ“®
-	if (GetKeyboardPress(DIK_S))
+	if (GetKeyboardPress(DIK_S) || controllerLY < 0)
 	{
 		transvector_ += player_front * -1.0f;
 	}
 	//‰E•ûŒüˆÚ“®
-	if (GetKeyboardPress(DIK_D))
+	if (GetKeyboardPress(DIK_D) || controllerLX > 0)
 	{
 		transvector_ += player_right;
 	}
 	//¶•ûŒüˆÚ“®
-	if (GetKeyboardPress(DIK_A))
+	if (GetKeyboardPress(DIK_A) || controllerLX < 0)
 	{
 		transvector_ += player_right * -1.0f;
 	}

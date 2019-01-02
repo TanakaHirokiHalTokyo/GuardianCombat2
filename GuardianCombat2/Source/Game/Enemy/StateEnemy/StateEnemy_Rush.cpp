@@ -12,7 +12,9 @@ void StateEnemy_Rush::Act(EnemyHige * enemy)
 	EnemyHigeRush::ENEMY_PARAMETER parameter = enemy->GetRushParameter();
 
 	const auto& vector = enemy->GetVector();
-	
+	enemy->SetCollisionEnable(true);
+	enemy->SetCollisionDPS(parameter.attack);
+
 	//座標更新
 	enemy->SetPosition(enemy->GetPosition() + vector->GetFront() * parameter.speed);
 
@@ -22,6 +24,8 @@ void StateEnemy_Rush::Act(EnemyHige * enemy)
 	//設定した距離分突進したら突進終了
 	if (rushLength_ > parameter.length)
 	{
+		enemy->SetCollisionEnable(false);
+		enemy->SetCollisionDPS(0.0f);
 		//行動終了　IDLE状態に
 		enemy->FinishState();
 	}
@@ -33,11 +37,7 @@ void StateEnemy_Rush::BeginDisplay(EnemyHige * enemy)
 
 void StateEnemy_Rush::Display(EnemyHige * enemy)
 {
-	//デバッグモード時
-	if (enemy->GetDebugMode())
-	{
-		
-	}
+
 }
 
 void StateEnemy_Rush::EndDisplay(EnemyHige * enemy)

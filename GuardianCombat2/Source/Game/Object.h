@@ -63,8 +63,6 @@ public:
 	static void DrawAll();
 	static void EndDrawAll();
 	static void ReleaseAll();
-	static void GameObjectReleaseAll();
-
 
 	void Release();
 
@@ -143,30 +141,20 @@ public:
 	template<class _Object, class ... Args>
 	static _Object* Create(Args ... args)
 	{
-		Scene* scene = GameManager::GetScene();
-
-		if(GameManager::GetSceneTag() == "GameScene")
-		{	//ゲームシーンだった場合
-			_Object* obj = new _Object(args ...);
-			obj->Init();
-			gameObjects_.emplace_back(obj);
-			return obj;
-		}
-		else
-		{	//ゲームシーンではない場合
-			_Object* obj = new _Object(args ...);
-			obj->Init();
-			objects_.emplace_back(obj);
-			return obj;
-		}
+		_Object* obj = new _Object(args ...);
+		obj->Init();
+		objects_.emplace_back(obj);
+		return obj;
 	}
 
 protected:
-	static vector<Object*> gameObjects_;							//ゲームシーンオブジェクト動的配列（ゲーム終了時に解放処理　Load時間削減）
-	static vector<Object*> objects_;								//動的配列
+	static vector<Object*> objects_;									//動的配列
+	static vector<Sphere*> enemyCollisions_;					//敵の当たり判定
+	static vector<Sphere*> enemyAvaterCollisions_;			//敵の分身の当たり判定
 	static vector<OBB*> enemycubeCollisions_;					//ホーミング弾のコリジョン
 	static vector<Sphere*> playerCollision_;						//プレイヤーのコリジョン
-	static OBB* enemyBurstCollision_;									//バーストショットの当たり判定				
+	static OBB* enemyBurstCollision_;									//バーストショットの当たり判定
+	static vector<Sphere*> playerBulletCollisions_;			//プレイヤーの弾のコリジョン
 
 	bool exist_ = true;												//存在しているか falseになったら消される。
 	bool visible_ = true;											//可視状態にするか

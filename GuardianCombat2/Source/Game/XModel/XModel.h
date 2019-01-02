@@ -20,6 +20,7 @@ struct XFILENAME
 const XFILENAME g_aXFileName[] =
 {
 	{ "resource/Xmodel/dome303.X" },
+	{ "resource/Xmodel/dome336.X" },
 	{ "resource/Xmodel/youkai_hige.x" },
 	{ "resource/Xmodel/shotgun.x" },
 	{ "resource/Xmodel/Ring.x" },
@@ -33,7 +34,8 @@ class XModel :public Object
 public:
 	enum XMODEL
 	{
-		MODEL_DOME303,
+		MODEL_DOME303,						//ê∞ìVÇÃãÛ
+		MODEL_DOME336,						//ó[ïÈÇÍ
 		MODEL_HIGE,
 		MODEL_SHOTGUN,
 		MODEL_RING,

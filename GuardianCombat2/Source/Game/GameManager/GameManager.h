@@ -25,8 +25,9 @@ public:
 	static DirectionalLight* GetDirectionalLight();							//ディレクショナルライト取得
 	static void SetSceneTag(std::string sceneTag);							//シーンタグ設定
 	static std::string GetSceneTag();												//シーンタグを取得
-	static void SetGameObjectLoad(bool loaded);							//GameObjectをすでに読み込んでいるのかを設定。
-	static bool GetGameObjectLoad();												//GameObjectをすでに読み込んでいるのかを取得。
+
+	static void GameOver(bool flag);												//ゲームが終了したとき
+	static inline bool GetGameOver() { return gameOver_; }			//ゲームオーバーしたか
 
 	static Player* SetPlayer(Player* player);									//Player情報登録。
 	static Player* GetPlayer();															//Player情報取得。
@@ -37,7 +38,7 @@ private:
 	static Fade* fade_;													//Fade情報
 	static DirectionalLight* light_;								//DirectionalLight情報
 	static std::string sceneTag_;									//現在のシーンタグ
-	static bool gameObjectLoaded_;							//GameObjectをすでにロード済みか
 	static Player* player_;												//プレイヤー情報
 	static Blur* blur_;													//ブラー情報
+	static bool gameOver_;											//ゲームオーバーフラグ
 };

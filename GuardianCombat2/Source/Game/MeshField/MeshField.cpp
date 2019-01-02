@@ -40,13 +40,6 @@ MeshField::MeshField()
 
 	useShader_ = true;
 
-	for (size_t i = 0; i < 4; i++)
-	{
-		wall_[i] = Object::Create<XModel>();
-		wall_[i]->SetModelType(XModel::MODEL_WALL);
-		
-		
-	}
 }
 MeshField::~MeshField()
 {
@@ -157,21 +150,6 @@ void MeshField::Init()
 
 	file.close();
 
-	wall_[0]->SetPosition(FIELD_SIZE + 0.1f,GetScale().y,0.0f);
-	wall_[1]->SetPosition(-FIELD_SIZE - 0.1f,GetScale().y,0.0f);
-	wall_[2]->SetPosition(0.0f,GetScale().y,FIELD_SIZE + 0.1f);
-	wall_[3]->SetPosition(0.0f,GetScale().y ,-FIELD_SIZE - 0.1f);
-
-	wall_[0]->SetRotationY(90.0f);
-	wall_[1]->SetRotationY(90.0f);
-
-	for (size_t i = 0; i < 4; i++)
-	{
-		wall_[i]->SetScale(FIELD_SIZE * 1.1f,1.0f,0.1f);
-		//wall_[i]->LoadNormalmapTexture("resource/Xmodel/wall_Material.001_Normal.png");
-		//wall_[i]->AddTangentSpace();
-	}
-
 }
 void MeshField::Uninit()
 {
@@ -246,15 +224,12 @@ void MeshField::Draw()
 	}
 	else
 	{
-
 		LPD3DXEFFECT effect;
 
 		ShadowMapShader::SetInfo(world_);
 		effect = ShadowMapShader::GetEffect();
 		effect->SetTechnique("Scene");
 		Draw(effect, 0);
-
-		
 	}
 }
 void MeshField::Draw(LPD3DXEFFECT effect, UINT pass)

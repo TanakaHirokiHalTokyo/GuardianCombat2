@@ -17,5 +17,5 @@ public:
 	void Display()override;								//表示
 	void EndDisplay()override;							//表示終了
 private:
-	StateEnemyHige*  teleportation_ = nullptr;
+	StateEnemyHige*  teleportation_ = nullptr;			//テレポート制御
 };

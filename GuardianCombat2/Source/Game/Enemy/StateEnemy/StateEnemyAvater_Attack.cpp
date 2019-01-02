@@ -5,14 +5,17 @@
 #include "../../GameManager/GameManager.h"
 #include "../../Player/Player.h"
 #include "../../../Collision/Collision.h"
+#include "../Enemy_Hige.h"
 
 constexpr int COUNTER_ATTACK = 180;
-constexpr int SHOOTING_COUNTER = 120;
+constexpr int SHOOTING_COUNTER = 240;
 
 void StateEnemyAvater_Attack::Action(EnemyHige_Avater * enemy)
 {
 	//“G‚ÌƒLƒ…[ƒuî•ñŽæ“¾
 	if (!cube_){	cube_ = enemy->GetCube();	}
+	EnemyHige* hige = enemy->GetParent();
+	EnemyHigeSummons::ENEMY_PARAMETER parameter = hige->GetSummonsParameter();
 
 	if (!init_)
 	{
@@ -20,7 +23,7 @@ void StateEnemyAvater_Attack::Action(EnemyHige_Avater * enemy)
 		counter_ = Randrange_int(0,150);
 	}
 	counter_++;
-	if (counter_ >= COUNTER_ATTACK)
+	if (counter_ >= parameter.attack_interval)
 	{
 		shooting_ = true;
 		counter_ = 0;
@@ -43,7 +46,7 @@ void StateEnemyAvater_Attack::Action(EnemyHige_Avater * enemy)
 			cube_->SetHit(false);
 		}
 
-		cube_->SetPosition(cube_->GetPosition() + shotVector_ * 0.5f);
+		cube_->SetPosition(cube_->GetPosition() + shotVector_ * parameter.cube_speed);
 		cube_->SetPositionY(0.5f);
 		cube_->SetRotation(cube_->GetRotate().x + 10.0f, 0.0f, cube_->GetRotate().z + 10.0f);
 		cube_->GetCollision()->m_Pos = cube_->GetPosition();

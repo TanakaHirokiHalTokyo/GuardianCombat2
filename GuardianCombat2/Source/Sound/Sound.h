@@ -10,6 +10,9 @@ class SoundManager
 public:
 	enum SOUND_LABEL
 	{
+		TITLE_BGM,
+		GAME_BGM,
+		RESULT_BGM,
 		SELECTOK_SE,
 		SOUND_MAX,
 	};

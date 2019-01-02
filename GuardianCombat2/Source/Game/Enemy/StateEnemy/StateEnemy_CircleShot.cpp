@@ -67,6 +67,7 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 			parameter.cube[i].SetRotationY(parameter.cube[i].GetRotate().y + 5.0f);
 			parameter.cube[i].SetRotation(parameter.cube[i].GetRotate());
 			parameter.effect[i].CreateEffect(parameter.cube[i].GetPosition());
+			parameter.effect[i].SetVisible(true);
 			parameter.effect[i].Update();
 		}
 		//i‚ñ‚¾‹——£XV
@@ -80,6 +81,7 @@ void StateEnemy_CircleShot::Act(EnemyHige * enemy)
 		{
 			for (int i = 0; i < parameter.CUBE_NUM; i++)
 			{
+				parameter.effect[i].SetVisible(false);
 				parameter.cube[i].SetVisible(false);
 				parameter.speed = parameter.inital_velocity;
 				parameter.effect[i].Uninit();

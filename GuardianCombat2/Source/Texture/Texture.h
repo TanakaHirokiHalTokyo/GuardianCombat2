@@ -52,12 +52,18 @@ public:
 		Tex_PauseWord,
 		Tex_Turret,
 		Tex_SliderBar,
+		Tex_SimpleBullet,
+		Tex_TitleLogo,
+		Tex_PressSpace,
+		Tex_Thanks,
+		Tex_EditWord,
+		Tex_GameWord,
+		Tex_ExitWord,
 		Tex_Max,
 	};
 
 	static const TEXTURE_3D texInfo_[TextureList::Tex_Max];		//Textureの情報。パスとサイズ
 
-	
 	static void LoadAll();
 	static TexInfo GetTexture(TextureList type);
 	static void ReleaseAll();

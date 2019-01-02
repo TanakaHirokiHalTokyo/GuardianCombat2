@@ -13,6 +13,12 @@
 
 EnemyHige_Avater::EnemyHige_Avater()
 {
+	//ƒRƒŠƒWƒ‡ƒ“ì¬
+	collision_ = new Sphere();
+	collision_->object_ = this;
+	collision_->pos = GetPosition();
+	enemyAvaterCollisions_.emplace_back(collision_);
+
 	//ƒ‚ƒfƒ‹ì¬
 	model_ = Object::Create<XModel>();
 	model_->SetModelType(XModel::MODEL_HIGE);
@@ -89,6 +95,8 @@ void EnemyHige_Avater::Update()
 
 		rotate_->Act(this);
 		attack_->Action(this);
+
+		collision_->pos = GetPosition();
 	}
 }
 
@@ -188,4 +196,16 @@ Cube * EnemyHige_Avater::GetCube()
 void EnemyHige_Avater::SetParent(EnemyHige * hige)
 {
 	parent_ = hige;
+}
+
+void EnemyHige_Avater::Destroy()
+{
+	EnemyHigeSummons::ENEMY_PARAMETER parameter =  parent_->GetSummonsParameter();
+	parameter.avater_alive -= 1;
+
+	SetVisible(false);
+	cube_->SetVisible(false);
+	cube_->GetCollision()->enable_ = false;
+
+	parent_->SetSummonsParameter(&parameter);
 }

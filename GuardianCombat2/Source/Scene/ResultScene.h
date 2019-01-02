@@ -10,6 +10,8 @@
 
 #include "Scene.h"
 
+class Sound;
+
 class ResultScene :public Scene
 {
 public:
@@ -21,4 +23,7 @@ public:
 	void BeginDraw()override;
 	void Draw()override;
 	void EndDraw()override;
+private:
+	int count_ = 0;
+	Sound* bgm_ = nullptr;
 };

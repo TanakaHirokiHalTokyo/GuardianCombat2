@@ -12,10 +12,12 @@ class Player;
 class XModel;
 class WeaponState;
 class Bullet;
+class Vector3;
 
 class Weapon:public Object
 {
 public:
+	virtual ~Weapon() {};
 	virtual void Init() = 0;
 	virtual void Uninit() = 0;
 	virtual void Update() = 0;
@@ -46,10 +48,15 @@ protected:
 	void SetBullet(Bullet* bullet) { bullet_ = bullet; }
 	
 protected:
-	float attack_ = 1.0f;									//攻撃力
-	Player* player_ = nullptr;								//プレイヤー情報。アタッチする際などに使用
-	XModel* model_ = nullptr;								//銃のモデル
-	WeaponState* relative_ = nullptr;						//相対関係制御
-	D3DXVECTOR3 relativePosition_ = D3DXVECTOR3(0,0,0);		//相対座標
-	Bullet* bullet_ = nullptr;								//弾の情報
+	void ShotBullet(int BulletNum);
+
+protected:
+	float attack_ = 1.0f;																						//攻撃力
+	Player* player_ = nullptr;																			//プレイヤー情報。アタッチする際などに使用
+	XModel* model_ = nullptr;																			//銃のモデル
+	WeaponState* relative_ = nullptr;																//相対関係制御
+	D3DXVECTOR3 relativePosition_ = D3DXVECTOR3(0,0,0);						//相対座標
+	Bullet* bullet_ = nullptr;																				//弾の情報
+	float fireRate_ = 10.0f;																				//1秒間に何発うてるのか。
+	size_t rateCount_ = 0;																					//連射時カウンタ
 };

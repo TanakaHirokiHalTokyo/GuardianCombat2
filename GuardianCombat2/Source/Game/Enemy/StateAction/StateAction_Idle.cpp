@@ -4,6 +4,7 @@
 #include "../StateEnemy/StateEnemy_SlowlyRotate.h"
 #include "../Enemy_Hige.h"
 #include "../Enemy.h"
+#include "../../Player/Player.h"
 #include <stdio.h>
 #include <stdlib.h> 
 #include <time.h>  
@@ -69,7 +70,7 @@ void StateAction_Idle::Action()
 					int number = rand() % enemy_->GetSpecialAttackNum();
 
 					EnemyHige* enemy = (EnemyHige*)enemy_;
-					if (!enemy->GetSummonsParameter().avater_alive > 0)
+					if (!(enemy->GetSummonsParameter().avater_alive > 0))
 					{
 						number = enemy->GetNormalAttackNum() + number + 1;
 						enemy->SetState((EnemyHige::STATE)number);
@@ -89,7 +90,7 @@ void StateAction_Idle::Action()
 	}
 	enemy_->SetIdleParameter(&parameter);
 
-	move_->Act(enemy_);				//“®‚«‚ð§Œä
+	if (this->IsApproach()) { move_->Act(enemy_); }				//“®‚«‚ð§Œä
 	rotate_->Act(enemy_);			//‰ñ“]§Œä
 
 	
@@ -107,4 +108,19 @@ void StateAction_Idle::Display()
 
 void StateAction_Idle::EndDisplay()
 {
+}
+
+bool StateAction_Idle::IsApproach()
+{
+	//ParameterŽæ“¾
+	EnemyIdle::ENEMY_PARAMETER parameter = enemy_->GetIdleParameter();
+
+	Player* player = GameManager::GetPlayer();
+	const auto& player_position = player->GetPosition();
+	const auto& enemy_position = enemy_->GetPosition();
+
+	auto length = player_position - enemy_position;
+	
+
+	return parameter.approache_length * parameter.approache_length < D3DXVec3LengthSq(&length);
 }

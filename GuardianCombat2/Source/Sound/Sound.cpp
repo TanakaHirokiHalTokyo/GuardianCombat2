@@ -9,6 +9,9 @@ BYTE* SoundManager::apDataAudio[SoundManager::SOUND_MAX] = {};							// オーディ
 DWORD SoundManager::aSizeAudio[SoundManager::SOUND_MAX] = {};							// オーディオデータサイズ
 SoundManager::SOUND_INFO SoundManager::soundInfo[SoundManager::SOUND_MAX] = {};
 SoundManager::SOUNDPARAM SoundManager::aParam[SoundManager::SOUND_MAX] = {
+	"resource/Sound/TitleBGM.wav",-1,
+	"resource/Sound/GameBGM.wav",-1,
+	"resource/Sound/ResultWinBGM.wav",-1,
 	"resource/Sound/SelectOK.wav",0,
 };
 
@@ -16,8 +19,6 @@ HRESULT SoundManager::Init()
 {
 	HRESULT hr;
 	HWND hWnd = GethWnd();
-
-	
 
 	// COMライブラリの初期化
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);

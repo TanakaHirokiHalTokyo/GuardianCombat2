@@ -3,6 +3,7 @@
 #include "../Object.h"
 #include "../../main.h"
 #include <array>
+#include <string>
 
 class Vector3;
 class XModel;
@@ -14,10 +15,11 @@ namespace EnemyIdle
 	{
 		float speed = 0.01f;						//スピード
 		float rot_angle = 0.1f;					//回転角度
+		float approache_length = 1.0f;	//プレイヤーとの距離（これ以上は近づかない）
 		std::array<int, 5> count = { 120, 100,80,60,40 };
 		std::array<float, 4> hp_ratio_ = { 0.8f,0.6f,0.4f,0.2f };												//HPの割合
-		std::array<double, 5> normalAttackLuck = { 0.9,0.9,0.9,0.9,0.9 };
-		std::array<double, 5> specialAttackLuck = { 0.1 ,0.1,0.1,0.1,0.1};
+		std::array<double, 5> normalAttackLuck = { 0.9,0.8,0.7,0.65,0.6 };
+		std::array<double, 5> specialAttackLuck = { 0.1 ,0.2,0.3,0.35,0.4};
 		int idle__counter = 0;
 	};
 }
@@ -43,6 +45,10 @@ public:
 	virtual void EndDraw() = 0;
 
 	void SetLife(float value) { life_ = value; }						//体力設定
+	void DecreaseLife(float value) {
+		life_ -= value;
+		if (life_ < 0.0f) life_ = 0.0f;
+	}
 	float GetLife() { return life_; }									//体力取得
 	void SetSpeed(float value) { idleParameter_.speed = value; }		//スピード設定
 	float GetSpeed() { return idleParameter_.speed; }				//スピード取得
@@ -55,27 +61,38 @@ public:
 	void SetUp(D3DXVECTOR3 up);
 	void SetRight(D3DXVECTOR3 right);
 
-	void SetDebugMode(bool flag) { debug_ = flag; }					//デバッグモード設定
-	bool GetDebugMode() { return debug_; }						//デバッグモード取得
+	EnemyIdle::ENEMY_PARAMETER GetIdleParameter();									//待機状態パラメータ取得
+	void SetIdleParameter(EnemyIdle::ENEMY_PARAMETER* parameter);		//待機状態パラメータ設定
+	void SaveIdleParameter(std::string filename);												//待機状態パラメータ保存
+	void LoadIdleParameter(std::string filename);												//待機状態パラメータ読み込み
 
-	EnemyIdle::ENEMY_PARAMETER GetIdleParameter();
-	void SetIdleParameter(EnemyIdle::ENEMY_PARAMETER* parameter);
-
-	inline float GetMoveSpeedToPoint() { return moveSpeedToPoint_; }
-	inline ENEMY_TYPE GetEnemyType() { return enemyType_; }
-	inline size_t GetNormalAttackNum() { return normalAttackNum_; }
-	inline size_t GetSpecialAttackNum() { return specialAttackNum_; }
-	inline bool GetAutoAttack() { return autoAttack_; }
+	inline float GetMoveSpeedToPoint() { return moveSpeedToPoint_; }				//設定した場所に向かうスピード
+	inline ENEMY_TYPE GetEnemyType() { return enemyType_; }						//敵の種類取得
+	inline size_t GetNormalAttackNum() { return normalAttackNum_; }				//通常攻撃の数取得
+	inline size_t GetSpecialAttackNum() { return specialAttackNum_; }				//特殊攻撃の数取得
+	inline void SetAutoAttack(bool flag) { autoAttack_ = flag; }							//オートアタック設定
+	inline bool GetAutoAttack() { return autoAttack_; }										//オートアタックしているのか取得
+	inline void SetInvincible(bool flag) { invincible_ = flag; }								//無敵状態設定
+	inline bool GetInvincible() { return invincible_; }											//無敵状態か取得
+	inline void SetEditMode(bool flag) { isEdit_ = flag; }										//EditMode設定
+	inline bool GetEditMode()const { return isEdit_; }											//EditMode取得
+	inline void SetCollisionEnable(bool flag) { isCollisionEnable_ = flag; }			//Collisionの当たり判定行うか設定
+	inline bool GetCollisionEnable() { return isCollisionEnable_; }						//Collisionの当たり判定行うか取得
+	inline void SetCollisionDPS(float value) { collisionDPS_ = value; }				//Collisionの当たり判定の際のDPS設定
+	inline float GetCollisionDPS() { return collisionDPS_; }									//Collisionの当たり判定の際のDPS取得
 protected:
+	bool isEdit_ = false;																									//EditModeか
+	bool isCollisionEnable_ = false;																					//Playerと体がぶつかったとき、判定を行うか
+	float collisionDPS_ = 0.0f;																							//コリジョン判定を行う際のDPS
 	ENEMY_TYPE enemyType_ = ENEMY_MAX;																//敵の種類
-	float life_ = ENEMY_MAX_LIFE;																										//体力
+	float life_ = ENEMY_MAX_LIFE;																					//体力
 	Vector3* vector_ = nullptr;																							//ベクトル情報
 	XModel* model_ = nullptr;																							//モデル情報
-	bool debug_ = false;																									//デバッグ状態にするか
 	bool enemypause_ = false;																							//敵のポーズ状態
-	EnemyIdle::ENEMY_PARAMETER idleParameter_ = {};												//待機状態のパラメータ
+	EnemyIdle::ENEMY_PARAMETER idleParameter_;												//待機状態のパラメータ
 	float moveSpeedToPoint_ = 0.1f;																				//移動地点に移動するスピード
 	size_t normalAttackNum_ = 0;																				//通常攻撃の数
 	size_t specialAttackNum_ = 0;																				//特殊攻撃の数
 	bool autoAttack_ = false;																						//自動的に攻撃をしてくるか
+	bool invincible_ = false;																							//無敵フラグ
 };

@@ -19,5 +19,5 @@ public:
 	void Display(Enemy* enemy)override;
 	void EndDisplay(Enemy* enemy)override;
 private:
-	float rotateAngle_ = ROTATE_ANGLE;
+	float rotateAngle_ = ROTATE_ANGLE;					//U‚èŒü‚«Šp“x
 };

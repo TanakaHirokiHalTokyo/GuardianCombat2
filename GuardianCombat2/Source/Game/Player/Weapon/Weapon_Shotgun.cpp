@@ -9,6 +9,8 @@
 #include "Bullet\Bullet_Shotgun.h"
 #include "../../../DInput/DirectInput.h"
 #include "../../../XInput/xcontroller.h"
+#include "../../../main.h"
+#include "../../../Vector3/Vector3.h"
 
 Weapon_Shotgun::Weapon_Shotgun()
 {
@@ -19,22 +21,36 @@ Weapon_Shotgun::Weapon_Shotgun()
 
 	//シェーダーを適用する。
 	model_->SetUseShader(true);
-	//親子関係を適用
-	model_->SetHieral(false);
 
 	//弾生成
-	bullet_ = Object::Create<Bullet_Shotgun>();
-	bullet_->SetWeapon(this);
+	bullet_ = new Bullet_Shotgun[BulletNum];
+	for (size_t i = 0; i < BulletNum; i++)
+	{
+		bullet_[i].SetWeapon(this);
+		bullet_[i].Init();
+	}
 }
 
 Weapon_Shotgun::~Weapon_Shotgun()
 {
 	delete relative_;
 	delete model_;
+
+	if (bullet_)
+	{
+		delete[] bullet_;
+		bullet_ = nullptr;
+	}
 }
 
 void Weapon_Shotgun::Init()
 {
+	for (size_t i = 0; i < BulletNum; i++)
+	{
+		bullet_[i].Init();
+		bullet_[i].SetVisible(false);
+	}
+
 	//ワールド行列を初期化
 	D3DXMatrixIdentity(&world_);
 	model_->SetWorld(world_);
@@ -50,32 +66,54 @@ void Weapon_Shotgun::Init()
 
 void Weapon_Shotgun::Uninit()
 {
+	for (size_t i = 0; i < BulletNum; i++)
+	{
+		bullet_[i].Uninit();
+	}
 	model_->Uninit();
 }
 
 void Weapon_Shotgun::Update()
 {
+	DIMOUSESTATE mouse = ReturnMouseMove();
+
+	size_t rate_count = 0;
+	if (fireRate_ > 0.0f) { 
+		rate_count = (size_t)((float)GameFPS / fireRate_); }
+
+	if (mouse.rgbButtons[0] == 0x80 || X_CONTROLLER::GetXcontrollerButtonPress(1, XINPUT_GAMEPAD_RIGHT_SHOULDER))
+	{
+		rateCount_++;
+		if (rateCount_ >= rate_count)
+		{
+			ShotBullet(BulletNum);
+			rateCount_ = 0;
+		}
+	}
+	//相対関係制御実行
+	relative_->Act(this);
+
 	model_->Update();
 
-	if (GetKeyboardTrigger(DIK_J))
+	for (size_t i = 0; i < BulletNum; i++)
 	{
-		Bullet_Shotgun* shotgun_bullet = (Bullet_Shotgun*)bullet_;
-		shotgun_bullet->SetShooting();
+		bullet_[i].Update();
 	}
 }
 
 void Weapon_Shotgun::BeginDraw()
 {
-	
-	//相対関係制御実行
-	relative_->Act(this);
-
-
 	model_->SetScale(GetScale());
 	model_->SetPosition(GetPosition());
 	model_->SetRotation(GetRotate());
 
 	model_->BeginDraw();
+
+
+	for (size_t i = 0; i < BulletNum; i++)
+	{
+		bullet_[i].BeginDraw();
+	}
 
 	//シェーダー処理
 	if (model_->GetUseShader())
@@ -112,9 +150,17 @@ void Weapon_Shotgun::Draw()
 	{
 		model_->Draw();
 	}
+	for (size_t i = 0; i < BulletNum; i++)
+	{
+		bullet_[i].Draw();
+	}
 }
 
 void Weapon_Shotgun::EndDraw()
 {
 	model_->EndDraw();
+	for (size_t i = 0; i < BulletNum; i++)
+	{
+		bullet_[i].EndDraw();
+	}
 }

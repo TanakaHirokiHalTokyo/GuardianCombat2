@@ -28,9 +28,9 @@ void StateEnemy_Burst::Act(EnemyHige * enemy)
 		parameter.collision->m_NormaDirect[2] = enemy->GetVector()->GetFront();
 
 		Blur* blur = GameManager::GetBlur();
-		blur->SetUseBlur(true);
-		blur->SetAlpha(240);
-		blur->SetColor(255,200,200);
+		blur->SetUseBlur(parameter.isblur);
+		blur->SetAlpha(parameter.blur_alpha);
+		blur->SetColor((int)(parameter.blur_color[0] * 255.0f), (int)(parameter.blur_color[1] * 255.0f), (int)(parameter.blur_color[2] * 255.0f));
 		blur->SetStrength(1.0f);
 
 	}

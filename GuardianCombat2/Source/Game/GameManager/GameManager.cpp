@@ -18,9 +18,9 @@ Scene* GameManager::scene_ = NULL;
 Fade* GameManager::fade_ = NULL;
 DirectionalLight* GameManager::light_ = NULL;
 std::string GameManager::sceneTag_ = "None";
-bool GameManager::gameObjectLoaded_ = false;
 Player* GameManager::player_ = nullptr;
 Blur* GameManager::blur_ = nullptr;
+bool GameManager::gameOver_ = false;
 
 void GameManager::Init()
 {
@@ -51,7 +51,6 @@ void GameManager::Uninit()
 		blur_ = nullptr;
 	}
 	Object::CollisionReleaseAll();			//コリジョン解放
-	Object::GameObjectReleaseAll();			//ゲームオブジェクトすべて解放。
 	SoundManager::Uninit();					//サウンド終了処理
 	TextureManager::ReleaseAll();			//テクスチャ解放
 	ShaderManager::ReleaseAll();			//シェーダー解放
@@ -89,16 +88,16 @@ void GameManager::Draw()
 
 void GameManager::SetScene(Scene * scene)
 {
-	if (scene_ != NULL)
+	if (scene_ != nullptr)
 	{
 		scene_->Uninit();
 		delete scene_;
-		scene_ = NULL;	
+		scene_ = nullptr;	
 	}
 
 	scene_ = scene;
 
-	if (scene_ != NULL)
+	if (scene_ != nullptr)
 	{
 		scene_->Init();
 	}
@@ -133,14 +132,9 @@ std::string GameManager::GetSceneTag()
 	return sceneTag_;
 }
 
-void GameManager::SetGameObjectLoad(bool loaded)
+void GameManager::GameOver(bool flag)
 {
-	gameObjectLoaded_ = loaded;
-}
-
-bool GameManager::GetGameObjectLoad()
-{
-	return gameObjectLoaded_;
+	gameOver_ = flag;
 }
 
 Player* GameManager::SetPlayer(Player * player)

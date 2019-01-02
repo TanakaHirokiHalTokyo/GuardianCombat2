@@ -4,8 +4,8 @@
 
 class Player;
 class PauseScene;
-class Cube;
-class Texture;
+class Sound;
+
 class GameScene:public Scene
 {
 public:
@@ -19,8 +19,8 @@ public:
 	void EndDraw()override;
 
 private:
-	Player* player_ = nullptr;				//プレイヤー情報
+	Player* player_ = nullptr;							//プレイヤー情報
 	PauseScene* pauseScene_ = nullptr;		//ポーズシーン情報
-	Cube* cube_ = nullptr;
-	Texture* blurTex_ = nullptr;
+	Sound* bgm_ = nullptr;
+	bool cursorActive_ = true;
 };

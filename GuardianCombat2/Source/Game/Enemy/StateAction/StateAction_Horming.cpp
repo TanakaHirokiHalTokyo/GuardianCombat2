@@ -20,11 +20,7 @@ StateAction_Horming::~StateAction_Horming()
 
 void StateAction_Horming::Action()
 {
-	if (!rotateEnemy_)
-	{
-		rotateEnemy_ = true;
-		rotate_->Act(enemy_);
-	}
+	rotate_->Act(enemy_);
 
 	horming_->Act((EnemyHige*)enemy_);
 }

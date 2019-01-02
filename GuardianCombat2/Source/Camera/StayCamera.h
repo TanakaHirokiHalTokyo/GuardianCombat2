@@ -15,10 +15,7 @@ public:
 	void BeginDraw()override;
 	void Draw()override;
 	void EndDraw()override;
-	void SetModel1(XModel* model);
-	void SetModel2(XModel* model);
 private:
 	Vector3* vector_ = nullptr;
-	XModel* model1_ = nullptr;
-	XModel* model2_ = nullptr;
+
 };

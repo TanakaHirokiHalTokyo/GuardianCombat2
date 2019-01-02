@@ -301,15 +301,11 @@ void Cube::Draw()
 	{
 		LPD3DXEFFECT effect;
 
-		ShadowMapShader::SetInfo(world_);
-		effect = ShadowMapShader::GetEffect();
-		effect->SetTechnique("Scene");
-		Draw(effect, 0);
 
 		//トゥーンシェーダー描画
 		effect = ToonShader::GetEffect();
 		ToonShader::SetInfo(world_);
-		effect->SetTechnique("ToonPaintInk");
+		effect->SetTechnique("ToonMixed");
 		Draw(effect, 0);
 	}
 }
@@ -409,5 +405,28 @@ void Cube::SetHit(bool flag)
 void Cube::Hit()
 {
 	isHit = true;
+}
+
+void Cube::SaveParameter(const std::string filename)
+{
+	std::ofstream file;
+	file.open("resource/" + filename + ".parameter", std::ios::binary | std::ios::out);
+	file.write((const char*)&this->attack_,sizeof(float));
+	file.close();
+}
+
+void Cube::LoadParameter(const std::string filename)
+{
+	std::ifstream file;
+	file.open("resource/" + filename + ".parameter", std::ios::binary | std::ios::in);
+	if (file.fail())
+	{
+		MessageBoxA(NULL, "パラメータデータを読み込めませんでした。\nデフォルトデータを使用します。", "失敗", MB_OK | MB_ICONHAND);
+	}
+	else
+	{
+		file.read((char*)&this->attack_, sizeof(float));
+	}
+	file.close();
 }
 

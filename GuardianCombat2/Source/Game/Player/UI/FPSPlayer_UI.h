@@ -7,6 +7,7 @@
 //==========================================================
 
 class Texture;
+class Player;
 
 class FPSPlayer_UI
 {
@@ -18,5 +19,7 @@ public:
 	void Update();
 	void Draw();
 private:
-	Texture* reticle_ = nullptr;		//レティクルテクスチャ
+	Player* player_ = nullptr;						//Playerポインタ
+	Texture* lifeBar_ = nullptr;						//ライフバー
+	Texture* reticle_ = nullptr;						//レティクルテクスチャ
 };

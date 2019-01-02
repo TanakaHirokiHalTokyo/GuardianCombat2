@@ -1,8 +1,8 @@
 #include "Effect.h"
-#include <d3dx9.h>
-#include <d3d9.h>
 #include "../../DirectXRenderer.h"
 #include "../../Camera/Camera.h"
+#include <iostream>
+#include <fstream>
 
 LPDIRECT3DTEXTURE9 EffectManager::texture_ = nullptr;
 LPDIRECT3DVERTEXBUFFER9 EffectManager::vertexBuffer_ = nullptr;
@@ -180,101 +180,102 @@ void AdditionEffect::Update()
 
 void AdditionEffect::Draw()
 {
-	for (int i = 0; i < EFFECTNUM; i++)
+	if (visible_)
 	{
-		if (use_[i])
+		for (int i = 0; i < EFFECTNUM; i++)
 		{
-			//デバイス取得
-			LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
+			if (use_[i])
+			{
+				//デバイス取得
+				LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
 
-			//vertex情報取得
-			EffectManager::VERTEX3D* vertex = &EffectManager::GetVertex();
+				//vertex情報取得
+				EffectManager::VERTEX3D* vertex = &EffectManager::GetVertex();
 
-			EffectManager::GetVertexBuffer()->Lock(
-				0, 0, (void**)&vertex, D3DLOCK_DISCARD);
+				EffectManager::GetVertexBuffer()->Lock(
+					0, 0, (void**)&vertex, D3DLOCK_DISCARD);
 
-			//カラー再セット
-			vertex[0].color = (D3DXCOLOR)color_[i];
-			vertex[1].color = (D3DXCOLOR)color_[i];
-			vertex[2].color = (D3DXCOLOR)color_[i];
-			vertex[3].color = (D3DXCOLOR)color_[i];
+				//カラー再セット
+				vertex[0].color = (D3DXCOLOR)color_[i];
+				vertex[1].color = (D3DXCOLOR)color_[i];
+				vertex[2].color = (D3DXCOLOR)color_[i];
+				vertex[3].color = (D3DXCOLOR)color_[i];
 
-			EffectManager::GetVertexBuffer()->Unlock();
+				EffectManager::GetVertexBuffer()->Unlock();
 
-			//カメラ情報取得
-			CAMERA_INFO cam_info = Camera::GetCameraInfo();
-			D3DXMATRIX view = cam_info.view;
+				//カメラ情報取得
+				CAMERA_INFO cam_info = Camera::GetCameraInfo();
+				D3DXMATRIX view = cam_info.view;
 
-			//逆行列に変換
-			D3DXMatrixTranspose(&view, &view);
+				//逆行列に変換
+				D3DXMatrixTranspose(&view, &view);
 
-			view._14 = 0.0f;
-			view._24 = 0.0f;
-			view._34 = 0.0f;
+				view._14 = 0.0f;
+				view._24 = 0.0f;
+				view._34 = 0.0f;
 
-			D3DXMATRIX mtxTrans, mtxScale, mtxWorld;
+				D3DXMATRIX mtxTrans, mtxScale, mtxWorld;
 
-			//移動・拡大行列作成
-			D3DXMatrixTranslation(&mtxTrans, transform_[i].pos.x, transform_[i].pos.y, transform_[i].pos.z);
-			D3DXMatrixScaling(&mtxScale, transform_[i].scale.x, transform_[i].scale.y, transform_[i].scale.z);
+				//移動・拡大行列作成
+				D3DXMatrixTranslation(&mtxTrans, transform_[i].pos.x, transform_[i].pos.y, transform_[i].pos.z);
+				D3DXMatrixScaling(&mtxScale, transform_[i].scale.x, transform_[i].scale.y, transform_[i].scale.z);
 
-			mtxWorld = view;
-			mtxWorld *= mtxScale;
-			mtxWorld *= mtxTrans;
+				mtxWorld = view;
+				mtxWorld *= mtxScale;
+				mtxWorld *= mtxTrans;
 
-			pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-			//FVFの設定
-			pDevice->SetFVF(FVF_VERTEX3D);
-			//ライトオフにする
-			pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-			//テクスチャセット
-			pDevice->SetTexture(0, EffectManager::GetTexture());
-			//各種行列設定
-			pDevice->SetTransform(D3DTS_WORLD, &mtxWorld);
+				pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+				pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+				pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+				pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+				//FVFの設定
+				pDevice->SetFVF(FVF_VERTEX3D);
+				//ライトオフにする
+				pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+				//テクスチャセット
+				pDevice->SetTexture(0, EffectManager::GetTexture());
+				//各種行列設定
+				pDevice->SetTransform(D3DTS_WORLD, &mtxWorld);
 
-			// GPUとVertexBufferをパイプラインでつなぐ - +
-			pDevice->SetStreamSource(
-				0,										//パイプラインのセット番号
-				EffectManager::GetVertexBuffer(),		//バッファ
-				0,										//どこから書き込むか
-				sizeof(EffectManager::VERTEX3D)			//隣の頂点までどれくらいの長さ
-			);
+				// GPUとVertexBufferをパイプラインでつなぐ - +
+				pDevice->SetStreamSource(
+					0,										//パイプラインのセット番号
+					EffectManager::GetVertexBuffer(),		//バッファ
+					0,										//どこから書き込むか
+					sizeof(EffectManager::VERTEX3D)			//隣の頂点までどれくらいの長さ
+				);
 
-			// デバイスにインデックスセット
-			pDevice->SetIndices(
-				EffectManager::GetIndexBuffer()			//バッファ
-			);
+				// デバイスにインデックスセット
+				pDevice->SetIndices(
+					EffectManager::GetIndexBuffer()			//バッファ
+				);
 
-			//次からバッファ使いたくないときが来たときバッファをNULLにすれば使わなくなる。
+				//次からバッファ使いたくないときが来たときバッファをNULLにすれば使わなくなる。
 
-			pDevice->DrawIndexedPrimitive(
-				D3DPT_TRIANGLELIST,
-				0,
-				0,
-				4,			//頂点数
-				0,
-				2			//プリミティブ数
-			);
+				pDevice->DrawIndexedPrimitive(
+					D3DPT_TRIANGLELIST,
+					0,
+					0,
+					4,			//頂点数
+					0,
+					2			//プリミティブ数
+				);
 
 
-			//ライトオンにする
-			pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+				//ライトオンにする
+				pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 
-			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+				pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
-			////通常のαブレンド（半透明処理）に戻す
-			pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+				////通常のαブレンド（半透明処理）に戻す
+				pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+				pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+				pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+				pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			}
 		}
-	}
-
-	
+	}	
 }
 
 void AdditionEffect::CreateEffect(D3DXVECTOR3 pos)
@@ -310,4 +311,43 @@ void AdditionEffect::SetScale(float size)
 	{
 		transform_[i].scale = D3DXVECTOR3(size, size, size);
 	}
+}
+
+void AdditionEffect::SaveParameter(std::string filename)
+{
+	std::ofstream file;
+	file.open("resource/" + filename + ".parameter", std::ios::binary | std::ios::out);
+	file.write((const char*)&this->color_[0].r, sizeof(FLOAT));
+	file.write((const char*)&this->color_[0].g, sizeof(FLOAT));
+	file.write((const char*)&this->color_[0].b, sizeof(FLOAT));
+	file.write((const char*)&this->limit_,sizeof(int));
+	file.write((const char*)&this->transform_[0].scale,sizeof(transform_[0].scale));
+	file.close();
+}
+
+void AdditionEffect::LoadParameter(std::string filename)
+{
+	std::ifstream file;
+	file.open("resource/" + filename + ".parameter", std::ios::binary | std::ios::in);
+	if (file.fail())
+	{
+		MessageBoxA(NULL, "パラメータデータを読み込めませんでした。\nデフォルトデータを使用します。", "失敗", MB_OK | MB_ICONHAND);
+	}
+	else
+	{
+		D3DXCOLOR color;
+		file.read((char*)&color.r, sizeof(FLOAT));
+		file.read((char*)&color.g, sizeof(FLOAT));
+		file.read((char*)&color.b, sizeof(FLOAT));
+		for (size_t i = 0; i < EFFECTNUM; i++)
+		{
+			this->color_[i] = color;
+		}
+		file.read((char*)&this->limit_, sizeof(int));
+		file.read((char*)&this->transform_[0].scale, sizeof(transform_[0].scale));
+
+		this->SetScale(transform_[0].scale.x);
+		this->SetLimit(limit_);
+	}
+	file.close();
 }

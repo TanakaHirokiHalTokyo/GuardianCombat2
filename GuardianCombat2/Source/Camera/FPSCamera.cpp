@@ -122,8 +122,8 @@ void FPSCamera::CameraAtUpdate()
 	//‰ñ“]s—ñ‚ðì¬
 	if (X_CONTROLLER::GetConnectController())
 	{
-		transform_.rotate.y -= -controllerRY * sensitivity_;
-		D3DXMatrixRotationAxis(&mtxRotY, &vector_->GetRight(), D3DXToRadian(-controllerRY * sensitivity_));
+		transform_.rotate.y -= controllerRY * sensitivity_ * -1.0f;
+		D3DXMatrixRotationAxis(&mtxRotY, &vector_->GetRight(), D3DXToRadian(controllerRY * sensitivity_ * -1.0f));
 	}
 	else
 	{
@@ -158,7 +158,7 @@ void FPSCamera::CameraAtUpdate()
 
 		if (X_CONTROLLER::GetConnectController())
 		{
-			transform_.rotate.y += -controllerRY * sensitivity_;
+			transform_.rotate.y += controllerRY * sensitivity_ * -1.0f;
 		}
 		else
 		{
@@ -183,8 +183,8 @@ void FPSCamera::CameraAtUpdate()
 
 	if (X_CONTROLLER::GetConnectController())
 	{
-		transform_.rotate.x += -controllerRX * sensitivity_;
-		D3DXMatrixRotationY(&mtxRotX, D3DXToRadian(controllerRX * sensitivity_));
+		transform_.rotate.x += controllerRX * sensitivity_;
+		D3DXMatrixRotationY(&mtxRotX, D3DXToRadian(controllerRX * sensitivity_ ));
 	}
 	else
 	{
@@ -215,7 +215,7 @@ void FPSCamera::CameraAtUpdate()
 
 		if (X_CONTROLLER::GetConnectController())
 		{
-			transform_.rotate.x -= -controllerRX * sensitivity_;
+			transform_.rotate.x -= controllerRX * sensitivity_;
 		}
 		else
 		{

@@ -10,6 +10,7 @@ class StateEnemy;
 class EnemyHige;
 class Cube;
 class StateEnemyAvater;
+class Sphere;
 
 class EnemyHige_Avater :public Enemy
 {
@@ -31,6 +32,8 @@ public:
 	Cube* GetCube();																//キューブ取得
 	void SetParent(EnemyHige* hige);
 	inline EnemyHige* GetParent() { return parent_; }
+
+	void Destroy();
 private:
 	EnemyHige* parent_ = nullptr;											//親ポインタ
 	StateEnemy* rotate_ = nullptr;											//回転制御
@@ -39,4 +42,5 @@ private:
 	float distance_ = 0.0f;															//進んだ距離
 	bool moving_ = true;															//動いているのか
 	Cube* cube_ = nullptr;
+	Sphere* collision_ = nullptr;
 };

@@ -3,6 +3,7 @@
 
 #include <d3dx9.h>
 #include <d3d9.h>
+#include <string>
 
 class EffectManager
 {
@@ -47,16 +48,23 @@ public:
 	void Update();
 	void Draw();
 
-	void CreateEffect(D3DXVECTOR3 pos);
-	void SetLimit(int limit);
-	void SetColor(float r, float g, float b);
-	void SetScale(float size);
-
+	inline void SetVisible(const bool flag) { visible_ = flag; }													//可視状態設定
+	inline bool GetVisible()const { return visible_; }																	//可視状態取得
+	void CreateEffect(D3DXVECTOR3 pos);										//エフェクト作成
+	void SetLimit(int limit);																//生存時間設定
+	inline int GetLimit() { return limit_; }											//生存時間取得
+	void SetColor(float r, float g, float b);											//色設定
+	void SetScale(float size);															//サイズ設定
+	inline float GetScale() { return transform_[0].scale.x; }				//サイズ取得
+	inline D3DXCOLOR GetColor() { return color_[0]; }					//カラー取得
+	void SaveParameter(std::string filename);										//パラメータ情報ファイルかき出し
+	void LoadParameter(std::string filename);										//パラメータ情報ファイル読み込み
 private:
-	int count_[EFFECTNUM];			//カウンタ
-	int limit_ = 60;				//寿命
-	bool use_[EFFECTNUM];
-	D3DXCOLOR color_[EFFECTNUM] = {};
+	bool visible_ = false;						//可視状態
+	int count_[EFFECTNUM];				//カウンタ
+	int limit_ = 60;									//寿命
+	bool use_[EFFECTNUM];				//現在使用中か
+	D3DXCOLOR color_[EFFECTNUM] = {};		//色
 	Transform transform_[EFFECTNUM] = {};		//トランスフォームデータ
 };
 

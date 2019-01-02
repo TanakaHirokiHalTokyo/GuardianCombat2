@@ -22,11 +22,10 @@
 #define CLASS_NAME		" "
 #define WINDOW_STYLE	WS_OVERLAPPEDWINDOW
 
-constexpr unsigned int ScreenWidth = 1440U;															//画面幅サイズ
-constexpr unsigned int ScreenHeight = 810U;															//画面高さサイズ
-constexpr int	GameFPS = 60;																	//FPS
+constexpr unsigned int ScreenWidth = 1600;															//画面幅サイズ
+constexpr unsigned int ScreenHeight = 900;															//画面高さサイズ
+constexpr int	GameFPS = 60;																				//FPS
 constexpr bool	FullScreenFlag = true;
-
 
 HINSTANCE GetHinstance();
 HWND	  GethWnd();

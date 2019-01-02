@@ -55,7 +55,7 @@ void PauseScene::Uninit()
 
 void PauseScene::Update()
 {
-	if (GetKeyboardTrigger(DIK_P))
+	if (GetKeyboardTrigger(DIK_P)|| X_CONTROLLER::GetXcontrollerButtonTrigger(1, XINPUT_GAMEPAD_START))
 	{
 		pausing_ = !pausing_;
 	}

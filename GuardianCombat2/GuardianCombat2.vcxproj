@@ -89,7 +89,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -115,7 +115,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
@@ -193,10 +193,11 @@
     <ClCompile Include="Source\Game\Player\FPSPlayer.cpp" />
     <ClCompile Include="Source\Game\Player\Player.cpp" />
     <ClCompile Include="Source\Game\Player\PlayerCamera.cpp" />
-    <ClCompile Include="Source\Game\Player\PlayerLifeBar.cpp" />
     <ClCompile Include="Source\Game\Player\StatePlayer\FPSPlayer_Movement.cpp" />
     <ClCompile Include="Source\Game\Player\UI\FPSPlayer_UI.cpp" />
+    <ClCompile Include="Source\Game\Player\Weapon\Bullet\Bullet.cpp" />
     <ClCompile Include="Source\Game\Player\Weapon\Bullet\Bullet_Shotgun.cpp" />
+    <ClCompile Include="Source\Game\Player\Weapon\Weapon.cpp" />
     <ClCompile Include="Source\Game\Player\Weapon\WeaponState\WeaponRelative.cpp" />
     <ClCompile Include="Source\Game\Player\Weapon\Weapon_Shotgun.cpp" />
     <ClCompile Include="Source\Game\Shader\OutlineShader.cpp" />
@@ -215,12 +216,14 @@
     <ClCompile Include="Source\Imgui\imgui_impl_dx9.cpp" />
     <ClCompile Include="Source\Light\Light.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Scene\EditScene.cpp" />
     <ClCompile Include="Source\Scene\Fade.cpp" />
     <ClCompile Include="Source\Scene\GameScene.cpp" />
     <ClCompile Include="Source\Scene\PauseScene.cpp" />
     <ClCompile Include="Source\Scene\ResultScene.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Scene\TitleScene.cpp" />
+    <ClCompile Include="Source\Scene\Title\TitleSelect.cpp" />
     <ClCompile Include="Source\Sound\Sound.cpp" />
     <ClCompile Include="Source\Texture\Texture.cpp" />
     <ClCompile Include="Source\UI\UI.cpp" />
@@ -278,7 +281,6 @@
     <ClInclude Include="Source\Game\Player\FPSPlayer.h" />
     <ClInclude Include="Source\Game\Player\Player.h" />
     <ClInclude Include="Source\Game\Player\PlayerCamera.h" />
-    <ClInclude Include="Source\Game\Player\PlayerLifeBar.h" />
     <ClInclude Include="Source\Game\Player\StatePlayer\FPSPlayer_Movement.h" />
     <ClInclude Include="Source\Game\Player\StatePlayer\FPSPlayer_State.h" />
     <ClInclude Include="Source\Game\Player\UI\FPSPlayer_UI.h" />
@@ -310,12 +312,14 @@
     <ClInclude Include="Source\Light\Light.h" />
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\message.h" />
+    <ClInclude Include="Source\Scene\EditScene.h" />
     <ClInclude Include="Source\Scene\Fade.h" />
     <ClInclude Include="Source\Scene\GameScene.h" />
     <ClInclude Include="Source\Scene\PauseScene.h" />
     <ClInclude Include="Source\Scene\ResultScene.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Scene\TitleScene.h" />
+    <ClInclude Include="Source\Scene\Title\TitleSelect.h" />
     <ClInclude Include="Source\Sound\Sound.h" />
     <ClInclude Include="Source\Texture\Texture.h" />
     <ClInclude Include="Source\UI\UI.h" />

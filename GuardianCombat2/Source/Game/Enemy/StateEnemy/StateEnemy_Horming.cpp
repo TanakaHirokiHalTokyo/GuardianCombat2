@@ -64,6 +64,7 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 			for (int i = 0; i < parameter.CUBE_NUM; i++)
 			{
 				parameter.effect[i].Init();
+				parameter.effect[i].SetVisible(true);
 				parameter.cube[i].GetCollision()->enable_ = true;
 			}
 		}
@@ -166,6 +167,7 @@ void StateEnemy_Horming::Act(EnemyHige * enemy)
 
 							//エフェクト終了処理
 							parameter.effect[i].Uninit();
+							parameter.effect[i].SetVisible(false);
 						}
 						enemy->FinishState();
 					}

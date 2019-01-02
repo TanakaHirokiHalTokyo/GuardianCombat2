@@ -33,23 +33,23 @@ public:
 		Tex_Difficulity,
 		Tex_Max,
 	};
-	enum MeshField_Type
+	enum MeshField_Type							//フィールド種類
 	{
-		Field_Ground,
-		Field_Wall,
+		Field_Ground,										//地面
+		Field_Wall,											//壁
 		Field_Max
 	};
-	enum Wall_Type
+	enum Wall_Type										
 	{
-		Wall_Left,
-		Wall_Front,
-		Wall_Right,
-		Wall_Back,
-		Wall_Ups
+		Wall_Left,					//左壁
+		Wall_Front,					//手前壁
+		Wall_Right,					//右壁
+		Wall_Back,					//奥壁
+		Wall_Up						//上壁
 	};
 
 public:
-	MeshField();
+	MeshField();		
 	~MeshField();
 
 	void Init()override;
@@ -60,29 +60,29 @@ public:
 	void Draw(LPD3DXEFFECT effect, UINT pass);
 	void EndDraw()override;
 
-	float GetSizeX();
-	float GetSizeY();
-	float GetSpliteX();
-	float GetSpliteY();
+	float GetSizeX();				//幅サイズ取得
+	float GetSizeY();				//奥行サイズ取得
+	float GetSpliteX();			//幅分割数取得
+	float GetSpliteY();			//奥行分割数取得
 
-	static float GetHeight(D3DXVECTOR3 position);
+	static float GetHeight(D3DXVECTOR3 position);			//指定した座標のフィールドの高さ取得
 
 private:
 	void SetMeshField(float SizeX, float SizeY, int SpliteX, int SpliteY, MeshField_Type type);
 private:
-	LPDIRECT3DTEXTURE9 pTexture_;
+	LPDIRECT3DTEXTURE9 pTexture_ = nullptr;			//テクスチャポインタ
 
-	static float sizeX_;
-	static float sizeY_;
-	static int spliteX_;
-	static int spliteY_;
-	static VERTEX3D*	Vertex;
-	static WORD*		pIndex;
+	static float sizeX_;								//幅サイズ
+	static float sizeY_;								//奥行サイズ
+	static int spliteX_;								//幅分割数
+	static int spliteY_;								//奥行分割数
+	static VERTEX3D*	Vertex;					//頂点情報
+	static WORD*		pIndex;						//インデックス情報
 
-	D3DMATERIAL9 mat_;
+	D3DMATERIAL9 mat_;					//マテリアル情報
 	MeshF meshf_[MeshField::MeshField_Type::Field_Max];												//ワールド行列
-	MeshField_Type type_;
-	D3DXMATRIX world_;
+	MeshField_Type type_;					//メッシュフィールドの種類
+	D3DXMATRIX world_;						//ワールド行列
 
 	XModel* wall_[4] = {};											//壁のモデル
 };

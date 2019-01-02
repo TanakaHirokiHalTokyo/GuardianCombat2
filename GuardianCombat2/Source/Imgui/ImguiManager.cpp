@@ -11,8 +11,11 @@ void CImGui::Init(HWND hwnd,LPDIRECT3DDEVICE9 device)
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 	ImGui_ImplDX9_Init(hwnd, device);
 
+	io.Fonts->AddFontFromFileTTF("resource\\Fonts\\ipag.ttf", 14.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+
 	// Setup style
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
+
 }
 void CImGui::Uninit()
 {

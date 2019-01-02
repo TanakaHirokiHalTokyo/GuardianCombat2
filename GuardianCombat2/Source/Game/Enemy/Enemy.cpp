@@ -3,6 +3,8 @@
 #include "../../Vector3/Vector3.h"
 #include "../../DInput/DirectInput.h"
 #include "../../XInput/xcontroller.h"	
+#include <iostream>
+#include <fstream>
 
 Enemy::~Enemy()
 {
@@ -12,7 +14,7 @@ Enemy::~Enemy()
 void Enemy::JudgePause()
 {
 	//F2 GamepadXボタンを押した際に敵は更新処理を行わなくなる。
-	if (GetKeyboardTrigger(DIK_F2) || X_CONTROLLER::GetXcontrollerButtonTrigger(0,XINPUT_GAMEPAD_X))
+	if (GetKeyboardTrigger(DIK_F2))
 	{
 		enemypause_ = !enemypause_;
 	}
@@ -56,4 +58,39 @@ EnemyIdle::ENEMY_PARAMETER Enemy::GetIdleParameter()
 void Enemy::SetIdleParameter(EnemyIdle::ENEMY_PARAMETER* parameter)
 {
 	idleParameter_ = *parameter;
+}
+
+void Enemy::SaveIdleParameter(std::string filename)
+{
+	std::ofstream file;
+	file.open("resource/" + filename + ".parameter", std::ios::binary | std::ios::out);
+	file.write((const char*)&this->idleParameter_.count, sizeof(idleParameter_.count));
+	file.write((const char*)&this->idleParameter_.hp_ratio_, sizeof(idleParameter_.hp_ratio_));
+	file.write((const char*)&this->idleParameter_.normalAttackLuck, sizeof(idleParameter_.normalAttackLuck));
+	file.write((const char*)&this->idleParameter_.rot_angle,sizeof(idleParameter_.rot_angle));
+	file.write((const char*)&this->idleParameter_.specialAttackLuck,sizeof(idleParameter_.specialAttackLuck));
+	file.write((const char*)&this->idleParameter_.speed,sizeof(idleParameter_.speed));
+	file.write((const char*)&this->idleParameter_.approache_length, sizeof(idleParameter_.approache_length));
+	file.close();
+}
+
+void Enemy::LoadIdleParameter(std::string filename)
+{
+	std::ifstream file;
+	file.open("resource/" + filename + ".parameter", std::ios::binary | std::ios::in);
+	if (file.fail())
+	{
+		MessageBoxA(NULL, "パラメータデータを読み込めませんでした。\nデフォルトデータを使用します。", "失敗", MB_OK | MB_ICONHAND);
+	}
+	else
+	{
+		file.read((char*)&this->idleParameter_.count, sizeof(idleParameter_.count));
+		file.read((char*)&this->idleParameter_.hp_ratio_, sizeof(idleParameter_.hp_ratio_));
+		file.read((char*)&this->idleParameter_.normalAttackLuck, sizeof(idleParameter_.normalAttackLuck));
+		file.read((char*)&this->idleParameter_.rot_angle, sizeof(idleParameter_.rot_angle));
+		file.read((char*)&this->idleParameter_.specialAttackLuck, sizeof(idleParameter_.specialAttackLuck));
+		file.read((char*)&this->idleParameter_.speed, sizeof(idleParameter_.speed));
+		file.read((char*)&this->idleParameter_.approache_length, sizeof(idleParameter_.approache_length));
+	}
+	file.close();
 }

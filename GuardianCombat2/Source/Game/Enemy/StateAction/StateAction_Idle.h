@@ -19,6 +19,8 @@ public:
 	void Display()override;					//表示
 	void EndDisplay()override;				//表示終了
 private:
+	bool IsApproach();							//これ以上プレイヤーに近づくかを判断
+
 	StateEnemy* move_ = nullptr;			//移動を制御
 	StateEnemy* rotate_ = nullptr;			//回転情報制御
 };

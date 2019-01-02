@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Enemy.h"
+#include <string>
 
 class StatePattern_Enemy;
 class Sphere;
@@ -23,6 +24,7 @@ namespace EnemyHigeRush				//突進状態のパラメータ
 	{
 		float speed = 0.5f;						//スピード
 		float length = 10.0f;						//突進距離
+		float attack = 0.1f;						//ダメージ量(Damage Per Second)
 	};
 }
 namespace EnemyHigeCircleShot					//波状攻撃の情報
@@ -38,7 +40,7 @@ namespace EnemyHigeCircleShot					//波状攻撃の情報
 		float cubeSize = 1.0f;								//キューブのサイズ
 		Cube* cube = nullptr;								//キューブ情報
 		ParameterVector* vec = nullptr;				//ベクトル情報
-		AdditionEffect* effect = nullptr;							//エフェクト情報
+		AdditionEffect* effect = nullptr;				//エフェクト情報
 	};
 }
 
@@ -88,6 +90,8 @@ namespace EnemyHigeSummons							//分身召喚情報
 		int avater_old_num = summons_num;										//分身の前回までの数
 		D3DXVECTOR3 move_position = D3DXVECTOR3(0,0,0);			//移動する場所
 		int avater_alive = 0;																		//敵が生きている数
+		float cube_speed = 0.1f;																//キューブの飛んでいくスピード
+		int attack_interval = 180;															//攻撃の間隔
 	};
 }
 namespace EnemyHigeBurstShot
@@ -99,6 +103,9 @@ namespace EnemyHigeBurstShot
 		float effect_size = 1.0f;												//エフェクトのサイズ
 		OBB* collision = nullptr;												//コリジョン
 		float dps = 20.0f;															//damage per second
+		float blur_color[3] = { 255.0f,255.0f,255.0f};				//ブラーのカラー
+		int blur_alpha = 240;													//ブラーテクスチャのα値
+		bool isblur = true;														//ブラーを使用するのか
 	};
 }
 
@@ -151,26 +158,39 @@ public:
 	//突進状態のパラメータ取得・設定
 	EnemyHigeRush::ENEMY_PARAMETER GetRushParameter();
 	void SetRushParameter(EnemyHigeRush::ENEMY_PARAMETER* parameter);
+	void SaveRushParameter(const std::string filename);			//突進パラメータ保存
+	void LoadRushParameter(const std::string filename);			//突進パラメータ読込
 
 	//波状攻撃のパラメータ取得・設定
 	EnemyHigeCircleShot::ENEMY_PARAMETER GetCircleShotParameter();
 	void SetCircleShotParameter(EnemyHigeCircleShot::ENEMY_PARAMETER* parameter);
+	void SaveCircleShotParameter(const std::string filename);		//波状攻撃パラメータ保存
+	void LoadCircleShotParameter(const std::string filename);	//波状攻撃パラメータ読み込み
+	
 
 	//ホーミングのパラメータ取得・設定
 	EnemyHigeHorming::ENEMY_PARAMETER GetHormingParameter();
 	void SetHormingParameter(EnemyHigeHorming::ENEMY_PARAMETER* parameter);
+	void SaveHormingParameter(const std::string filename);		//ホーミングパラメータの保存
+	void LoadHormingParameter(const std::string filename);		//ホーミングパラメータ読込
 
 	//テレポートのパラメータ取得・設定
 	EnemyHigeTeleportation::ENEMY_PARAMETER GetTeleportParameter();
 	void SetTeleportParameter(EnemyHigeTeleportation::ENEMY_PARAMETER* parameter);
+	void SaveTeleportParameter(const std::string filename);		//テレポートパラメータ保存
+	void LoadTeleportParameter(const std::string filename);		//テレポートパラメータ読込
 
 	//召喚のパラメータ取得・設定
 	EnemyHigeSummons::ENEMY_PARAMETER GetSummonsParameter();
 	void SetSummonsParameter(EnemyHigeSummons::ENEMY_PARAMETER* parameter);
+	void SaveSummonsParameter(const std::string filename);		//召喚パラメータ保存
+	void LoadSummonsParameter(const std::string filename);		//召喚パラメータ読込
 
 	//バーストショットのパラメータ取得・設定
 	EnemyHigeBurstShot::ENEMY_PARAMETER GetBurstParameter();
 	void SetBurstParameter(EnemyHigeBurstShot::ENEMY_PARAMETER* parameter);
+	void SaveBurstParameter(const std::string filename);		//バーストパラメータ保存
+	void LoadBurstParameter(const std::string filename);		//バーストパラメータ読込
 
 private:
 	void DrawDebug();															//Debug表示
@@ -188,7 +208,6 @@ private:
 	StatePattern_Enemy* statePattern_ = nullptr;				//ステート状態管理
 	STATE state_ = IDLE;														//状態
 	Sphere* collision_ = nullptr;											//コリジョン情報
-
 	EnemyHigeRush::ENEMY_PARAMETER rushParameter_ = {};								//突進状態のパラメータ情報
 	EnemyHigeCircleShot::ENEMY_PARAMETER circleShotParameter_ = {};			//波状攻撃のパラメータ情報
 	EnemyHigeHorming::ENEMY_PARAMETER hormingParameter_ = {};					//ホーミングのパラメータ情報

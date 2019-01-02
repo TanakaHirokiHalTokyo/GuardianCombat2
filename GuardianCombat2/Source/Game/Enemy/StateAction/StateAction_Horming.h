@@ -22,6 +22,5 @@ public:
 
 private:
 	StateEnemyHige* horming_ = nullptr;			//ホーミング実行
-	StateEnemy* rotate_ = nullptr;				//プレイヤーのほうを向く制御
-	bool rotateEnemy_ = false;
+	StateEnemy* rotate_ = nullptr;						//プレイヤーのほうを向く制御
 };

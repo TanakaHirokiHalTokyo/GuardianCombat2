@@ -1,73 +1,72 @@
 #include "Bullet_Shotgun.h"
-#include "../../../../Effekseer/Effekseer.h"
 #include "../Weapon.h"
 #include "../../Player.h"
 #include "../../../../Camera/Camera.h"
 #include "../../../../Debug/Debug.h"
+#include "../../../Billboard/Billboard.h"
+#include "../../../../Collision/Collision.h"
 
 Bullet_Shotgun::Bullet_Shotgun()
 {
-	for (int i = 0; i < BulletNum; i++)
-	{
-		bullet_[i] = new CEffekseer(CEffekseer::Effect_Bullet);
-	}
-	debug_ = Object::Create<DebugSphere>();
+	bulletInfo_.bullet_ = Object::Create<Billboard>();
+	bulletInfo_.bullet_->SetTexture(TextureManager::Tex_SimpleBullet);
+
+	bulletInfo_.collision_ = new Sphere();
+	bulletInfo_.collision_->object_ = this;
+	playerBulletCollisions_.emplace_back(bulletInfo_.collision_);
+
+	bulletInfo_.debug_ = new DebugSphere();
+	bulletInfo_.debug_->Init();
 }
 
 Bullet_Shotgun::~Bullet_Shotgun()
 {
-	for (int i = 0; i < BulletNum; i++)
+	if (bulletInfo_.debug_)
 	{
-		bullet_[i]->Uninit();
-		delete bullet_[i];
-		bullet_[i] = nullptr;
+		bulletInfo_.debug_->Uninit();
+		delete bulletInfo_.debug_;
+		bulletInfo_.debug_ = nullptr;
 	}
 }
 
 void Bullet_Shotgun::Init()
 {
-	for (int i = 0; i < BulletNum; i++)
-	{
-		shot_ = false;
-		bullet_[i]->Init();
-		bullet_[i]->SetScale(0.3f, 0.3f, 0.3f);
-		bullet_[i]->SetVisible(false);
-	}
-	debug_->SetRadius(0.2f);
+	SetPosition(0,0,0);
+	SetScale(0.02f,0.02f,0.02f);
+	bulletInfo_.bullet_->SetVisible(false);
+	bulletInfo_.bullet_->SetUseShader(false);
+	bulletInfo_.bullet_->SetScale(0.02f,0.02f,0.02f);
+	bulletInfo_.collision_->rad = bulletInfo_.bullet_->GetScale().x;
+	bulletInfo_.count_ = 0;
+	bulletInfo_.debug_->Init();
+	bulletInfo_.use_ = false;
 }
 
 void Bullet_Shotgun::Uninit()
 {
-	for (int i = 0; i < BulletNum; i++)
-	{
-		bullet_[i]->Uninit();
-	}
+	
 }
 
 void Bullet_Shotgun::Update()
 {
-	for (int i = 0; i < BulletNum; i++)
+	if (bulletInfo_.use_)
 	{
-		if (shot_)
+		bulletInfo_.count_++;
+		if (bulletInfo_.count_ >= BulletAliveCount)
 		{
-			count_++;
-			bullet_[i]->Play();
-			if (count_  > 3 * 60)
-			{
-				count_ = 0;
-				shot_ = false;
-				bullet_[i]->SetVisible(false);
-			}
-		}
-		if (bullet_[i]->GetVisible())
-		{
-			bullet_[i]->SetPosition(bullet_[i]->GetPosition() + bulletVector_[i] * 1.0f);
+			bulletInfo_.count_ = 0;
+			bulletInfo_.use_ = false;
+			bulletInfo_.bullet_->SetVisible(false);
+			return;
 		}
 
-		bullet_[i]->Update();
+		SetPosition(GetPosition() + bulletInfo_.vector_ * bulletInfo_.speed_);
+		
+		bulletInfo_.bullet_->SetPosition(GetPosition());
+		bulletInfo_.bullet_->SetScale(GetScale());
+
+		bulletInfo_.collision_->pos = GetPosition();
 	}
-	debug_->SetPosition(bullet_[0]->GetPosition());
-	debug_->SetPositionY(bullet_[0]->GetPosition().y + (debug_->GetRadius() / 2.0f));
 }
 
 void Bullet_Shotgun::BeginDraw()
@@ -76,34 +75,10 @@ void Bullet_Shotgun::BeginDraw()
 
 void Bullet_Shotgun::Draw()
 {
-	for (int i = 0; i < BulletNum; i++)
-	{
-		if (bullet_[i]->GetVisible())
-		{
-			bullet_[i]->Draw();
-		}
-	}
+	
 }
 
 void Bullet_Shotgun::EndDraw()
 {
 }
 
-void Bullet_Shotgun::SetShooting()
-{
-	if (!shot_)
-	{
-		shot_ = true;
-		for (int i = 0; i < BulletNum; i++)
-		{
-			bullet_[i]->SetPosition(weapon_->GetPosition());
-			bulletVector_[i] = weapon_->GetPlayer()->GetCamera()->GetFront();
-			bullet_[i]->SetVisible(true);
-		}
-	}
-}
-
-bool Bullet_Shotgun::GetShooting()
-{
-	return shot_;
-}

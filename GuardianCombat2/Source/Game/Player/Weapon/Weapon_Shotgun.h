@@ -8,6 +8,8 @@
 
 #include "Weapon.h"
 
+const unsigned int BulletNum = 200;		//U’e‚·‚é’e‚Ì”
+
 class Weapon_Shotgun :public Weapon
 {
 public:
