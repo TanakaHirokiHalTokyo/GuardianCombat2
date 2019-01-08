@@ -12,6 +12,7 @@ class CEffekseer;
 class Texture;
 class EnemyHige_Avater;
 class OBB;
+class EnemyHigeUI;
 
 class ParameterVector
 {
@@ -205,6 +206,7 @@ private:
 	void InitBurstShotParameterValue();								//バーストショットの情報初期化
 	void DestParameter();														//パラメータデストラクタ
 private:
+	EnemyHigeUI* ui_ = nullptr;											//UI
 	StatePattern_Enemy* statePattern_ = nullptr;				//ステート状態管理
 	STATE state_ = IDLE;														//状態
 	Sphere* collision_ = nullptr;											//コリジョン情報

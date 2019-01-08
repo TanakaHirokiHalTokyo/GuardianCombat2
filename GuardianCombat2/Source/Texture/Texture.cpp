@@ -22,6 +22,14 @@ const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 	"resource/texture/EditWord.png",						600, 200,600, 200,
 	"resource/texture/GameWord.png",					600, 200,600, 200,
 	"resource/texture/ExitWord.png",						600, 200,600, 200,
+	"resource/texture/dassyu1.png",						400, 400,400, 400,
+	"resource/texture/energy-drink.png",					450, 337,450, 337,
+	"resource/texture/Lightning.png",						256, 256,256, 256,
+	"resource/texture/speedup.png",						202, 202,202, 202,
+	"resource/texture/DashExp.png",						600, 200,600, 200,
+	"resource/texture/HealExp.png",						600, 200,600, 200,
+	"resource/texture/LightningExp.png",				600, 200,600, 200,
+	"resource/texture/SpeedUpExp.png",				600, 200,600, 200,
 };
 void TextureManager::LoadAll()
 {

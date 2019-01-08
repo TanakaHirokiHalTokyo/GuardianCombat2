@@ -17,6 +17,7 @@
 #include "../../DirectXRenderer.h"	
 #include "../../Texture/Texture.h"
 #include "Enemy_HigeAvater.h"
+#include "Enemy_HigeUI.h"
 
 const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0.0f,-8.0f);
 const float EnemyHige::BURSTX = 3.5f;
@@ -34,6 +35,8 @@ EnemyHige::EnemyHige()
 	model_ = Object::Create<XModel>();
 	model_->SetModelType(XModel::XMODEL::MODEL_HIGE);
 	model_->SetUseShader(true);
+
+	ui_ = new EnemyHigeUI(this);
 
 	//ƒxƒNƒgƒ‹ì¬
 	vector_ = new Vector3();
@@ -76,6 +79,12 @@ EnemyHige::~EnemyHige()
 		delete statePattern_;
 		statePattern_ = nullptr;
 	}
+	if (ui_)
+	{
+		ui_->Uninit();
+		delete ui_;
+		ui_ = nullptr;
+	}
 	DestParameter();
 }
 
@@ -109,6 +118,8 @@ void EnemyHige::Init()
 	//Collision‰Šú‰»
 	collision_->rad = 0.5f;
 
+	ui_->Init();
+
 	FinishState();
 
 	InitCircleParameterValue();
@@ -120,6 +131,7 @@ void EnemyHige::Init()
 
 void EnemyHige::Uninit()
 {
+	ui_->Uninit();
 }
 
 void EnemyHige::Update()
@@ -157,6 +169,8 @@ void EnemyHige::Update()
 		model_->SetRotation(GetRotate());
 		model_->SetPosition(GetPosition());
 		model_->SetScale(GetScale());
+
+		ui_->Update();
 
 		ring_->SetPosition(GetPosition());
 		ring_->SetPositionY(ring_->GetPosition().y + ring_->GetScale().x);
@@ -227,6 +241,7 @@ void EnemyHige::Draw()
 		model_->Draw(effect, 0);
 
 	}
+	ui_->Draw();
 	for (int i = 0; i < summonsParameter_.summons_num; i++)
 	{
 		summonsParameter_.avater[i].Draw();

@@ -21,5 +21,6 @@ public:
 private:
 	Player* player_ = nullptr;						//Playerポインタ
 	Texture* lifeBar_ = nullptr;						//ライフバー
+	Texture* lifeBarMax_ = nullptr;				//ライフバーの背景
 	Texture* reticle_ = nullptr;						//レティクルテクスチャ
 };

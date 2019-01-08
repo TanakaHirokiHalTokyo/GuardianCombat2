@@ -59,6 +59,14 @@ public:
 		Tex_EditWord,
 		Tex_GameWord,
 		Tex_ExitWord,
+		Tex_IconDash,
+		Tex_IconHeal,
+		Tex_IconThunder,
+		Tex_IconSpeedUp,
+		Tex_ExpDash,
+		Tex_ExpHeal,
+		Tex_ExpThunder,
+		Tex_ExpSpeedUp,
 		Tex_Max,
 	};
 
