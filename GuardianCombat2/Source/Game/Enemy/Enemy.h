@@ -7,6 +7,8 @@
 
 class Vector3;
 class XModel;
+class Sound;
+class CEffekseer;
 
 //待機状態
 namespace EnemyIdle
@@ -61,10 +63,13 @@ public:
 	void SetUp(D3DXVECTOR3 up);
 	void SetRight(D3DXVECTOR3 right);
 
+	void SetPositionExploose(D3DXVECTOR3 pos);		//爆発エフェクト座標設定
+	void SetPositionExploose(float x,float y,float z);
+	void PlayExploose();				//爆発音再生
+	void StopExploose();				//爆発音停止
+
 	EnemyIdle::ENEMY_PARAMETER GetIdleParameter();									//待機状態パラメータ取得
 	void SetIdleParameter(EnemyIdle::ENEMY_PARAMETER* parameter);		//待機状態パラメータ設定
-	void SaveIdleParameter(std::string filename);												//待機状態パラメータ保存
-	void LoadIdleParameter(std::string filename);												//待機状態パラメータ読み込み
 
 	inline float GetMoveSpeedToPoint() { return moveSpeedToPoint_; }				//設定した場所に向かうスピード
 	inline ENEMY_TYPE GetEnemyType() { return enemyType_; }						//敵の種類取得
@@ -80,7 +85,18 @@ public:
 	inline bool GetCollisionEnable() { return isCollisionEnable_; }						//Collisionの当たり判定行うか取得
 	inline void SetCollisionDPS(float value) { collisionDPS_ = value; }				//Collisionの当たり判定の際のDPS設定
 	inline float GetCollisionDPS() { return collisionDPS_; }									//Collisionの当たり判定の際のDPS取得
+	inline void SetDamageCutRate(float rate) { damageCutRate_ = rate; }			//ダメージカット率設定
+	inline float GetDamageCutRate() { return damageCutRate_; }						//ダメージカット率取得
 protected:
+	void SaveIdleParameter(std::string filename);												//待機状態パラメータ保存
+	void LoadIdleParameter(std::string filename);												//待機状態パラメータ読み込み
+	void SaveBasisParameter(std::string filename);												//基本情報パラメータ保存
+	void LoadBasisParameter(std::string filename);											//基本情報パラメータ読み込み
+
+	CEffekseer* exploose_ = nullptr;																				//爆発エフェクト
+	Sound* explooseSE_ = nullptr;																					//爆発音	（ヒット時）
+	float maxLife_ = ENEMY_MAX_LIFE;																			//最大体力
+	float damageCutRate_ = 0.0f;																						//ダメージカット率
 	bool isEdit_ = false;																									//EditModeか
 	bool isCollisionEnable_ = false;																					//Playerと体がぶつかったとき、判定を行うか
 	float collisionDPS_ = 0.0f;																							//コリジョン判定を行う際のDPS

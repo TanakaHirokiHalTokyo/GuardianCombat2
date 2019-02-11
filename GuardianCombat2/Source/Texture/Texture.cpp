@@ -10,11 +10,13 @@ const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 	"resource/texture/0.png",									29, 31,29,31,
 	"resource/texture/Dot.png",								1, 1,1,1,
 	"resource/texture/ToonPaint.png",						256, 256,256,256,
-	"resource/texture/Mission.png",						395, 70,395,70,
 	"resource/texture/reticle.png",							400, 400,400,400,
-	"resource/texture/pauseWord.png",					400, 300,400,300,
+	"resource/texture/PauseWord.png",					600, 200,600,200,
+	"resource/texture/MouseWord.png",					600, 200,600,200,
+	"resource/texture/ControllerWord.png",				600, 200,600,200,
 	"resource/texture/turret.png",							200, 200,200,200,
 	"resource/texture/SliderBar.png",						200, 100,200,100,
+	"resource/texture/SliderButton.png",					200, 200,200,200,
 	"resource/texture/simple_bullet.png",				128, 128,128,128,
 	"resource/texture/GuardianCombat2.png",		400, 136,400, 136,
 	"resource/texture/PressSpace.png",					600, 200,600, 200,
@@ -22,14 +24,18 @@ const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 	"resource/texture/EditWord.png",						600, 200,600, 200,
 	"resource/texture/GameWord.png",					600, 200,600, 200,
 	"resource/texture/ExitWord.png",						600, 200,600, 200,
-	"resource/texture/dassyu1.png",						400, 400,400, 400,
-	"resource/texture/energy-drink.png",					450, 337,450, 337,
-	"resource/texture/Lightning.png",						256, 256,256, 256,
-	"resource/texture/speedup.png",						202, 202,202, 202,
-	"resource/texture/DashExp.png",						600, 200,600, 200,
-	"resource/texture/HealExp.png",						600, 200,600, 200,
-	"resource/texture/LightningExp.png",				600, 200,600, 200,
-	"resource/texture/SpeedUpExp.png",				600, 200,600, 200,
+	"resource/texture/NowLoading.png",					600, 200,600, 200,
+	"resource/texture/count1.png",							512, 512,512, 512,
+	"resource/texture/count2.png",							512, 512,512, 512,
+	"resource/texture/count3.png",							512, 512,512, 512,
+	"resource/texture/Win.png",								1200, 400,1200, 400,
+	"resource/texture/Lose.png",								1200, 400,1200, 400,
+	"resource/texture/GameResultBack.png",			1600, 900,1600, 900,
+	"resource/texture/B.png",									256,	256,256, 256,
+	"resource/texture/Back.png",								512,	256,512, 256,
+	"resource/texture/DamageScreen.png",			400,	300,400, 300,
+	"resource/texture/BackGame.png",					455,	89,455, 89,
+	"resource/texture/BackTitle.png",						471,	83,471, 83,
 };
 void TextureManager::LoadAll()
 {
@@ -131,7 +137,13 @@ Texture::Texture(TextureManager::TextureList type)
 }
 Texture::~Texture()
 {
-	
+	this->Uninit();
+
+	if (g_pVertexBuffer)
+	{
+		g_pVertexBuffer->Release();
+		g_pVertexBuffer = NULL;
+	}
 }
 void Texture::Init()
 {
@@ -140,11 +152,7 @@ void Texture::Init()
 void Texture::Uninit()
 {
 
-	if (g_pVertexBuffer)
-	{
-		g_pVertexBuffer->Release();
-		g_pVertexBuffer = NULL;
-	}
+	
 }
 void Texture::Update()
 {
@@ -155,47 +163,50 @@ void Texture::BeginDraw()
 }
 void Texture::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
-	if (pDevice == NULL) { return; }
-
-	//レンダ―ステートの設定
-	//αブレンドを行う
-	//SRC...今から描くもの。つまりポリゴンにテクスチャが描画されるもの。
-	//DEST...すでに描画されている画面のこと。
-	//SRC_RGB * SRC_α + DEST_RGB * (1 - SRC_α)
-	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-
-	//アルファテストをTRUEにする
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
-	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-
-	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	if (this->affine_ == true)
+	if (visible_)
 	{
-		CreateVertexAffine(this->drawSize_.x, this->drawSize_.y, (int)this->texcoord_.x, (int)this->texcoord_.y, (int)this->texcoordSize_.x, (int)this->texcoordSize_.y);
+		LPDIRECT3DDEVICE9 pDevice = CRendererDirectX::GetDevice();
+		if (pDevice == NULL) { return; }
+
+		//レンダ―ステートの設定
+		//αブレンドを行う
+		//SRC...今から描くもの。つまりポリゴンにテクスチャが描画されるもの。
+		//DEST...すでに描画されている画面のこと。
+		//SRC_RGB * SRC_α + DEST_RGB * (1 - SRC_α)
+		pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+
+		//アルファテストをTRUEにする
+		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+		pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
+		pDevice->SetFVF(FVF_VERTEX_2D);
+
+		if (this->affine_ == true)
+		{
+			CreateVertexAffine(this->drawSize_.x, this->drawSize_.y, (int)this->texcoord_.x, (int)this->texcoord_.y, (int)this->texcoordSize_.x, (int)this->texcoordSize_.y);
+		}
+		else
+		{
+			CreateVertex(this->drawSize_.x, this->drawSize_.y, (int)this->texcoord_.x, (int)this->texcoord_.y, (int)this->texcoordSize_.x, (int)this->texcoordSize_.y, (int)this->texSize_.x, (int)this->texSize_.y);
+		}
+		//GPUとVertexBufferをパイプラインでつなぐ-+
+		pDevice->SetStreamSource(
+			0,
+			g_pVertexBuffer,
+			0,
+			sizeof(VERTEX_2D)//隣の頂点までどれくらいの長さ
+		);
+		pDevice->SetTexture(0, this->pTexture_);
+		//ポリゴンを描く
+		pDevice->DrawPrimitive(
+			D3DPT_TRIANGLESTRIP,
+			0,						//何バイト目から読み込むか
+			2						//三角形
+		);
+		//アルファテストをFALSEにする
+		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	}
-	else
-	{
-		CreateVertex(this->drawSize_.x, this->drawSize_.y, (int)this->texcoord_.x, (int)this->texcoord_.y, (int)this->texcoordSize_.x, (int)this->texcoordSize_.y, (int)this->texSize_.x, (int)this->texSize_.y);
-	}
-	//GPUとVertexBufferをパイプラインでつなぐ-+
-	pDevice->SetStreamSource(
-		0,
-		g_pVertexBuffer,
-		0,
-		sizeof(VERTEX_2D)//隣の頂点までどれくらいの長さ
-	);
-	pDevice->SetTexture(0, this->pTexture_);
-	//ポリゴンを描く
-	pDevice->DrawPrimitive(
-		D3DPT_TRIANGLESTRIP,
-		0,						//何バイト目から読み込むか
-		2						//三角形
-	);
-	//アルファテストをFALSEにする
-	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 }
 void Texture::EndDraw()
 {
@@ -338,6 +349,17 @@ void Texture::SetDrawSize(float width, float height) {
 void Texture::SetTexcoord(int tcx, int tcy) {
 	this->texcoord_.x = (FLOAT)tcx;
 	this->texcoord_.y = (FLOAT)tcy;
+}
+void Texture::SetTexture(TextureManager::TextureList type)
+{
+	TextureManager::TexInfo textureInfo = TextureManager::GetTexture(type);
+	pTexture_ = textureInfo.pTex;
+	this->texSize_ = D3DXVECTOR2((float)textureInfo.width, (float)textureInfo.height);
+	this->texcoordSize_ = D3DXVECTOR2((float)textureInfo.texcoordX, (float)textureInfo.texcoordY);
+	this->drawSize_ = D3DXVECTOR2((float)textureInfo.width, (float)textureInfo.height);
+	this->texcoord_ = D3DXVECTOR2((float)0, (float)0);
+	this->affine_ = false;
+	this->color_ = D3DCOLOR_RGBA(255, 255, 255, 255);
 }
 void Texture::SetTexture(LPDIRECT3DTEXTURE9 pTex, float texW, float texH)
 {

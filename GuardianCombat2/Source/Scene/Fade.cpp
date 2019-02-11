@@ -3,6 +3,8 @@
 #include "../main.h"
 
 constexpr float FadeSpeed = 3.0f;
+constexpr float LOADWORD_WIDTH = 600.0f * (float)ScreenWidth / 1600.0f;
+constexpr float LOADWORD_HEGIHT = 200.0f * (float)ScreenHeight / 900.0f;
 
 Fade::Fade()
 {
@@ -11,6 +13,9 @@ Fade::Fade()
 	tex_fade_->SetColor(D3DCOLOR_RGBA(0, 0, 0, 0));
 	tex_fade_->SetDrawSize((float)ScreenWidth, (float)ScreenHeight);
 	isFading_ = false;
+
+	tex_loading_ = new Texture(TextureManager::Tex_NowLoading);
+	tex_loading_->Init();
 }
 
 Fade::~Fade()
@@ -20,6 +25,11 @@ Fade::~Fade()
 		tex_fade_->Uninit();
 		SAFE_DELETE(tex_fade_);
 	}
+	if (tex_loading_)
+	{
+		tex_loading_->Uninit();
+		SAFE_DELETE(tex_loading_);
+	}
 }
 
 void Fade::Init()
@@ -27,6 +37,9 @@ void Fade::Init()
 	tex_fade_->SetColor(D3DCOLOR_RGBA(0, 0, 0, 0));
 	tex_fade_->SetDrawSize((float)ScreenWidth, (float)ScreenHeight);
 	isFading_ = false;
+
+	tex_loading_->SetColor(D3DCOLOR_RGBA(255,255,255,0));
+	tex_loading_->SetDrawSize(LOADWORD_WIDTH,LOADWORD_HEGIHT);
 }
 
 void Fade::Uninit()
@@ -47,6 +60,7 @@ void Fade::Update()
 			isFading_ = false;
 		}
 		tex_fade_->SetColor(D3DCOLOR_RGBA(0,0,0,(int)fadeAlpha_));
+		tex_loading_->SetColor(D3DCOLOR_RGBA(255, 255, 255, (int)fadeAlpha_));
 	}
 	else
 	{
@@ -58,6 +72,7 @@ void Fade::Update()
 			isFading_ = false;
 		}
 		tex_fade_->SetColor(D3DCOLOR_RGBA(0, 0, 0, (int)fadeAlpha_));
+		tex_loading_->SetColor(D3DCOLOR_RGBA(255, 255, 255, (int)fadeAlpha_));
 	}
 }
 
@@ -68,6 +83,7 @@ void Fade::BeginDraw()
 void Fade::Draw()
 {
 	tex_fade_->Draw();
+	tex_loading_->Draw();
 }
 
 void Fade::EndDraw()

@@ -11,6 +11,8 @@
 #include "../MeshField/MeshField.h"
 #include "UI\FPSPlayer_UI.h"
 #include "../../main.h"
+#include "DeviceConfig\DeviceConfig.h"
+#include "../../Texture/Texture.h"
 
 FPSPlayer::FPSPlayer()
 {
@@ -40,18 +42,24 @@ FPSPlayer::FPSPlayer()
 	//コリジョン作成
 	collision_ = AddCollision();
 	collision_->object_ = this;
+
+	//デバイス情報作成
+	deviceConfig_ = new DeviceConfig();
 }
 
 FPSPlayer::~FPSPlayer()
 {
 	//ベクトル破棄
-	delete vector_;
+	SAFE_DELETE(vector_);
 
 	//移動制御破棄
-	delete movement_;
+	SAFE_DELETE(movement_);
 
 	//UI破棄
-	delete playerUI_;
+	SAFE_DELETE(playerUI_);
+
+	//Device情報破棄
+	SAFE_DELETE(deviceConfig_);
 
 	if (shotgun_)
 	{
@@ -65,6 +73,8 @@ void FPSPlayer::Init()
 {
 	life_ = 100.0f;
 
+	visible_ = true;
+
 	SetPosition(0.1f,0.0f, 8.0f);
 	SetRotation(0.0f,0.0f,0.0f);
 	SetScale(1.0f, 1.0f, 1.0f);
@@ -77,6 +87,13 @@ void FPSPlayer::Init()
 	playerUI_->Init();
 
 	shotgun_->Init();
+
+	debug_ = false;
+
+	if (GameManager::GetSceneTag() == "EditScene")
+	{
+		debug_ = true;
+	}
 }
 
 void FPSPlayer::Uninit()
@@ -117,9 +134,6 @@ void FPSPlayer::Update()
 		if (GetPosition().z > 0) { SetPositionZ(FIELD_SIZE); }
 		else { SetPositionZ(-FIELD_SIZE); }
 	}
-
-	
-
 	//CollisionUpdate
 	collision_->pos = GetPosition();
 	collision_->pos.y = GetPosition().y + collision_->rad;
@@ -136,28 +150,31 @@ void FPSPlayer::BeginDraw()
 	world_ *= mtxRotate;
 	world_ *= mtxTrans;
 
-	shotgun_->BeginDraw();
-
-	ImGui::Begin("Player Position");
-	ImGui::Text("Position %f %f %f", GetPosition().x, GetPosition().y, GetPosition().z);
-	ImGui::End();
+	if(visible_)	shotgun_->BeginDraw();
 }
 
 void FPSPlayer::Draw()
 {
-	//プレイヤーUI描画
-	playerUI_->Draw();
+	if(visible_)	shotgun_->Draw();
 
-	shotgun_->Draw();
-
-	ImGui::Begin("Player Debug Info");
-	ImGui::Checkbox("Player Invincible", &invincible_);
-	ImGui::End();
+	if (GameManager::GetEnableEdit())
+	{
+		if (debug_)
+		{
+			ImGui::Begin(u8"プレイヤー情報");
+			ImGui::Checkbox(u8"無敵", &invincible_);
+			ImGui::SliderFloat(u8"プレイヤー体力", &life_, 0, 100.0f);
+			ImGui::Text(u8"座標 %f %f %f", GetPosition().x, GetPosition().y, GetPosition().z);
+			ImGui::End();
+		}
+	}
 }
 
 void FPSPlayer::EndDraw()
 {
 	shotgun_->EndDraw();
+	//プレイヤーUI描画
+	playerUI_->Draw();
 }
 
 Weapon * FPSPlayer::GetWeapon()

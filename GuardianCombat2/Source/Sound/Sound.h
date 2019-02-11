@@ -14,6 +14,12 @@ public:
 		GAME_BGM,
 		RESULT_BGM,
 		SELECTOK_SE,
+		SELECTING_SE,
+		COUNT_SE,
+		GAMESTART_SE,
+		BULLETSHOT_SE,
+		EXPLOOSE_SE,
+		GAMERESULT_BGM,
 		SOUND_MAX,
 	};
 	struct SOUNDPARAM
@@ -46,12 +52,12 @@ private:
 	static SOUND_INFO soundInfo[SOUND_MAX];
 };	
 
-class Sound
+class Sound																				
 {
 public:
-	Sound(SoundManager::SOUND_LABEL label);
-	HRESULT PlaySound();
-	void StopSound(void);
+	Sound(SoundManager::SOUND_LABEL label);			//ラベル指定コンストラクタ
+	HRESULT PlaySound();												//再生
+	void StopSound(void);													//停止
 private:
-	SoundManager::SOUND_INFO soundInfo;
+	SoundManager::SOUND_INFO soundInfo;					//サウンド情報
 };

@@ -31,69 +31,71 @@ StateAction_Idle::~StateAction_Idle()
 
 void StateAction_Idle::Action()
 {
-	//Parameteræ“¾
-	EnemyIdle::ENEMY_PARAMETER parameter = enemy_->GetIdleParameter();
-	if (enemy_->GetAutoAttack())
+	if (!GameManager::GetEnding())
 	{
-		
-		float rate = enemy_->GetLife() / ENEMY_MAX_LIFE;
-		size_t i = 0;
-		for (i = 0; i < parameter.hp_ratio_.size() + 1; i++)
+		//Parameteræ“¾
+		EnemyIdle::ENEMY_PARAMETER parameter = enemy_->GetIdleParameter();
+		if (enemy_->GetAutoAttack())
 		{
-			if (i == parameter.hp_ratio_.size())break;
-			if (rate >= parameter.hp_ratio_[i])
+			float rate = enemy_->GetLife() / ENEMY_MAX_LIFE;
+			size_t i = 0;
+			//ƒpƒ‰ƒ[ƒ^‚ÌHPŠ„‡‚ğQÆ‚µ‚ÄŒ»İ‚Ì‘Ì—Í‚ÌŠ„‡‚Æ”äŠr
+			for (i = 0; i < parameter.hp_ratio_.size() + 1; i++)
 			{
-				break;
-			}
-		}
-		parameter.idle__counter++;
-		if (parameter.idle__counter >= parameter.count[i])
-		{
-			double probability = parameter.normalAttackLuck[i];
-
-			if ((double)rand() / RAND_MAX < probability) {
-				//’ÊíUŒ‚‚Ìê‡
-				int number = rand() % enemy_->GetNormalAttackNum() + 1;
-
-				if (enemy_->GetEnemyType() == Enemy::ENEMY_HIGE)
+				if (i == parameter.hp_ratio_.size())break;
+				if (rate >= parameter.hp_ratio_[i])
 				{
-					EnemyHige* enemy = (EnemyHige*)enemy_;
-					enemy->SetState((EnemyHige::STATE)number);
-					return;
+					break;
 				}
 			}
-			else
+			parameter.idle__counter++;
+			if (parameter.idle__counter >= parameter.count[i])
 			{
-				if (enemy_->GetEnemyType() == Enemy::ENEMY_HIGE)
-				{
-					//“ÁêUŒ‚‚Ìê‡
-					int number = rand() % enemy_->GetSpecialAttackNum();
+				double probability = parameter.normalAttackLuck[i];
 
-					EnemyHige* enemy = (EnemyHige*)enemy_;
-					if (!(enemy->GetSummonsParameter().avater_alive > 0))
+				if ((double)rand() / RAND_MAX < probability) {
+					//’ÊíUŒ‚‚Ìê‡
+					int number = rand() % enemy_->GetNormalAttackNum() + 1;
+
+					if (enemy_->GetEnemyType() == Enemy::ENEMY_HIGE)
 					{
-						number = enemy->GetNormalAttackNum() + number + 1;
+						EnemyHige* enemy = (EnemyHige*)enemy_;
 						enemy->SetState((EnemyHige::STATE)number);
+						return;
 					}
-					else
+				}
+				else
+				{
+					if (enemy_->GetEnemyType() == Enemy::ENEMY_HIGE)
 					{
 						//“ÁêUŒ‚‚Ìê‡
-						int number = rand() % (enemy_->GetSpecialAttackNum() - 1);
-						number = enemy->GetNormalAttackNum() + number + 1;
-						enemy->SetState((EnemyHige::STATE)number);
+						int number = rand() % enemy_->GetSpecialAttackNum();
+
+						EnemyHige* enemy = (EnemyHige*)enemy_;
+						if (!(enemy->GetSummonsParameter().avater_alive > 0))
+						{
+							number = enemy->GetNormalAttackNum() + number + 1;
+							enemy->SetState((EnemyHige::STATE)number);
+						}
+						else
+						{
+							//“ÁêUŒ‚‚Ìê‡
+							int number = rand() % (enemy_->GetSpecialAttackNum() - 1);
+							number = enemy->GetNormalAttackNum() + number + 1;
+							enemy->SetState((EnemyHige::STATE)number);
+						}
+						return;
 					}
-					return;
 				}
+
 			}
-			
 		}
+		enemy_->SetIdleParameter(&parameter);
+
+		if (this->IsApproach()) { move_->Act(enemy_); }				//“®‚«‚ğ§Œä
+		rotate_->Act(enemy_);			//‰ñ“]§Œä
+
 	}
-	enemy_->SetIdleParameter(&parameter);
-
-	if (this->IsApproach()) { move_->Act(enemy_); }				//“®‚«‚ğ§Œä
-	rotate_->Act(enemy_);			//‰ñ“]§Œä
-
-	
 }
 
 void StateAction_Idle::BeginDisplay()

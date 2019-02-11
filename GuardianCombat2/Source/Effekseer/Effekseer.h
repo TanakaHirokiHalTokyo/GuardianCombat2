@@ -23,9 +23,11 @@ public:
 
 	const enum Effect
 	{
-		Effect_Bullet,					//弾のエフェクト
-		Effect_Teleport,				//テレポート
-		Effect_Burst,					//バースト
+		Effect_Bullet,							//弾のエフェクト
+		Effect_Teleport,						//テレポート
+		Effect_Burst,							//バースト
+		Effect_EnemyExplosion,			//敵の爆発エフェクト
+		Effect_HitEnemy,						//敵にヒットしたとき
 		Effect_Max
 	};
 	//ファイルパス
@@ -33,6 +35,8 @@ public:
 		L"resource/Effekseer/simple_bullet.efk",
 		L"resource/Effekseer/teleportation.efk",
 		L"resource/Effekseer/burstshot.efk",
+		L"resource/Effekseer/EnemyExplosion.efk",
+		L"resource/Effekseer/Hit.efk",
 	};
 
 

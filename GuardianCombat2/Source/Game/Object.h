@@ -138,6 +138,10 @@ public:
 		objects_.reserve(reserve);
 	}
 
+	static inline void SetDrawJudge(bool flag) { isDrawJudge_ = flag; }		//当たり判定の可視化設定
+	static inline bool GetDrawJudge() { return isDrawJudge_; }					//当たり判定可視化状態取得
+
+	//オブジェクト生成
 	template<class _Object, class ... Args>
 	static _Object* Create(Args ... args)
 	{
@@ -155,7 +159,7 @@ protected:
 	static vector<Sphere*> playerCollision_;						//プレイヤーのコリジョン
 	static OBB* enemyBurstCollision_;									//バーストショットの当たり判定
 	static vector<Sphere*> playerBulletCollisions_;			//プレイヤーの弾のコリジョン
-
+	static bool isDrawJudge_;										//当たり判定表示フラグ
 	bool exist_ = true;												//存在しているか falseになったら消される。
 	bool visible_ = true;											//可視状態にするか
 	bool pause_ = false;											//ポーズ状態か

@@ -20,7 +20,14 @@ DirectionalLight* GameManager::light_ = NULL;
 std::string GameManager::sceneTag_ = "None";
 Player* GameManager::player_ = nullptr;
 Blur* GameManager::blur_ = nullptr;
+bool GameManager::playingGame_ = false;
 bool GameManager::gameOver_ = false;
+bool GameManager::gameClear_ = false;
+bool GameManager::enableEdit_ = true;
+bool GameManager::ending_ = false;
+int GameManager::playerSkill1_ = -1;
+int GameManager::playerSkill2_ = -1;
+bool GameManager::returnTitle_ = false;
 
 void GameManager::Init()
 {
@@ -50,8 +57,9 @@ void GameManager::Uninit()
 		delete blur_;
 		blur_ = nullptr;
 	}
-	Object::CollisionReleaseAll();			//コリジョン解放
-	SoundManager::Uninit();					//サウンド終了処理
+	Object::ReleaseAll();							//オブジェクト解放
+	Object::CollisionReleaseAll();				//コリジョン解放
+	SoundManager::Uninit();						//サウンド終了処理
 	TextureManager::ReleaseAll();			//テクスチャ解放
 	ShaderManager::ReleaseAll();			//シェーダー解放
 }
@@ -73,6 +81,12 @@ void GameManager::Update()
 			SetMouseCursorShow(true);
 		}
 	}
+	
+	if (GetKeyboardTrigger(DIK_F1))
+	{
+		enableEdit_ = !enableEdit_;
+	}
+	if (playingGame_)	enableEdit_ = false;
 }
 void GameManager::Draw()
 {

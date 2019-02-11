@@ -18,7 +18,7 @@
 #endif // !SAFE_DELETE_ARRAY
 
 #define FVF_VERTEX3D	(D3DFVF_XYZ  | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)			//FVF
-#define WINDOW_NAME		"Tanaka Project"
+#define WINDOW_NAME		"GuardianCombat2"
 #define CLASS_NAME		" "
 #define WINDOW_STYLE	WS_OVERLAPPEDWINDOW
 

@@ -22,7 +22,8 @@ public:
 
 private:
 	bool fadeIn_ = false;
-	Texture* tex_fade_;
+	Texture* tex_fade_ = nullptr;
+	Texture* tex_loading_ = nullptr;
 	float fadeAlpha_ = 255.0f;
 	bool isFading_ = false;
 };

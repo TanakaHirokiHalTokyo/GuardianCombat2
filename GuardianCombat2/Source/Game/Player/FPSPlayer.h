@@ -28,6 +28,7 @@ public:
 	Sphere* AddCollision();
 
 private:
+	bool debug_ = false;								//デバッグモード
 	FPSPlayerState* movement_ = nullptr;	//プレイヤーの移動を制御
 	Weapon* shotgun_ = nullptr;					//ショットガン情報
 	FPSPlayer_UI* playerUI_ = nullptr;		//PlayerUI情報

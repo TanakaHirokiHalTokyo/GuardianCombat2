@@ -1,11 +1,8 @@
-
-
 #include "Effekseer.h"
 #include "../DirectXRenderer.h"
 #include "../Imgui/ImguiManager.h"
 #include "../Camera/Camera.h"
 
-static Camera* camera;
 CEffekseer::CEffekseer(Effect EffectType)
 {
 	//描画管理用インスタンスの生成
@@ -101,7 +98,7 @@ void CEffekseer::Update()
 	playing_ = effekseerManager_->Exists(effekseerHandle_);
 	if (!playing_)
 	{
-		if (this->repeat_)
+		if (this->repeat_ && this->visible_)
 		{
 			//エフェクトの再生
 			Play();
@@ -118,11 +115,8 @@ void CEffekseer::Update()
 }
 void CEffekseer::Draw()
 {
-	//effekseerRenderer_->SetRenderMode(Effekseer::RenderMode::Wireframe);
-
 	if (GetVisible())
 	{
-		
 		effekseerRenderer_->BeginRendering();
 		effekseerManager_->Draw();
 		effekseerRenderer_->EndRendering();

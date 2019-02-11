@@ -33,9 +33,15 @@ void StayCamera::Uninit()
 
 void StayCamera::Update()
 {
+	this->vector_->SetFront(GetAt() - GetPosition());
+	//右ベクトル
+	D3DXVECTOR3 right;
+	D3DXVec3Cross(&right, &vector_->GetUp(), &vector_->GetFront());
+	D3DXVec3Normalize(&right, &right);
+	vector_->SetRight(right);
+
 	this->SetView();
 	this->SetMainCameraInfo(this->transform_.pos, this->at_, vector_->GetUp(), this->mtxView_, this->mtxProj_);
-
 }
 
 void StayCamera::BeginDraw()

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "../../Vector3/Vector3.h"
 
+
 Vector3* Player::GetVector()
 {
 	return vector_;
@@ -38,4 +39,10 @@ void Player::DecreaseLife(float value)
 	{
 		life_ = 0.0f;
 	}
+	damageAlpha_ = 255.0f;
+}
+
+DeviceConfig * Player::GetDeviceConfig()
+{
+	return deviceConfig_;
 }

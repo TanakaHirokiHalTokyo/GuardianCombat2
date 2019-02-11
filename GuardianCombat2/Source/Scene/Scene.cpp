@@ -14,3 +14,22 @@ bool Scene::ChangeSceneUpdate()
 	}
 	return false;
 }
+
+void Scene::SceneChange(Scene* next_scene)
+{
+	Fade* fade = GameManager::GetFade();
+
+	if (!sceneChange_)
+	{
+		sceneChange_ = true;
+		fade->FadeIn();
+	}
+	else
+	{
+		if (!fade->IsFading())
+		{
+			GameManager::SetScene(next_scene);
+			return;
+		}
+	}
+}

@@ -9,12 +9,10 @@
 
 FPSCamera::FPSCamera()
 {
-	deviceConfig_ = new DeviceConfig();
 }
 
 FPSCamera::~FPSCamera()
 {
-	delete deviceConfig_;
 }
 
 void FPSCamera::Init()
@@ -31,6 +29,8 @@ void FPSCamera::Init()
 	//プレイヤー情報をもとにカメラ情報セット
 	if (player_ != nullptr)
 	{
+		deviceConfig_ = player_->GetDeviceConfig();
+
 		//PlayerPosition Get
 		const auto& player_position = player_->GetPosition();
 		D3DXVECTOR3 camera_position = player_position;
@@ -97,6 +97,7 @@ void FPSCamera::SetPlayer(Player * player)
 
 void FPSCamera::CameraAtUpdate()
 {
+
 	DIMOUSESTATE MouseData = ReturnMouseMove();
 
 	mouseSensi_ = deviceConfig_->GetMouseSensitivity();

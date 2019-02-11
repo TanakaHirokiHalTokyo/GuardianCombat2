@@ -9,6 +9,7 @@
 #include "Scene.h"
 
 class Texture;
+class PauseSelect;
 
 class PauseScene :public Scene
 {
@@ -24,8 +25,11 @@ public:
 
 	void SetPause(bool flag);
 	bool GetPause();
+
+	inline void SetEnableClick(bool flag) { isEnableClick_ = flag; }
 private:
-	bool pausing_ = false;					//現在ポーズ中か
-	Texture* pauseWord_ = nullptr;			//ポーズ文字テクスチャ
-	Texture* backImage_ = nullptr;			//裏テクスチャ	
+	bool isEnableClick_ = true;							//マウスクリックでの編集可能か
+	bool pausing_ = false;									//現在ポーズ中か
+	PauseSelect* pauseSelect_ = nullptr;		//ポーズ選択制御
+	Texture* backImage_ = nullptr;					//裏テクスチャ	
 };

@@ -13,6 +13,12 @@ SoundManager::SOUNDPARAM SoundManager::aParam[SoundManager::SOUND_MAX] = {
 	"resource/Sound/GameBGM.wav",-1,
 	"resource/Sound/ResultWinBGM.wav",-1,
 	"resource/Sound/SelectOK.wav",0,
+	"resource/Sound/selecting_se.wav",0,
+	"resource/Sound/CountDown.wav",0,
+	"resource/Sound/GameStartSE.wav",0,
+	"resource/Sound/se_BulletShot.wav",0,
+	"resource/Sound/se_Exploose.wav",0,
+	"resource/Sound/GameResult.wav",-1,
 };
 
 HRESULT SoundManager::Init()

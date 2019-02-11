@@ -4,6 +4,8 @@
 class SceneSkinMesh;
 class Vector3;
 class Camera;
+class DeviceConfig;
+class Texture;
 
 const float PLAYER_DEFAULT_SPEED = 0.005f;
 const float PLAYER_DEFAULT_LIFE = 100.0f;
@@ -11,6 +13,8 @@ const float PLAYER_DEFAULT_LIFE = 100.0f;
 class Player :public Object
 {
 public:
+	const float DAMAGE_ALPHA_SPEED = 2.0f;
+
 	virtual void Init() = 0;
 	virtual void Uninit() = 0;
 	virtual void Update() = 0;
@@ -35,7 +39,15 @@ public:
 
 	inline void SetInvincible(bool flag) { invincible_ = flag; }		//無敵状態設定
 	inline bool GetInvincible() { return invincible_; }					//無敵状態取得
+
+	inline void SetDamageAlpha(float value) { damageAlpha_ = value; }		//ダメージα値設定
+	inline float GetDamageAlpha() { return damageAlpha_; }							//ダメージα値取得
+
+	//デバイス情報取得
+	DeviceConfig* GetDeviceConfig();
 protected:
+	float damageAlpha_ = 0.0f;										//ダメージα値
+	DeviceConfig* deviceConfig_ = nullptr;					//デバイス情報
 	bool invincible_ = false;											//無敵
 	Camera* camera_ = nullptr;									//カメラ情報
 	SceneSkinMesh* animModel_ = nullptr;				//アニメーション付きモデル

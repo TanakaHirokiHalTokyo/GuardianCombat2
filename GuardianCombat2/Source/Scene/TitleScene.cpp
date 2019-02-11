@@ -21,6 +21,32 @@ TitleScene::TitleScene()
 	GameManager::SetSceneTag("TitleScene");
 	//FadeOut
 	GameManager::GetFade()->FadeOut();
+
+	DirectionalLight* light = Object::Create<DirectionalLight>();		//環境光作成
+	light->SetPause(true);
+	light->SetVector(D3DXVECTOR3(0.0f, -1.0f, 1.0f));
+	GameManager::SetDirectionalLight(light);										//GameManagerにライトを設定
+
+	Camera* camera = Object::Create<StayCamera>();
+	camera->SetPosition(0.0f, 0.0f, -10.0f);
+	camera->SetAt(0.0f, 0.0f, 0.0f);
+	camera->SetProjection();
+
+	XModel* dome = Object::Create<XModel>();
+	dome->SetModelType(XModel::MODEL_DOME336);
+	dome->SetScale(0.01f, 0.01f, 0.01f);
+
+	hige_ = Object::Create<XModel>();
+
+	effect_ = new CEffekseer(CEffekseer::Effect_Teleport);
+
+	Texture* logo = Object::Create<Texture>(TextureManager::Tex_TitleLogo);
+	logo->SetDrawSize(logo->GetDrawSize().x * 1.5f, logo->GetDrawSize().y * 1.5f);
+
+	bgm_ = new Sound(SoundManager::TITLE_BGM);
+	selectOKSE_ = new Sound(SoundManager::SELECTOK_SE);
+
+	titleSelect_ = new TitleSelect(this);
 }
 
 TitleScene::~TitleScene()
@@ -37,6 +63,12 @@ TitleScene::~TitleScene()
 		delete bgm_;
 		bgm_ = nullptr;
 	}
+	if (selectOKSE_)
+	{
+		selectOKSE_->StopSound();
+		delete selectOKSE_;
+		selectOKSE_ = nullptr;
+	}
 	if (titleSelect_)
 	{
 		titleSelect_->Uninit();
@@ -47,38 +79,17 @@ TitleScene::~TitleScene()
 
 void TitleScene::Init()
 {
-	DirectionalLight* light = Object::Create<DirectionalLight>();		//環境光作成
-	light->SetPause(true);
-	light->SetVector(D3DXVECTOR3(0.0f, -1.0f, 1.0f));
-	GameManager::SetDirectionalLight(light);										//GameManagerにライトを設定
-
-	Camera* camera = Object::Create<StayCamera>();
-	camera->SetPosition(0.0f, 0.0f, -10.0f);
-	camera->SetAt(0.0f, 0.0f, 0.0f);
-	camera->SetProjection();
-
-	XModel* dome = Object::Create<XModel>();
-	dome->SetModelType(XModel::MODEL_DOME336);
-	dome->SetScale(0.01f, 0.01f, 0.01f);
-
-	hige_ = Object::Create<XModel>();
 	hige_->SetModelType(XModel::MODEL_HIGE);
 	hige_->SetPosition(0.0f, 0.0f, 0.0f);
 	hige_->SetRotation(0, 180.0f, 0);
 
-	effect_ = new CEffekseer(CEffekseer::Effect_Teleport);
 	effect_->Init();
 	effect_->SetScale(10.0f, 10.0f, 10.0f);
 	effect_->RepeatEffect(true);
 	effect_->SetVisible(true);
 
-	Texture* logo = Object::Create<Texture>(TextureManager::Tex_TitleLogo);
-	logo->SetDrawSize(logo->GetDrawSize().x * 1.5f, logo->GetDrawSize().y * 1.5f);
-
-	bgm_ = new Sound(SoundManager::TITLE_BGM);
 	bgm_->PlaySoundA();
 
-	titleSelect_ = new TitleSelect();
 	titleSelect_->Init();
 
 	Object::InitAll();
@@ -86,42 +97,20 @@ void TitleScene::Init()
 
 void TitleScene::Uninit()
 {
-	Object::ReleaseAll();
 	bgm_->StopSound();
 }
 
 void TitleScene::Update()
 {
-	Fade* fade = GameManager::GetFade();
-
 	if (!sceneChange_)
 	{
-		if (up_){
-			value_ += 0.002f;
-			if (value_ > 0.05f)
-			{
-				up_ = false;
-			}
-		}
-		else {
-			value_ -= 0.002f;
-			if (value_ < -0.05f)
-			{
-				up_ = true;
-			}
-		}
-		hige_->SetPositionY(hige_->GetPosition().y + value_);
+		titleSelect_->Update();
 
 		if (GetKeyboardTrigger(DIK_RETURN) || GetKeyboardTrigger(DIK_SPACE) || 
 			X_CONTROLLER::GetXcontrollerButtonTrigger(1, XINPUT_GAMEPAD_A) || 
 			X_CONTROLLER::GetXcontrollerButtonTrigger(1, XINPUT_GAMEPAD_B))
 		{
-			fade->FadeIn();
-			sceneChange_ = true;
-			if (titleSelect_->GetSelectMode() == (int)TitleSelect::EXIT)
-			{
-				GameEnd();
-			}
+			SceneChange();
 		}
 	}
 	else
@@ -131,9 +120,11 @@ void TitleScene::Update()
 			switch (titleSelect_->GetSelectMode())
 			{
 			case TitleSelect::EDIT:
+				Object::ReleaseAll();
 				GameManager::SetScene(new EditScene());
 				break;
 			case TitleSelect::GAME:
+				Object::ReleaseAll();
 				GameManager::SetScene(new GameScene());
 				break;
 			default:
@@ -142,9 +133,25 @@ void TitleScene::Update()
 
 			return;
 		}
+
 	}
+	if (up_) {
+		value_ += 0.002f;
+		if (value_ > 0.05f)
+		{
+			up_ = false;
+		}
+	}
+	else {
+		value_ -= 0.002f;
+		if (value_ < -0.05f)
+		{
+			up_ = true;
+		}
+	}
+	hige_->SetPositionY(hige_->GetPosition().y + value_);
+
 	effect_->Update();
-	titleSelect_->Update();
 	Object::UpdateAll();
 }
 
@@ -163,4 +170,19 @@ void TitleScene::Draw()
 void TitleScene::EndDraw()
 {
 	Object::EndDrawAll();
+}
+
+void TitleScene::SceneChange()
+{
+	Fade* fade = GameManager::GetFade();
+
+	selectOKSE_->PlaySoundA();
+	bgm_->StopSound();
+	fade->FadeIn();
+	sceneChange_ = true;
+	if (titleSelect_->GetSelectMode() == (int)TitleSelect::EXIT)
+	{
+		Object::ReleaseAll();
+		GameEnd();
+	}
 }

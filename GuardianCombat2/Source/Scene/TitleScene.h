@@ -25,11 +25,14 @@ public:
 	void BeginDraw()override;
 	void Draw()override;
 	void EndDraw()override;
+
+	void SceneChange();
 private:
-	XModel* hige_ = nullptr;
-	bool up_ = false;
-	float value_ = 0.0f;
-	CEffekseer* effect_ = nullptr;
-	Sound* bgm_ = nullptr;
-	TitleSelect* titleSelect_ = nullptr;
+	XModel* hige_ = nullptr;							//敵のモデル情報
+	bool up_ = false;										//上昇フラグ
+	float value_ = 0.0f;									//上昇値
+	CEffekseer* effect_ = nullptr;					//エフェクト情報
+	Sound* bgm_ = nullptr;							//BGM情報
+	Sound* selectOKSE_ = nullptr;				//選択時効果音
+	TitleSelect* titleSelect_ = nullptr;			//選択管理クラス
 };

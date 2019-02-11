@@ -1,5 +1,11 @@
 #include "DeviceConfig.h"
 
+DeviceConfig::DeviceConfig()
+{
+	mouseSensitivity_ = MouseMaxSensitivity;
+	controllerSensitivity_ = ControllerMinSensitivity;
+}
+
 void DeviceConfig::ChangeMouseSensitivity(float Sensi)
 {
 	mouseSensitivity_ = Sensi;

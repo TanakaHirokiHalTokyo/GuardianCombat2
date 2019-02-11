@@ -14,50 +14,29 @@
 #include "../UI/UI.h"
 #include "Fade.h"
 #include "../DInput/DirectInput.h"
-#include "ResultScene.h"
+#include "GameResult.h"
 #include "PauseScene.h"
 #include "../Game/Cube/Cube.h"	
 #include "../Game/Effect/Effect.h"
 #include "../Game/Blur/Blur.h"
 #include "../Sound/Sound.h"
+#include "Game\GameCountdown.h"
+#include "TitleScene.h"
 
 GameScene::GameScene()
 {
 	//SceneTag設定
+	Object::SetDrawJudge(false);
+	GameManager::StartGame();
 	GameManager::SetSceneTag("GameScene");
+	GameManager::SetGameClear(false);
+	GameManager::ResetEnding();
 	GameManager::GameOver(false);
 	GameManager::GetFade()->FadeOut();
 	EffectManager::Init();
 	pauseScene_ = new PauseScene();													//ポーズシーン作成
 
 	bgm_ = new Sound(SoundManager::GAME_BGM);
-
-}
-
-GameScene::~GameScene()
-{
-	EffectManager::Uninit();
-
-	//ポーズシーン破棄
-	delete pauseScene_;
-	pauseScene_ = nullptr;
-
-	if (bgm_)
-	{
-		bgm_->StopSound();
-		delete bgm_;
-		bgm_ = nullptr;
-	}
-
-	//シャドウマップ終了処理
-	ShadowMapShader::Uninit();
-	//オブジェクト解放
-	Object::ReleaseAll();
-	Object::CollisionReleaseAll();
-}
-
-void GameScene::Init()
-{
 	bgm_->PlaySoundA();
 
 	DirectionalLight* light = Object::Create<DirectionalLight>();		//環境光作成
@@ -73,18 +52,47 @@ void GameScene::Init()
 	Object::Create<MeshField>();														//フィールド作成
 
 	player_ = GameManager::SetPlayer(Object::Create<FPSPlayer>());		//プレイヤー作成しマネージャーにプレイヤー登録する
-	player_->SetInvincible(false);
 
 	EnemyHige* enemy = Object::Create<EnemyHige>();															//敵作成
 	enemy->SetAutoAttack(true);
 	enemy->SetInvincible(false);
 	enemy->SetEditMode(false);
 
-	UI* ui = Object::Create<UI>(TextureManager::Tex_Mission);			//UI作成
-	ui->SetStartScale(200.0f, 40.0f);															//UI初期スケール設定
-	ui->SetStartPosition(-200.0f, (float)ScreenHeight / 2.0f);					//UI初期座標設定
-	ui->MoveTexture(0.0f, 5.0f, 0, (float)ScreenHeight / 2.0f);				//UI移動設定
-	ui->ScalingTexture(0.0f, 5.0f, 200.0f, 40.0f);										//UI拡大設定
+	countDown_ = new GameCountdown();
+}
+
+GameScene::~GameScene()
+{
+	EffectManager::Uninit();
+	GameManager::EndGame();
+
+	//ポーズシーン破棄
+	delete pauseScene_;
+	pauseScene_ = nullptr;
+
+	if (countDown_)
+	{
+		countDown_->Uninit();
+		delete countDown_;
+		countDown_ = nullptr;
+	}
+
+	if (bgm_)
+	{
+		bgm_->StopSound();
+		delete bgm_;
+		bgm_ = nullptr;
+	}
+
+	//シャドウマップ終了処理
+	ShadowMapShader::Uninit();
+}
+
+void GameScene::Init()
+{
+	updateOnce_ = false;
+	if (countDown_) countDown_->Init();
+	player_->SetInvincible(false);
 	Object::InitAll();
 	pauseScene_->Init();
 }
@@ -92,51 +100,82 @@ void GameScene::Init()
 void GameScene::Uninit()
 {
 	pauseScene_->Uninit();
+	if (countDown_) countDown_->Uninit();
 }
 
 void GameScene::Update()
 {
 	//Fadeポインタ取得
 	Fade* fade = GameManager::GetFade();
+	if(countDown_) countDown_->Update();
 
-	if (GameManager::GetGameOver())
+	if (countDown_ == nullptr || !countDown_->GetCountDown() || !updateOnce_)
 	{
-		//シーンチェンジ
-		if (!sceneChange_)
+		updateOnce_ = true;
+		if (GameManager::GetGameOver())
 		{
-			fade->FadeIn();
-			sceneChange_ = true;
+			//シーンチェンジ
+			if (!sceneChange_)
+			{
+				fade->FadeIn();
+				sceneChange_ = true;
+			}
+			else
+			{
+				if (ChangeSceneUpdate())
+				{
+					//オブジェクト解放
+					Object::ReleaseAll();
+					Object::CollisionReleaseAll();
+					GameManager::SetScene(new GameResult());
+					return;
+				}
+			}
 		}
 		else
 		{
-			if (ChangeSceneUpdate())
+			if (GameManager::GetReturnTitle())
 			{
-				GameManager::SetScene(new ResultScene());
-				return;
+				if (!sceneChange_)
+				{
+					fade->FadeIn();
+					sceneChange_ = true;
+				}
+				else
+				{
+					if (ChangeSceneUpdate())
+					{
+						//オブジェクト解放
+						Object::ReleaseAll();
+						Object::CollisionReleaseAll();
+						GameManager::SetScene(new TitleScene());
+						GameManager::SetReturnTitle(false);
+						return;
+					}
+				}
+			}
+
+			//ポーズシーンの更新
+			pauseScene_->Update();
+
+			if (!pauseScene_->GetPause())
+			{
+				if (GetKeyboardTrigger(DIK_F8))
+				{
+					cursorActive_ = !cursorActive_;
+				}
+
+				if (cursorActive_)
+				{
+					//カーソルの位置固定
+					SetCursorPos((int)ScreenWidth / 2, (int)ScreenHeight / 2);
+				}
+				//オブジェクト更新
+				Object::UpdateAll();
 			}
 		}
 	}
-	else
-	{
-		//ポーズシーンの更新
-		pauseScene_->Update();
-
-		if (!pauseScene_->GetPause())
-		{
-			if (GetKeyboardTrigger(DIK_F8))
-			{
-				cursorActive_ = !cursorActive_;
-			}
-
-			if (cursorActive_)
-			{
-				//カーソルの位置固定
-				SetCursorPos((int)ScreenWidth / 2, (int)ScreenHeight / 2);
-			}
-			//オブジェクト更新
-			Object::UpdateAll();
-		}
-	}
+	
 	
 }
 
@@ -163,11 +202,12 @@ void GameScene::Draw()
 	GameManager::GetBlur()->BeginDraw();
 	Object::DrawAll();
 	GameManager::GetBlur()->EndDraw();
-	pauseScene_->Draw();
+	if(countDown_) countDown_->Draw();
 }
 
 void GameScene::EndDraw()
 {
-	CRendererDirectX::ClearZ();
 	Object::EndDrawAll();
+	pauseScene_->Draw();
+	CRendererDirectX::ClearZ();
 }

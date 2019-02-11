@@ -8,6 +8,8 @@
 
 #include "Weapon.h"
 
+class Sound;
+
 const unsigned int BulletNum = 200;		//U’e‚·‚é’e‚Ì”
 
 class Weapon_Shotgun :public Weapon
@@ -23,5 +25,5 @@ public:
 	void EndDraw()override;
 
 private:
-	
+	Sound* shotSE_ = nullptr;
 };

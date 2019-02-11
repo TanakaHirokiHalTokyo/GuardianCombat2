@@ -17,12 +17,14 @@
 #include "../../DirectXRenderer.h"	
 #include "../../Texture/Texture.h"
 #include "Enemy_HigeAvater.h"
+#include "../../Sound/Sound.h"	
 #include "Enemy_HigeUI.h"
 
 const D3DXVECTOR3 init_pos = D3DXVECTOR3(-0.1f,0.0f,-8.0f);
 const float EnemyHige::BURSTX = 3.5f;
 const float EnemyHige::BURSTY = 3.5f;
 const float EnemyHige::BURSTZ = 8.5f;
+const float DESTROY_EFFECT_SIZE = 1.0f;
 
 EnemyHige::EnemyHige()
 {
@@ -50,13 +52,15 @@ EnemyHige::EnemyHige()
 	collision_->pos = GetPosition();
 	enemyCollisions_.emplace_back(collision_);
 
-	ring_ = Object::Create<XModel>();
-	ring_->SetModelType(XModel::MODEL_RING);
-	ring_->SetScale(0.5f, 0.5f, 0.5f);
+	efDestroy_ = new CEffekseer(CEffekseer::Effect_EnemyExplosion);
 
+	explooseSE_ = new Sound(SoundManager::EXPLOOSE_SE);
+
+	exploose_ = new CEffekseer(CEffekseer::Effect_HitEnemy);
 	//パラメータ初期化
 	InitParameter();
 
+	this->LoadBasisParameter("EnemyHige_Basis");
 	this->LoadIdleParameter("EnemyHige_Idle");
 	this->LoadCircleShotParameter("EnemyHige_CircleShot");
 	this->LoadRushParameter("EnemyHige_Rush");
@@ -73,7 +77,18 @@ EnemyHige::~EnemyHige()
 		delete vector_;
 		vector_ = nullptr;
 	}
-	
+	if (explooseSE_)
+	{
+		explooseSE_->StopSound();
+		delete explooseSE_;
+		explooseSE_ = nullptr;
+	}
+	if (exploose_)
+	{
+		exploose_->Uninit();
+		delete exploose_;
+		exploose_ = nullptr;
+	}
 	if (statePattern_ )
 	{
 		delete statePattern_;
@@ -85,13 +100,21 @@ EnemyHige::~EnemyHige()
 		delete ui_;
 		ui_ = nullptr;
 	}
+	if (efDestroy_)
+	{
+		efDestroy_->Uninit();
+		delete efDestroy_;
+		efDestroy_ = nullptr;
+	}
 	DestParameter();
 }
 
 void EnemyHige::Init()
 {
 	//初期化
-	life_ = 100.0f;
+	life_ = maxLife_;
+
+	isEnding_ = false;	
 
 	SetScale(0.3f, 0.3f, 0.3f);
 	SetPosition(init_pos);
@@ -116,9 +139,15 @@ void EnemyHige::Init()
 	vector_->SetRight(right);
 	
 	//Collision初期化
-	collision_->rad = 0.5f;
+	collision_->rad = 0.6f;
 
 	ui_->Init();
+
+	efDestroy_->Init();
+	efDestroy_->SetVisible(false);
+
+	exploose_->Init();
+	exploose_->SetVisible(true);
 
 	FinishState();
 
@@ -132,15 +161,38 @@ void EnemyHige::Init()
 void EnemyHige::Uninit()
 {
 	ui_->Uninit();
+	efDestroy_->Uninit();
 }
 
 void EnemyHige::Update()
 {
 	if (life_ <= 0.0f)
 	{
-		GameManager::GameOver(true);
+		statePattern_->Act();
+
+		if (!GameManager::GetEnding())
+		{
+			GameManager::StartEnding();
+			efDestroy_->SetVisible(true);
+			efDestroy_->SetPosition(GetPosition());
+			efDestroy_->SetScale(DESTROY_EFFECT_SIZE, DESTROY_EFFECT_SIZE, DESTROY_EFFECT_SIZE);
+			efDestroy_->Play();
+			GameManager::GetPlayer()->SetVisible(false);
+
+		}
+		else
+		{
+			efDestroy_->Update();
+			if (!efDestroy_->GetPlaying())
+			{
+				GameManager::SetGameClear(true);
+				GameManager::GameOver(true);
+			}
+		}
 		return;
 	}
+
+	
 
 	//敵だけのポーズモード適用するのか判断
 	JudgePause();
@@ -172,8 +224,9 @@ void EnemyHige::Update()
 
 		ui_->Update();
 
-		ring_->SetPosition(GetPosition());
-		ring_->SetPositionY(ring_->GetPosition().y + ring_->GetScale().x);
+		exploose_->SetScale(0.5f,0.5f,0.5f);
+
+
 		collision_->pos = GetPosition();
 		collision_->pos.y = collision_->pos.y + collision_->rad;
 
@@ -203,6 +256,8 @@ void EnemyHige::BeginDraw()
 	world_ *= trans;
 
 	SetWorld(&world_);
+
+	exploose_->Update();
 
 	statePattern_->BeginDisplay();
 
@@ -241,17 +296,23 @@ void EnemyHige::Draw()
 		model_->Draw(effect, 0);
 
 	}
+
 	ui_->Draw();
+	efDestroy_->Draw();
+	exploose_->Draw();
+
 	for (int i = 0; i < summonsParameter_.summons_num; i++)
 	{
 		summonsParameter_.avater[i].Draw();
 	}
 
-
 	if (this->GetEditMode())
 	{
-		//デバッグ表示　ステート・パラメータ表示
-		DrawDebug();
+		if (GameManager::GetEnableEdit())
+		{
+			//デバッグ表示　ステート・パラメータ表示
+			DrawDebug();
+		}
 	}
 	statePattern_->Display();
 }
@@ -304,7 +365,6 @@ void EnemyHige::SaveRushParameter(const std::string filename)
 	file.write((const char*)&this->rushParameter_.speed, sizeof(float));
 	file.write((const char*)&this->rushParameter_.attack, sizeof(float));
 	file.close();
-	
 }
 //============================================================
 //		突進攻撃パラメータ読込
@@ -628,6 +688,7 @@ void EnemyHige::DrawDebug()
 	reset_parameter = ImGui::Button(u8"パラメータ情報初期化");
 	if (ImGui::Button(u8"パラメータ保存"))
 	{
+		this->SaveBasisParameter("EnemyHIge_Basis");
 		this->SaveIdleParameter("EnemyHige_Idle");
 		this->SaveRushParameter("EnemyHige_Rush");
 		this->SaveCircleShotParameter("EnemyHige_CircleShot");
@@ -638,7 +699,9 @@ void EnemyHige::DrawDebug()
 	}
 	ImGui::Checkbox(u8"オートアタック",&autoAttack_);
 	ImGui::Checkbox(u8"無敵", &invincible_);											//無敵
-	ImGui::SliderFloat(u8"体力",&life_,0.0f,ENEMY_MAX_LIFE);
+	ImGui::SliderFloat(u8"最大体力",&maxLife_,0.0f,ENEMY_MAX_LIFE);
+	ImGui::SliderFloat(u8"現体力",&life_,0.0f,ENEMY_MAX_LIFE);
+	ImGui::SliderFloat(u8"ダメージカット率",&damageCutRate_,0.0f,1.0f);
 	ImGui::Text(u8"攻撃パターン : %s",StateWord[state_]);
 
 	//次に設定するSTATE

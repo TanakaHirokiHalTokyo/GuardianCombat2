@@ -159,41 +159,42 @@ public:
 	//突進状態のパラメータ取得・設定
 	EnemyHigeRush::ENEMY_PARAMETER GetRushParameter();
 	void SetRushParameter(EnemyHigeRush::ENEMY_PARAMETER* parameter);
-	void SaveRushParameter(const std::string filename);			//突進パラメータ保存
-	void LoadRushParameter(const std::string filename);			//突進パラメータ読込
 
 	//波状攻撃のパラメータ取得・設定
 	EnemyHigeCircleShot::ENEMY_PARAMETER GetCircleShotParameter();
 	void SetCircleShotParameter(EnemyHigeCircleShot::ENEMY_PARAMETER* parameter);
-	void SaveCircleShotParameter(const std::string filename);		//波状攻撃パラメータ保存
-	void LoadCircleShotParameter(const std::string filename);	//波状攻撃パラメータ読み込み
 	
 
 	//ホーミングのパラメータ取得・設定
 	EnemyHigeHorming::ENEMY_PARAMETER GetHormingParameter();
 	void SetHormingParameter(EnemyHigeHorming::ENEMY_PARAMETER* parameter);
-	void SaveHormingParameter(const std::string filename);		//ホーミングパラメータの保存
-	void LoadHormingParameter(const std::string filename);		//ホーミングパラメータ読込
 
 	//テレポートのパラメータ取得・設定
 	EnemyHigeTeleportation::ENEMY_PARAMETER GetTeleportParameter();
 	void SetTeleportParameter(EnemyHigeTeleportation::ENEMY_PARAMETER* parameter);
-	void SaveTeleportParameter(const std::string filename);		//テレポートパラメータ保存
-	void LoadTeleportParameter(const std::string filename);		//テレポートパラメータ読込
 
 	//召喚のパラメータ取得・設定
 	EnemyHigeSummons::ENEMY_PARAMETER GetSummonsParameter();
 	void SetSummonsParameter(EnemyHigeSummons::ENEMY_PARAMETER* parameter);
-	void SaveSummonsParameter(const std::string filename);		//召喚パラメータ保存
-	void LoadSummonsParameter(const std::string filename);		//召喚パラメータ読込
 
 	//バーストショットのパラメータ取得・設定
 	EnemyHigeBurstShot::ENEMY_PARAMETER GetBurstParameter();
 	void SetBurstParameter(EnemyHigeBurstShot::ENEMY_PARAMETER* parameter);
+
+private:
+	void SaveRushParameter(const std::string filename);			//突進パラメータ保存
+	void LoadRushParameter(const std::string filename);			//突進パラメータ読込
+	void SaveCircleShotParameter(const std::string filename);		//波状攻撃パラメータ保存
+	void LoadCircleShotParameter(const std::string filename);	//波状攻撃パラメータ読み込み
+	void SaveHormingParameter(const std::string filename);		//ホーミングパラメータの保存
+	void LoadHormingParameter(const std::string filename);		//ホーミングパラメータ読込
+	void SaveTeleportParameter(const std::string filename);		//テレポートパラメータ保存
+	void LoadTeleportParameter(const std::string filename);		//テレポートパラメータ読込
+	void SaveSummonsParameter(const std::string filename);		//召喚パラメータ保存
+	void LoadSummonsParameter(const std::string filename);		//召喚パラメータ読込
 	void SaveBurstParameter(const std::string filename);		//バーストパラメータ保存
 	void LoadBurstParameter(const std::string filename);		//バーストパラメータ読込
 
-private:
 	void DrawDebug();															//Debug表示
 	void InitParameter();														//パラメータ初期化
 	void ReCreateCircleParameter();									//波状攻撃パラメータ再作成
@@ -206,6 +207,8 @@ private:
 	void InitBurstShotParameterValue();								//バーストショットの情報初期化
 	void DestParameter();														//パラメータデストラクタ
 private:
+	CEffekseer* efDestroy_ = nullptr;									//死んだときのエフェクト
+	bool isEnding_ = false;													//終了時エフェクト再生中か
 	EnemyHigeUI* ui_ = nullptr;											//UI
 	StatePattern_Enemy* statePattern_ = nullptr;				//ステート状態管理
 	STATE state_ = IDLE;														//状態
@@ -216,5 +219,4 @@ private:
 	EnemyHigeTeleportation::ENEMY_PARAMETER teleportationParameter_ = {};	//テレポートのパラメータ情報
 	EnemyHigeSummons::ENEMY_PARAMETER summonsParameter_ = {};				//分身召喚のパラメータ情報
 	EnemyHigeBurstShot::ENEMY_PARAMETER burstParameter_ = {};					//バーストショットのパラメータ情報
-	XModel* ring_ = nullptr;
 };

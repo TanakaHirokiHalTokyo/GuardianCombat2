@@ -11,6 +11,7 @@
 #include "../../../XInput/xcontroller.h"
 #include "../../../main.h"
 #include "../../../Vector3/Vector3.h"
+#include "../../../Sound/Sound.h"
 
 Weapon_Shotgun::Weapon_Shotgun()
 {
@@ -29,12 +30,28 @@ Weapon_Shotgun::Weapon_Shotgun()
 		bullet_[i].SetWeapon(this);
 		bullet_[i].Init();
 	}
+
+	shotSE_ = new Sound(SoundManager::BULLETSHOT_SE);
 }
 
 Weapon_Shotgun::~Weapon_Shotgun()
 {
-	delete relative_;
-	delete model_;
+	if (relative_)
+	{
+		delete relative_;
+		relative_ = nullptr;
+	}
+	if (model_) {
+		model_->Uninit();
+		delete model_;
+		model_ = nullptr;
+	}
+	if (shotSE_)
+	{
+		shotSE_->StopSound();
+		delete shotSE_;
+		shotSE_ = nullptr;
+	}
 
 	if (bullet_)
 	{
@@ -86,6 +103,7 @@ void Weapon_Shotgun::Update()
 		rateCount_++;
 		if (rateCount_ >= rate_count)
 		{
+			shotSE_->PlaySoundA();
 			ShotBullet(BulletNum);
 			rateCount_ = 0;
 		}

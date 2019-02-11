@@ -13,6 +13,7 @@ public:
 	virtual void EndDraw() = 0;
 
 	bool ChangeSceneUpdate();
+	void SceneChange(Scene* next_scene);
 protected:
 	bool sceneChange_ = false;
 };

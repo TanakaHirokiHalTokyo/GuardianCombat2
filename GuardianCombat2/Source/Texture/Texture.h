@@ -47,11 +47,13 @@ public:
 		Tex_0,
 		Tex_Fade,
 		Tex_Toon,
-		Tex_Mission,
 		Tex_Reticle,
 		Tex_PauseWord,
+		Tex_MouseWord,
+		Tex_ControllerWord,
 		Tex_Turret,
 		Tex_SliderBar,
+		Tex_SliderButton,
 		Tex_SimpleBullet,
 		Tex_TitleLogo,
 		Tex_PressSpace,
@@ -59,14 +61,18 @@ public:
 		Tex_EditWord,
 		Tex_GameWord,
 		Tex_ExitWord,
-		Tex_IconDash,
-		Tex_IconHeal,
-		Tex_IconThunder,
-		Tex_IconSpeedUp,
-		Tex_ExpDash,
-		Tex_ExpHeal,
-		Tex_ExpThunder,
-		Tex_ExpSpeedUp,
+		Tex_NowLoading,
+		Tex_Count1,
+		Tex_Count2,
+		Tex_Count3,
+		Tex_Win,
+		Tex_Lose,
+		Tex_GameResultBack,
+		Tex_B,
+		Tex_Back,
+		Tex_DamageScreen,
+		Tex_BackGame,
+		Tex_BackTitle,
 		Tex_Max,
 	};
 
@@ -99,6 +105,7 @@ public:
 	void SetDrawSize(float width, float height);
 	D3DXVECTOR2 GetDrawSize() { return drawSize_; }
 	void SetTexcoord(int tcx, int tcy);
+	void SetTexture(TextureManager::TextureList type);
 	void SetTexture(LPDIRECT3DTEXTURE9 pTex, float texW, float texH);
 	void SetTexcoordSize(float tcw, float tch);
 	void SetAffine(bool Affine);

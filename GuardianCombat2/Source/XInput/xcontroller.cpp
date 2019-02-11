@@ -1,11 +1,10 @@
 //**-------------------------------------------------------**
 //**
 //**                  xcontroller.cpp
-//**               Author: Akagawa Yuichi
 //**
 //**-------------------------------------------------------**
 #include <Windows.h>
-
+#include "../Game/GameManager/GameManager.h"
 #include "../Imgui/ImguiManager.h"
 
 #include "xcontroller.h"
@@ -284,137 +283,140 @@ void X_CONTROLLER::XcontrollerValue(int nNumController)
 	ImGui::SetNextWindowPos(ImVec2(900, 20), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(340, 420), ImGuiSetCond_Once);
 
-	ImGui::Begin("XController");
-	if (GetConnectController())
+	/*if (GameManager::GetEnableEdit())
 	{
-		ImGui::Text("Connected");
-	}
-	else
-	{
-		ImGui::Text("No Connection");
-	}
+		ImGui::Begin("XController");
+		if (GetConnectController())
+		{
+			ImGui::Text("Connected");
+		}
+		else
+		{
+			ImGui::Text("No Connection");
+		}
 
-	ImGui::Text("Controller %d", nNumController);
-	ImGui::Text("LeftStick X : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbLX, (controllerState_[nNumController - 1].Gamepad.sThumbLX - (-32768)) / 32768.0f - 1.0f);
-	ImGui::Text("LeftStick Y : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbLY, (controllerState_[nNumController - 1].Gamepad.sThumbLY - (-32768)) / 32768.0f - 1.0f);
-	ImGui::Text("RightStick X : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbRX, (controllerState_[nNumController - 1].Gamepad.sThumbRX - (-32768)) / 32768.0f - 1.0f);
-	ImGui::Text("RightStick Y : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbRY, (controllerState_[nNumController - 1].Gamepad.sThumbRY - (-32768)) / 32768.0f - 1.0f);
-	ImGui::Text("LeftTrigger : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.bLeftTrigger, (controllerState_[nNumController - 1].Gamepad.bLeftTrigger - 0) / 255.0f);
-	ImGui::Text("RightTrigger : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.bRightTrigger, (controllerState_[nNumController - 1].Gamepad.bRightTrigger - 0) / 255.0f);
+		ImGui::Text("Controller %d", nNumController);
+		ImGui::Text("LeftStick X : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbLX, (controllerState_[nNumController - 1].Gamepad.sThumbLX - (-32768)) / 32768.0f - 1.0f);
+		ImGui::Text("LeftStick Y : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbLY, (controllerState_[nNumController - 1].Gamepad.sThumbLY - (-32768)) / 32768.0f - 1.0f);
+		ImGui::Text("RightStick X : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbRX, (controllerState_[nNumController - 1].Gamepad.sThumbRX - (-32768)) / 32768.0f - 1.0f);
+		ImGui::Text("RightStick Y : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.sThumbRY, (controllerState_[nNumController - 1].Gamepad.sThumbRY - (-32768)) / 32768.0f - 1.0f);
+		ImGui::Text("LeftTrigger : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.bLeftTrigger, (controllerState_[nNumController - 1].Gamepad.bLeftTrigger - 0) / 255.0f);
+		ImGui::Text("RightTrigger : %6d (%.6f)", controllerState_[nNumController - 1].Gamepad.bRightTrigger, (controllerState_[nNumController - 1].Gamepad.bRightTrigger - 0) / 255.0f);
 
-	if (buttonStatus_[nNumController - 1].DPAD_UP)
-	{
-		ImGui::Text("DPAD_UP : TRUE");
-	}
-	else
-	{
-		ImGui::Text("DPAD_UP : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].DPAD_DOWN)
-	{
-		ImGui::Text("DPAD_DOWN : TRUE");
-	}
-	else
-	{
-		ImGui::Text("DPAD_DOWN : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].DPAD_LEFT)
-	{
-		ImGui::Text("DPAD_LEFT : TRUE");
-	}
-	else
-	{
-		ImGui::Text("DPAD_LEFT : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].DPAD_RIGHT)
-	{
-		ImGui::Text("DPAD_RIGHT : TRUE");
-	}
-	else
-	{
-		ImGui::Text("DPAD_RIGHT : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].START)
-	{
-		ImGui::Text("START : TRUE");
-	}
-	else
-	{
-		ImGui::Text("START : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].BACK)
-	{
-		ImGui::Text("BACK : TRUE");
-	}
-	else
-	{
-		ImGui::Text("BACK : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].LEFT_THUMB)
-	{
-		ImGui::Text("LEFT_THUMB : TRUE");
-	}
-	else
-	{
-		ImGui::Text("LEFT_THUMB : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].RIGHT_THUMB)
-	{
-		ImGui::Text("RIGHT_THUMB : TRUE");
-	}
-	else
-	{
-		ImGui::Text("RIGHT_THUMB : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].LEFT_SHOULDER)
-	{
-		ImGui::Text("LEFT_SHOULDER : TRUE");
-	}
-	else
-	{
-		ImGui::Text("LEFT_SHOULDER : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].RIGHT_SHOULDER)
-	{
-		ImGui::Text("RIGHT_SHOULDER : TRUE");
-	}
-	else
-	{
-		ImGui::Text("RIGHT_SHOULDER : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].A)
-	{
-		ImGui::Text("A : TRUE");
-	}
-	else
-	{
-		ImGui::Text("A : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].B)
-	{
-		ImGui::Text("B : TRUE");
-	}
-	else
-	{
-		ImGui::Text("B : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].X)
-	{
-		ImGui::Text("X : TRUE");
-	}
-	else
-	{
-		ImGui::Text("X : FALSE");
-	}
-	if (buttonStatus_[nNumController - 1].Y)
-	{
-		ImGui::Text("Y : TRUE");
-	}
-	else
-	{
-		ImGui::Text("Y : FALSE");
-	}
-	ImGui::End();
+		if (buttonStatus_[nNumController - 1].DPAD_UP)
+		{
+			ImGui::Text("DPAD_UP : TRUE");
+		}
+		else
+		{
+			ImGui::Text("DPAD_UP : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].DPAD_DOWN)
+		{
+			ImGui::Text("DPAD_DOWN : TRUE");
+		}
+		else
+		{
+			ImGui::Text("DPAD_DOWN : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].DPAD_LEFT)
+		{
+			ImGui::Text("DPAD_LEFT : TRUE");
+		}
+		else
+		{
+			ImGui::Text("DPAD_LEFT : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].DPAD_RIGHT)
+		{
+			ImGui::Text("DPAD_RIGHT : TRUE");
+		}
+		else
+		{
+			ImGui::Text("DPAD_RIGHT : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].START)
+		{
+			ImGui::Text("START : TRUE");
+		}
+		else
+		{
+			ImGui::Text("START : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].BACK)
+		{
+			ImGui::Text("BACK : TRUE");
+		}
+		else
+		{
+			ImGui::Text("BACK : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].LEFT_THUMB)
+		{
+			ImGui::Text("LEFT_THUMB : TRUE");
+		}
+		else
+		{
+			ImGui::Text("LEFT_THUMB : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].RIGHT_THUMB)
+		{
+			ImGui::Text("RIGHT_THUMB : TRUE");
+		}
+		else
+		{
+			ImGui::Text("RIGHT_THUMB : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].LEFT_SHOULDER)
+		{
+			ImGui::Text("LEFT_SHOULDER : TRUE");
+		}
+		else
+		{
+			ImGui::Text("LEFT_SHOULDER : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].RIGHT_SHOULDER)
+		{
+			ImGui::Text("RIGHT_SHOULDER : TRUE");
+		}
+		else
+		{
+			ImGui::Text("RIGHT_SHOULDER : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].A)
+		{
+			ImGui::Text("A : TRUE");
+		}
+		else
+		{
+			ImGui::Text("A : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].B)
+		{
+			ImGui::Text("B : TRUE");
+		}
+		else
+		{
+			ImGui::Text("B : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].X)
+		{
+			ImGui::Text("X : TRUE");
+		}
+		else
+		{
+			ImGui::Text("X : FALSE");
+		}
+		if (buttonStatus_[nNumController - 1].Y)
+		{
+			ImGui::Text("Y : TRUE");
+		}
+		else
+		{
+			ImGui::Text("Y : FALSE");
+		}
+		ImGui::End();
+	}*/
 
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();

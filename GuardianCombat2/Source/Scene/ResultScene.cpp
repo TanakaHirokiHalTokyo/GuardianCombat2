@@ -16,6 +16,9 @@ ResultScene::ResultScene()
 
 	bgm_ = new Sound(SoundManager::RESULT_BGM);
 	bgm_->PlaySoundA();
+
+	Texture* thanks = Object::Create<Texture>(TextureManager::Tex_Thanks);
+	thanks->SetDrawSize((float)ScreenWidth, (float)ScreenHeight);
 }
 
 ResultScene::~ResultScene()
@@ -30,14 +33,11 @@ ResultScene::~ResultScene()
 
 void ResultScene::Init()
 {
-	Texture* thanks = Object::Create<Texture>(TextureManager::Tex_Thanks);
-	thanks->SetDrawSize((float)ScreenWidth, (float)ScreenHeight);
 	Object::InitAll();
 }
 
 void ResultScene::Uninit()
 {
-	Object::ReleaseAll();
 }
 
 void ResultScene::Update()
@@ -54,7 +54,6 @@ void ResultScene::Update()
 			fade->FadeIn();
 			sceneChange_ = true;
 		}
-
 		if (GetKeyboardTrigger(DIK_SPACE) || GetKeyboardTrigger(DIK_RETURN))
 		{
 			fade->FadeIn();
@@ -65,6 +64,8 @@ void ResultScene::Update()
 	{
 		if (ChangeSceneUpdate())
 		{
+			//オブジェクト解放
+			Object::ReleaseAll();
 			GameManager::SetScene(new TitleScene());
 		}
 	}

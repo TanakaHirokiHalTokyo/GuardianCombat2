@@ -17,6 +17,7 @@ vector<OBB*> Object::enemycubeCollisions_ = {};
 vector<Sphere*> Object::playerCollision_ = {};
 OBB* Object::enemyBurstCollision_ = nullptr;
 vector<Sphere*> Object::playerBulletCollisions_ = {};
+bool Object::isDrawJudge_ = false;
 
 Object::Object()
 	: transform_{ D3DXVECTOR3(0,0,0),D3DXVECTOR3(1,1,1),D3DXVECTOR3(0,0,0) }
@@ -131,10 +132,15 @@ void Object::JudgementAll()
 								player->DecreaseLife(cube->GetAttackValue());
 							}
 						}
-
-						ImGui::Begin("DEBUG COLLISION");
-						ImGui::Text("Hit Cube!!!");
-						ImGui::End();
+						if (isDrawJudge_)
+						{
+							if (GameManager::GetEnableEdit())
+							{
+								ImGui::Begin("DEBUG COLLISION");
+								ImGui::Text("Hit Cube!!!");
+								ImGui::End();
+							}
+						}
 					}
 				}
 			}
@@ -154,9 +160,15 @@ void Object::JudgementAll()
 					{
 						player->DecreaseLife(enemy->GetBurstParameter().dps / (float)GameFPS);
 					}
-					ImGui::Begin("DEBUG COLLISION");
-					ImGui::Text("Hit Burst!!!");
-					ImGui::End();
+					if (isDrawJudge_)
+					{
+						if (GameManager::GetEnableEdit())
+						{
+							ImGui::Begin("DEBUG COLLISION");
+							ImGui::Text("Hit Burst!!!");
+							ImGui::End();
+						}
+					}
 				}
 			}
 		}
@@ -173,13 +185,21 @@ void Object::JudgementAll()
 					{
 						if (!enemy->GetInvincible())
 						{
-							enemy->DecreaseLife(0.3f);
+							enemy->DecreaseLife(0.3f * (1.0f - enemy->GetDamageCutRate()));
 						}
 						bullet->Destroy();
+						enemy->SetPositionExploose(bullet->GetPosition());
+						enemy->PlayExploose();
 
-						ImGui::Begin("DEBUG COLLISION");
-						ImGui::Text("Hit PlayerBullet!!!");
-						ImGui::End();
+						if (isDrawJudge_)
+						{
+							if (GameManager::GetEnableEdit())
+							{
+								ImGui::Begin("DEBUG COLLISION");
+								ImGui::Text("Hit PlayerBullet!!!");
+								ImGui::End();
+							}
+						}
 					}	
 				}
 			}
@@ -196,9 +216,15 @@ void Object::JudgementAll()
 						{
 							enemy->Destroy();
 							bullet->Destroy();
-							ImGui::Begin("DEBUG COLLISION");
-							ImGui::Text("Hit PlayerBullet!!!");
-							ImGui::End();
+							if (isDrawJudge_)
+							{
+								if (GameManager::GetEnableEdit())
+								{
+									ImGui::Begin("DEBUG COLLISION");
+									ImGui::Text("Hit PlayerBullet!!!");
+									ImGui::End();
+								}
+							}
 						}
 					}
 				}
@@ -219,9 +245,15 @@ void Object::JudgementAll()
 						player->DecreaseLife(enemy->GetCollisionDPS());
 					}
 
-					ImGui::Begin("DEBUG COLLISION");
-					ImGui::Text("Hit Rush!!!");
-					ImGui::End();
+					if (isDrawJudge_)
+					{
+						if (GameManager::GetEnableEdit())
+						{
+							ImGui::Begin("DEBUG COLLISION");
+							ImGui::Text("Hit Rush!!!");
+							ImGui::End();
+						}
+					}
 				}
 			}
 		}

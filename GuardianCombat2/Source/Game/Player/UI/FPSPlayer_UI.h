@@ -23,4 +23,5 @@ private:
 	Texture* lifeBar_ = nullptr;						//ライフバー
 	Texture* lifeBarMax_ = nullptr;				//ライフバーの背景
 	Texture* reticle_ = nullptr;						//レティクルテクスチャ
+	Texture* damage_ = nullptr;					//DamageScreen
 };
