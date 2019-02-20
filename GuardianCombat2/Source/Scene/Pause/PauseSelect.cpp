@@ -13,8 +13,10 @@
 //入出力をするファイル名
 const std::string FILENAME = "PauseSelectSettings";
 
-PauseSelect::PauseSelect()
+PauseSelect::PauseSelect(PauseScene* scene)
 {
+	pauseScene_ = scene;
+
 	LoadSettings(FILENAME);
 	//ポーズ設定制御生成
 	pauseSetting_ = new PauseSetting(this);
@@ -23,6 +25,7 @@ PauseSelect::PauseSelect()
 	controllerWord_ = new Texture(TextureManager::Tex_ControllerWord);
 	backGame_ = new Texture(TextureManager::Tex_BackGame);
 	backTitle_ = new Texture(TextureManager::Tex_BackTitle);
+	selectBack_ = new Texture(TextureManager::Tex_SelectBack);
 
 	selectingSE_ = new Sound(SoundManager::SELECTING_SE);
 	selectSE_ = new Sound(SoundManager::SELECTOK_SE);
@@ -45,6 +48,7 @@ PauseSelect::~PauseSelect()
 		controllerWord_->Uninit();
 		SAFE_DELETE(controllerWord_);
 	}
+	SAFE_DELETE(selectBack_);
 	SAFE_DELETE(backTitle_);
 	SAFE_DELETE(backGame_);
 	SAFE_DELETE(selectingSE_);
@@ -59,6 +63,7 @@ void PauseSelect::Init()
 	controllerWord_->Init();
 	pauseSetting_->Init();
 	backGame_->Init();
+	selectBack_->Init();
 
 	//文字サイズ初期化
 	pauseWord_->SetDrawSize(pauseSize_.x,pauseSize_.y);
@@ -66,12 +71,14 @@ void PauseSelect::Init()
 	controllerWord_->SetDrawSize(controllerSize_.x, controllerSize_.y);
 	backGame_->SetDrawSize(backGameSize_.x, backGameSize_.y);
 	backTitle_->SetDrawSize(backTitleSize_.x, backTitleSize_.y);
+	selectBack_->SetDrawSize(selectBackSize_.x,selectBackSize_.y);
 	//文字色初期化
 	pauseWord_->SetColor(D3DCOLOR_RGBA(255,255,255,255));
 	mouseWord_->SetColor(D3DCOLOR_RGBA(255, 255, 255, 255));
 	controllerWord_->SetColor(D3DCOLOR_RGBA(255, 255, 255, 255));
 	backGame_->SetColor(D3DCOLOR_RGBA(255,255,255,255));
 	backTitle_->SetColor(D3DCOLOR_RGBA(255, 255, 255, 255));
+	selectBack_->SetColor(D3DCOLOR_RGBA(255,255,255,255));
 	//文字座標初期化
 	pauseWord_->SetPosition(pausePos_.x, pausePos_.y, 0.0f);
 	mouseWord_->SetPosition(mousePos_.x, mousePos_.y, 0.0f);
@@ -86,6 +93,7 @@ void PauseSelect::Uninit()
 	mouseWord_->Uninit();
 	controllerWord_->Uninit();
 	pauseSetting_->Uninit();
+	selectBack_->Uninit();
 }
 
 void PauseSelect::Update()
@@ -114,17 +122,19 @@ void PauseSelect::Update()
 			ImGui::DragFloat(u8"コントローラXサイズ", &this->controllerSize_.x, 1.0f, 0.0f, (float)ScreenWidth);
 			ImGui::DragFloat(u8"コントローラYサイズ", &this->controllerSize_.y, 1.0f, 0.0f, (float)ScreenHeight);
 			ImGui::Text(u8"ゲームに戻る文字");
-			ImGui::ColorEdit3(u8"ゲームに戻る文字色",backGameColor_);
 			ImGui::DragFloat(u8"ゲームに戻るX座標", &this->backGamePos_.x, 1.0f, 0.0f, (float)ScreenWidth);
 			ImGui::DragFloat(u8"ゲームに戻るY座標", &this->backGamePos_.y, 1.0f, 0.0f, (float)ScreenHeight);
 			ImGui::DragFloat(u8"ゲームに戻るXサイズ", &this->backGameSize_.x, 1.0f, 0.0f, (float)ScreenWidth);
 			ImGui::DragFloat(u8"ゲームに戻るYサイズ", &this->backGameSize_.y, 1.0f, 0.0f, (float)ScreenHeight);
 			ImGui::Text(u8"タイトルに戻る文字");
-			ImGui::ColorEdit3(u8"タイトルに戻る文字色", backTitleColor_);
 			ImGui::DragFloat(u8"タイトルに戻るX座標", &this->backTitlePos_.x, 1.0f, 0.0f, (float)ScreenWidth);
 			ImGui::DragFloat(u8"タイトルに戻るY座標", &this->backTitlePos_.y, 1.0f, 0.0f, (float)ScreenHeight);
 			ImGui::DragFloat(u8"タイトルに戻るXサイズ", &this->backTitleSize_.x, 1.0f, 0.0f, (float)ScreenWidth);
 			ImGui::DragFloat(u8"タイトルに戻るYサイズ", &this->backTitleSize_.y, 1.0f, 0.0f, (float)ScreenHeight);
+			ImGui::Text(u8"選択中の背景");
+			ImGui::ColorEdit4(u8"選択中の背景色",this->selectBackColor_);
+			ImGui::DragFloat(u8"選択中の背景Xサイズ",&this->selectBackSize_.x,1.0f,0.0f,(float)ScreenWidth );
+			ImGui::DragFloat(u8"選択中の背景Yサイズ", &this->selectBackSize_.y, 1.0f, 0.0f, (float)ScreenHeight);
 			ImGui::End();
 
 			pauseWord_->SetPosition(pausePos_.x, pausePos_.y, 0.0f);
@@ -138,14 +148,17 @@ void PauseSelect::Update()
 			controllerWord_->SetDrawSize(controllerSize_.x, controllerSize_.y);
 			backGame_->SetDrawSize(backGameSize_.x,backGameSize_.y);
 			backTitle_->SetDrawSize(backTitleSize_.x,backTitleSize_.y);
+			selectBack_->SetDrawSize(selectBackSize_.x,selectBackSize_.y);
 		}
 
 		pauseWord_->SetColor(D3DCOLOR_RGBA((int)(255.0f * stayColor_[0]), (int)(255.0f * stayColor_[1]), (int)(255.0f * stayColor_[2]), 255));
 		mouseWord_->SetColor(D3DCOLOR_RGBA((int)(255.0f * stayColor_[0]), (int)(255.0f * stayColor_[1]), (int)(255.0f * stayColor_[2]), 255));
 		controllerWord_->SetColor(D3DCOLOR_RGBA((int)(255.0f * stayColor_[0]), (int)(255.0f * stayColor_[1]), (int)(255.0f * stayColor_[2]), 255));
-		backGame_->SetColor(D3DCOLOR_RGBA((int)(255.0f * backGameColor_[0]), (int)(255.0f * backGameColor_[1]), (int)(255.0f * backGameColor_[2]), 255));
-		backTitle_->SetColor(D3DCOLOR_RGBA((int)(255.0f * backTitleColor_[0]), (int)(255.0f * backTitleColor_[1]), (int)(255.0f * backTitleColor_[2]), 255));
-
+		backGame_->SetColor(D3DCOLOR_RGBA((int)(255.0f * stayColor_[0]), (int)(255.0f * stayColor_[1]), (int)(255.0f * stayColor_[2]), 255));
+		backTitle_->SetColor(D3DCOLOR_RGBA((int)(255.0f * stayColor_[0]), (int)(255.0f * stayColor_[1]), (int)(255.0f * stayColor_[2]), 255));
+		selectBack_->SetColor(D3DCOLOR_RGBA((int)(255.0f * selectBackColor_[0]), (int)(255.0f * selectBackColor_[1]), (int)(255.0f * selectBackColor_[2]), (int)(255.0f * selectBackColor_[3])));
+		//----------------------------------------------------------------------------------------
+		//		クリック操作		(ゲームに戻るとタイトルに戻るは関数を呼び出しての使用)
 		if (isEnableClick_)
 		{
 			//マウスでの当たり判定
@@ -186,32 +199,95 @@ void PauseSelect::Update()
 				}
 			}
 		}
+		//---------------------------------------------------------------------------------------------------
 
+		//------------------------------------------------------------------------------
+		//		キー操作での選択		XinputとDinput両方対応
+
+		//コントローラースティック傾き
+		float controllerLY = (float)X_CONTROLLER::GetXcontrollerLStickY(1);
+
+		//上選択
+		if (GetKeyboardTrigger(DIK_W) || GetKeyboardTrigger(DIK_UP) ||
+			controllerLY >= 0.1f || X_CONTROLLER::GetXcontrollerButtonTrigger(1, XINPUT_GAMEPAD_DPAD_UP))
+		{
+			if (selectingIndex_ > 0)		//上の文字に移動
+			{
+				selectingIndex_--;
+				selectingSE_->PlaySoundA();
+			}
+		}
+		//下選択
+		if (GetKeyboardTrigger(DIK_S) || GetKeyboardTrigger(DIK_DOWN) ||
+			controllerLY <= -0.1f || X_CONTROLLER::GetXcontrollerButtonTrigger(1, XINPUT_GAMEPAD_DPAD_DOWN))
+		{
+			if (selectingIndex_ < WORD_MAX - 1)		//下の文字に移動
+			{
+				selectingIndex_++;
+				selectingSE_->PlaySoundA();
+			}
+		}
+		//-------------------------------------------------------------------------------
+
+		float offsetX = 0.0f;
+		float offsetY = 0.0f;
+		//現在選択中の文字色変更
 		switch (selectingIndex_)
 		{
 		case MOUSE:
-			if (GetKeyboardTrigger(DIK_S) || GetKeyboardTrigger(DIK_DOWN)) {
-				selectingIndex_ = CONTROLLER;
-				selectingSE_->PlaySoundA();
-			}
+			offsetX = (selectBack_->GetDrawSize().x - mouseWord_->GetDrawSize().x) / 2.0f;
+			offsetY = (selectBack_->GetDrawSize().y - mouseWord_->GetDrawSize().y) / 2.0f;
 			mouseWord_->SetColor(D3DCOLOR_RGBA((int)(255.0f * selectingColor_[0]), (int)(255.0f * selectingColor_[1]), (int)(255.0f * selectingColor_[2]), 255));
+			selectBack_->SetPosition(mouseWord_->GetPosition().x - offsetX,mouseWord_->GetPosition().y - offsetY,0.0f);
 			break;
 		case CONTROLLER:
-			if (GetKeyboardTrigger(DIK_W) || GetKeyboardTrigger(DIK_UP)) {
-				selectingIndex_ = MOUSE;
-				selectingSE_->PlaySoundA();
-			}
+			offsetX = (selectBack_->GetDrawSize().x - controllerWord_->GetDrawSize().x) / 2.0f;
+			offsetY = (selectBack_->GetDrawSize().y - controllerWord_->GetDrawSize().y) / 2.0f;
 			controllerWord_->SetColor(D3DCOLOR_RGBA((int)(255.0f * selectingColor_[0]), (int)(255.0f * selectingColor_[1]), (int)(255.0f * selectingColor_[2]), 255));
+			selectBack_->SetPosition(controllerWord_->GetPosition().x - offsetX, controllerWord_->GetPosition().y - offsetY, 0.0f);
+			break;
+		case BACKGAME:
+			offsetX = (selectBack_->GetDrawSize().x - backGame_->GetDrawSize().x) / 2.0f;
+			offsetY = (selectBack_->GetDrawSize().y - backGame_->GetDrawSize().y) / 2.0f;
+			backGame_->SetColor(D3DCOLOR_RGBA((int)(255.0f * selectingColor_[0]), (int)(255.0f * selectingColor_[1]), (int)(255.0f * selectingColor_[2]), 255));
+			selectBack_->SetPosition(backGame_->GetPosition().x - offsetX, backGame_->GetPosition().y - offsetY, 0.0f);
+			break;
+		case BACKTITLE:
+			offsetX = (selectBack_->GetDrawSize().x - backTitle_->GetDrawSize().x) / 2.0f;
+			offsetY = (selectBack_->GetDrawSize().y - backTitle_->GetDrawSize().y) / 2.0f;
+			backTitle_->SetColor(D3DCOLOR_RGBA((int)(255.0f * selectingColor_[0]), (int)(255.0f * selectingColor_[1]), (int)(255.0f * selectingColor_[2]), 255));
+			selectBack_->SetPosition(backTitle_->GetPosition().x - offsetX, backTitle_->GetPosition().y - offsetY, 0.0f);
 			break;
 		default:
 			break;
 		}
 		
+		//決定した際の処理
 		if (GetKeyboardTrigger(DIK_RETURN) || GetKeyboardTrigger(DIK_SPACE))
 		{
-			isSelecting_ = false;
-			pauseSetting_->ChangeDevice((PauseSetting::DEVICE)selectingIndex_);		//デバイス切替
-			pauseSetting_->SetCirclePosition();				//ボタンの位置決定
+			//マウス・コントローラの場合
+			switch (selectingIndex_)
+			{
+			case MOUSE:
+				isSelecting_ = false;
+				pauseSetting_->ChangeDevice((PauseSetting::DEVICE)MOUSE);		//デバイス切替
+				pauseSetting_->SetCirclePosition();				//ボタンの位置決定
+				break;
+			case CONTROLLER:
+				isSelecting_ = false;
+				pauseSetting_->ChangeDevice((PauseSetting::DEVICE)CONTROLLER);		//デバイス切替
+				pauseSetting_->SetCirclePosition();				//ボタンの位置決定
+				break;
+			case BACKGAME:
+				ClosePause();
+				pauseScene_->SetPause(false);
+				break;
+			case BACKTITLE:
+				GameManager::SetReturnTitle(true);
+				break;
+			default:
+				break;
+			}
 			selectSE_->PlaySoundA();
 		}
 		if(pauseWord_)		pauseWord_->Update();
@@ -225,7 +301,7 @@ void PauseSelect::Update()
 		pauseSetting_->Update();
 
 		//デバイス選択画面に戻る
-		if (GetKeyboardTrigger(DIK_ESCAPE) || GetKeyboardTrigger(DIK_B))
+		if (GetKeyboardTrigger(DIK_B))
 		{
 			isSelecting_ = true;
 			selectSE_->PlaySoundA();
@@ -239,6 +315,7 @@ void PauseSelect::Draw()
 {
 	if (isSelecting_)
 	{
+		if (selectBack_)		selectBack_->Draw();
 		if (pauseWord_)		pauseWord_->Draw();
 		if (mouseWord_)		mouseWord_->Draw();
 		if (controllerWord_) controllerWord_->Draw();
@@ -261,6 +338,7 @@ bool PauseSelect::IsHitMouseBackGameWord()
 	if (MouseState::IsHitMouseCursorBox(backGame_->GetPosition().x, backGame_->GetPosition().y,
 		backGame_->GetDrawSize().x, backGame_->GetDrawSize().y))
 	{
+		selectingIndex_ = BACKGAME;
 		return true;
 	}
 	return false;
@@ -271,6 +349,7 @@ bool PauseSelect::IsHitMouseBackTitleWord()
 	if (MouseState::IsHitMouseCursorBox(backTitle_->GetPosition().x, backTitle_->GetPosition().y,
 		backTitle_->GetDrawSize().x, backTitle_->GetDrawSize().y))
 	{
+		selectingIndex_ = BACKTITLE;
 		return true;
 	}
 	return false;
@@ -290,10 +369,10 @@ void PauseSelect::SaveSettings(std::string filename)
 	file.write((const char*)&this->controllerSize_, sizeof(this->controllerSize_));
 	file.write((const char*)&this->backGamePos_, sizeof(this->backGamePos_));
 	file.write((const char*)&this->backGameSize_, sizeof(this->backGameSize_));
-	file.write((const char*)&this->backGameColor_, sizeof(this->backGameColor_));
 	file.write((const char*)&this->backTitlePos_, sizeof(this->backTitlePos_));
 	file.write((const char*)&this->backTitleSize_, sizeof(this->backTitleSize_));
-	file.write((const char*)&this->backTitleColor_, sizeof(this->backTitleColor_));
+	file.write((const char*)&this->selectBackSize_, sizeof(this->selectBackSize_));
+	file.write((const char*)&this->selectBackColor_, sizeof(this->selectBackColor_));
 	file.close();
 }
 
@@ -317,10 +396,10 @@ void PauseSelect::LoadSettings(std::string filename)
 		file.read((char*)&this->controllerSize_, sizeof(this->controllerSize_));
 		file.read((char*)&this->backGamePos_, sizeof(this->backGamePos_));
 		file.read((char*)&this->backGameSize_, sizeof(this->backGameSize_));
-		file.read((char*)&this->backGameColor_, sizeof(this->backGameColor_));
 		file.read((char*)&this->backTitlePos_, sizeof(this->backTitlePos_));
 		file.read((char*)&this->backTitleSize_, sizeof(this->backTitleSize_));
-		file.read((char*)&this->backTitleColor_, sizeof(this->backTitleColor_));
+		file.read((char*)&this->selectBackSize_, sizeof(this->selectBackSize_));
+		file.read((char*)&this->selectBackColor_, sizeof(this->selectBackColor_));
 	}
 	file.close();
 }

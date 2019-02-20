@@ -25,5 +25,4 @@ private:
 	Player* player_ = nullptr;							//プレイヤー情報
 	PauseScene* pauseScene_ = nullptr;		//ポーズシーン情報
 	Sound* bgm_ = nullptr;
-	bool cursorActive_ = true;
 };

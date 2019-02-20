@@ -158,6 +158,7 @@ void PauseSetting::Update()
 	if (GameManager::GetEnableEdit())
 	{
 		ImGui::Begin(u8"PauseSetting編集");
+		ImGui::Text(u8"マウス感度 : %f",this->mouse_rate_);
 		if (ImGui::Button(u8"保存")) SaveSettings(FILENAME);
 		ImGui::DragFloat(u8"バーのX座標", &barPosition_.x, 1.0f, 0.0f, (float)ScreenWidth);
 		ImGui::DragFloat(u8"バーのY座標", &barPosition_.y, 1.0f, 0.0f, (float)ScreenHeight);

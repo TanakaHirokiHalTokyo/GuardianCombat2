@@ -88,8 +88,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		(WINDOW_STYLE &~(WS_THICKFRAME | WS_MAXIMIZEBOX)),	//WindowsStyle		^を使うことでMINIMIZEBOXを封印
 		StartWindowLocateX,						//Windowの開始時　左X
 		StartWindowLocateY,						//Windowの開始時  左Y
-		WindowWidth,							//Frameを含めた幅
-		WindowHeight,							//Frameを含めた高さ
+		WindowWidth,									//Frameを含めた幅
+		WindowHeight,								//Frameを含めた高さ
 		NULL,
 		NULL,
 		hInstance,

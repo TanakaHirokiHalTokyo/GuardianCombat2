@@ -15,7 +15,10 @@ PauseScene::PauseScene()
 	//裏イメージ生成
 	backImage_ = new Texture(TextureManager::Tex_Fade);
 	//ポーズ選択制御生成
-	pauseSelect_ = new PauseSelect();
+	pauseSelect_ = new PauseSelect(this);
+
+	ShowCursor(false);
+	SetMouseCursorShow(false);
 }
 
 PauseScene::~PauseScene()
@@ -43,11 +46,14 @@ void PauseScene::Init()
 	backImage_->SetVisible(true);
 	
 	pauseSelect_->Init();
+
 }
 
 void PauseScene::Uninit()
 {
 	pauseSelect_->Uninit();
+
+	SetMouseCursorShow(true);
 }
 
 void PauseScene::Update()
@@ -56,6 +62,8 @@ void PauseScene::Update()
 	{
 		pauseSelect_->ClosePause();
 		pausing_ = !pausing_;
+		GameManager::SetGamePause(pausing_);
+		SetMouseCursorShow(!GetMouseCursorShow());
 	}
 
 	//ポーズ中処理
@@ -66,19 +74,28 @@ void PauseScene::Update()
 
 		//マウスでのUIとの当たり判定
 		DIMOUSESTATE MouseData = ReturnMouseMove();
-		if (MouseData.rgbButtons[0] == 0x80)
+		
+		if (isEnableClick_)
 		{
 			if (pauseSelect_->IsHitMouseBackGameWord())
 			{
-				pauseSelect_->ClosePause();
-				pausing_ = false;
+				if (MouseData.rgbButtons[0] == 0x80)
+				{
+					pauseSelect_->ClosePause();
+					pausing_ = false;
+				}
 			}
+			
 			if (pauseSelect_->IsHitMouseBackTitleWord())
 			{
-				GameManager::SetReturnTitle(true);
+				if (MouseData.rgbButtons[0] == 0x80)
+				{
+					GameManager::SetReturnTitle(true);
+				}
 			}
 		}
-	}	
+		
+	}
 	pauseSelect_->SetEnableClick(isEnableClick_);
 }
 

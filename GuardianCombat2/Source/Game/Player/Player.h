@@ -6,6 +6,7 @@ class Vector3;
 class Camera;
 class DeviceConfig;
 class Texture;
+class Weapon;
 
 const float PLAYER_DEFAULT_SPEED = 0.005f;
 const float PLAYER_DEFAULT_LIFE = 100.0f;
@@ -36,6 +37,7 @@ public:
 	Camera* GetCamera();											//PlayerCameraを取得
 	float GetLife();															//Life取得
 	void DecreaseLife(float value);								//Life減算
+	Weapon* GetWeapon();
 
 	inline void SetInvincible(bool flag) { invincible_ = flag; }		//無敵状態設定
 	inline bool GetInvincible() { return invincible_; }					//無敵状態取得
@@ -46,6 +48,7 @@ public:
 	//デバイス情報取得
 	DeviceConfig* GetDeviceConfig();
 protected:
+	Weapon* shotgun_ = nullptr;									//ショットガン情報
 	float damageAlpha_ = 0.0f;										//ダメージα値
 	DeviceConfig* deviceConfig_ = nullptr;					//デバイス情報
 	bool invincible_ = false;											//無敵

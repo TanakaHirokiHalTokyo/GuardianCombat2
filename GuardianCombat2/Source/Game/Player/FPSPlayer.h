@@ -23,14 +23,11 @@ public:
 	void Draw()override;				//描画処理
 	void EndDraw()override;			//オブジェクトすべての描画が終わった後の処理
 
-	Weapon* GetWeapon();
-
 	Sphere* AddCollision();
 
 private:
 	bool debug_ = false;								//デバッグモード
 	FPSPlayerState* movement_ = nullptr;	//プレイヤーの移動を制御
-	Weapon* shotgun_ = nullptr;					//ショットガン情報
 	FPSPlayer_UI* playerUI_ = nullptr;		//PlayerUI情報
 	Sphere* collision_ = nullptr;					//PlayerCollision
 };

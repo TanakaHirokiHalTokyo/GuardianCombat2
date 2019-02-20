@@ -21,6 +21,7 @@
 #include "../Game/Blur/Blur.h"
 #include "../Sound/Sound.h"
 #include "Game\GameCountdown.h"
+#include "../Game/Player/Weapon/Weapon.h"
 #include "TitleScene.h"
 
 GameScene::GameScene()
@@ -37,7 +38,7 @@ GameScene::GameScene()
 	pauseScene_ = new PauseScene();													//ポーズシーン作成
 
 	bgm_ = new Sound(SoundManager::GAME_BGM);
-	bgm_->PlaySoundA();
+	
 
 	DirectionalLight* light = Object::Create<DirectionalLight>();		//環境光作成
 	light->SetPause(true);
@@ -64,7 +65,6 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	EffectManager::Uninit();
-	GameManager::EndGame();
 
 	//ポーズシーン破棄
 	delete pauseScene_;
@@ -95,6 +95,7 @@ void GameScene::Init()
 	player_->SetInvincible(false);
 	Object::InitAll();
 	pauseScene_->Init();
+	bgm_->PlaySoundA();
 }
 
 void GameScene::Uninit()

@@ -131,6 +131,10 @@ void Object::JudgementAll()
 							{
 								player->DecreaseLife(cube->GetAttackValue());
 							}
+							else
+							{
+								player->DecreaseLife(0.0f);
+							}
 						}
 						if (isDrawJudge_)
 						{
@@ -159,6 +163,10 @@ void Object::JudgementAll()
 					if (!player->GetInvincible())
 					{
 						player->DecreaseLife(enemy->GetBurstParameter().dps / (float)GameFPS);
+					}
+					else
+					{
+						player->DecreaseLife(0.0f);
 					}
 					if (isDrawJudge_)
 					{
@@ -243,6 +251,10 @@ void Object::JudgementAll()
 					if (!player->GetInvincible())
 					{
 						player->DecreaseLife(enemy->GetCollisionDPS());
+					}
+					else
+					{
+						player->DecreaseLife(0.0f);
 					}
 
 					if (isDrawJudge_)

@@ -166,6 +166,7 @@
     <ClCompile Include="Source\Game\Enemy\Enemy_Hige.cpp" />
     <ClCompile Include="Source\Game\Enemy\Enemy_HigeAvater.cpp" />
     <ClCompile Include="Source\Game\Enemy\Enemy_HigeUI.cpp" />
+    <ClCompile Include="Source\Game\Enemy\RandomMoveHige.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Burst.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_CircleShot.cpp" />
     <ClCompile Include="Source\Game\Enemy\StateAction\StateAction_Horming.cpp" />
@@ -217,6 +218,7 @@
     <ClCompile Include="Source\Imgui\imgui_impl_dx9.cpp" />
     <ClCompile Include="Source\Light\Light.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Random\Random.cpp" />
     <ClCompile Include="Source\Scene\EditScene.cpp" />
     <ClCompile Include="Source\Scene\Fade.cpp" />
     <ClCompile Include="Source\Scene\GameResult.cpp" />
@@ -229,6 +231,7 @@
     <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Scene\TitleScene.cpp" />
     <ClCompile Include="Source\Scene\Title\TitleSelect.cpp" />
+    <ClCompile Include="Source\Scene\Tutorial.cpp" />
     <ClCompile Include="Source\Sound\Sound.cpp" />
     <ClCompile Include="Source\Texture\Texture.cpp" />
     <ClCompile Include="Source\UI\UI.cpp" />
@@ -254,6 +257,7 @@
     <ClInclude Include="Source\Game\Enemy\Enemy_Hige.h" />
     <ClInclude Include="Source\Game\Enemy\Enemy_HigeAvater.h" />
     <ClInclude Include="Source\Game\Enemy\Enemy_HigeUI.h" />
+    <ClInclude Include="Source\Game\Enemy\RandomMoveHige.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_Burst.h" />
     <ClInclude Include="Source\Game\Enemy\StateAction\StateAction_CircleShot.h" />
@@ -318,6 +322,7 @@
     <ClInclude Include="Source\Light\Light.h" />
     <ClInclude Include="Source\main.h" />
     <ClInclude Include="Source\message.h" />
+    <ClInclude Include="Source\Random\Random.h" />
     <ClInclude Include="Source\Scene\EditScene.h" />
     <ClInclude Include="Source\Scene\Fade.h" />
     <ClInclude Include="Source\Scene\GameResult.h" />
@@ -330,6 +335,7 @@
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Scene\TitleScene.h" />
     <ClInclude Include="Source\Scene\Title\TitleSelect.h" />
+    <ClInclude Include="Source\Scene\Tutorial.h" />
     <ClInclude Include="Source\Sound\Sound.h" />
     <ClInclude Include="Source\Texture\Texture.h" />
     <ClInclude Include="Source\UI\UI.h" />

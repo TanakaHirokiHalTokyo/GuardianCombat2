@@ -357,8 +357,8 @@ void Billboard::SetTexture(TextureManager::TextureList texture)
 {
 	TextureManager::TexInfo textureInfo = TextureManager::GetTexture(texture);
 	pTexture_ = textureInfo.pTex;
-	texSize_ = D3DXVECTOR2(textureInfo.width, textureInfo.height);
-	texcoordSize_ = D3DXVECTOR2(textureInfo.texcoordX, textureInfo.texcoordY);
+	texSize_ = D3DXVECTOR2((float)textureInfo.width, (float)textureInfo.height);
+	texcoordSize_ = D3DXVECTOR2((float)textureInfo.texcoordX, (float)textureInfo.texcoordY);
 }
 
 void Billboard::SetStand(bool stand)

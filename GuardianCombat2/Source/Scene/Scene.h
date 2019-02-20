@@ -16,5 +16,6 @@ public:
 	void SceneChange(Scene* next_scene);
 protected:
 	bool sceneChange_ = false;
+	bool cursorActive_ = true;
 };
 

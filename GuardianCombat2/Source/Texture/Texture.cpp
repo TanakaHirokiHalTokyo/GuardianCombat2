@@ -12,8 +12,8 @@ const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 	"resource/texture/ToonPaint.png",						256, 256,256,256,
 	"resource/texture/reticle.png",							400, 400,400,400,
 	"resource/texture/PauseWord.png",					600, 200,600,200,
-	"resource/texture/MouseWord.png",					600, 200,600,200,
-	"resource/texture/ControllerWord.png",				600, 200,600,200,
+	"resource/texture/MouseWord.png",					512, 151,512,151,
+	"resource/texture/ControllerWord.png",				512, 82,512,82,
 	"resource/texture/turret.png",							200, 200,200,200,
 	"resource/texture/SliderBar.png",						200, 100,200,100,
 	"resource/texture/SliderButton.png",					200, 200,200,200,
@@ -36,6 +36,11 @@ const TEXTURE_3D TextureManager::texInfo_[TextureManager::TextureList::Tex_Max]
 	"resource/texture/DamageScreen.png",			400,	300,400, 300,
 	"resource/texture/BackGame.png",					455,	89,455, 89,
 	"resource/texture/BackTitle.png",						471,	83,471, 83,
+	"resource/texture/SelectBack.png",					512,	256,512, 256,
+	"resource/texture/NowTutorial.png",					512,	70,512, 70,
+	"resource/texture/TutorialTransExplain.png",	437,	138,437, 138,
+	"resource/texture/TutorialMouseExplain.png",	469,	256,469, 256,
+	"resource/texture/FinishTutorial.png",				512,	89,512, 89,
 };
 void TextureManager::LoadAll()
 {

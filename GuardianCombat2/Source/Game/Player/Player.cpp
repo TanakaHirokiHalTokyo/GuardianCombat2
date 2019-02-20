@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "../../Vector3/Vector3.h"
+#include "../Player/Weapon/Weapon.h"
 
 
 Vector3* Player::GetVector()
@@ -45,4 +46,8 @@ void Player::DecreaseLife(float value)
 DeviceConfig * Player::GetDeviceConfig()
 {
 	return deviceConfig_;
+}
+Weapon * Player::GetWeapon()
+{
+	return shotgun_;
 }

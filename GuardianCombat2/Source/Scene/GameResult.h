@@ -9,6 +9,8 @@
 
 class Texture;
 class Sound;
+class Camera;
+class RandomMoveHige;
 
 class GameResult :public Scene
 {
@@ -26,6 +28,8 @@ private:
 	void LoadSettings(std::string filename);
 	
 	int selectResultNumber_ = 0;				//選択中の結果番号 0: Win 1 : Lose
+	RandomMoveHige* enemy_ = nullptr;					//敵のモデル
+	Camera* camera_ = nullptr;				//カメラ
 	Sound* bgm_ = nullptr;						//BGM
 	Sound* selectSE_ = nullptr;				//選択効果音
 	Texture* pressKey_ = nullptr;				//PressKeyテクスチャ
@@ -40,4 +44,5 @@ private:
 	float scaleAddRate_ = 0.002f;				//スケール値拡大率
 	float scaleRate_ = 1.0f;						//スケール値
 	float alphaAddRate_ = 1.5f;				//α値加算値
+	float cameraAngle_ = 0.0f;					//カメラを回転運動させる
 };

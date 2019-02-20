@@ -73,6 +73,11 @@ public:
 		Tex_DamageScreen,
 		Tex_BackGame,
 		Tex_BackTitle,
+		Tex_SelectBack,
+		Tex_TutorialWord,
+		Tex_TutorialTransExplain,
+		Tex_TutorialMouseExplain,
+		Tex_TutorialFinish,
 		Tex_Max,
 	};
 
@@ -134,7 +139,5 @@ protected:
 	float		rotationOffsetY_ = 0.0f;
 	float		scaleOffsetX_ = 0.0f;
 	float		scaleOffsetY_ = 0.0f;
-
-protected:
-	int priority_;
 };
+

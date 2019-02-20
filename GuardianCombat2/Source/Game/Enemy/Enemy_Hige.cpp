@@ -60,14 +60,7 @@ EnemyHige::EnemyHige()
 	//パラメータ初期化
 	InitParameter();
 
-	this->LoadBasisParameter("EnemyHige_Basis");
-	this->LoadIdleParameter("EnemyHige_Idle");
-	this->LoadCircleShotParameter("EnemyHige_CircleShot");
-	this->LoadRushParameter("EnemyHige_Rush");
-	this->LoadHormingParameter("EnemyHige_Horming");
-	this->LoadTeleportParameter("EnemyHige_Teleport");
-	this->LoadSummonsParameter("EnemyHige_Summons");
-	this->LoadBurstParameter("EnemyHige_BurstShot");
+	
 }
 
 EnemyHige::~EnemyHige()
@@ -150,6 +143,15 @@ void EnemyHige::Init()
 	exploose_->SetVisible(true);
 
 	FinishState();
+
+	this->LoadBasisParameter("EnemyHige_Basis");
+	this->LoadIdleParameter("EnemyHige_Idle");
+	this->LoadCircleShotParameter("EnemyHige_CircleShot");
+	this->LoadRushParameter("EnemyHige_Rush");
+	this->LoadHormingParameter("EnemyHige_Horming");
+	this->LoadTeleportParameter("EnemyHige_Teleport");
+	this->LoadSummonsParameter("EnemyHige_Summons");
+	this->LoadBurstParameter("EnemyHige_BurstShot");
 
 	InitCircleParameterValue();
 	InitHormingParameterValue();
@@ -256,7 +258,8 @@ void EnemyHige::BeginDraw()
 	world_ *= trans;
 
 	SetWorld(&world_);
-
+	
+	if (GameManager::GetGamePause()) exploose_->SetSpeed(0.0f);
 	exploose_->Update();
 
 	statePattern_->BeginDisplay();
@@ -537,7 +540,7 @@ void EnemyHige::SaveTeleportParameter(const std::string filename)
 }
 //====================================================================
 //		テレポートパラメータ読込
-//		filename : 読み込みファイル名	s5e201938
+//		filename : 読み込みファイル名
 //=====================================================================
 void EnemyHige::LoadTeleportParameter(const std::string filename)
 {
@@ -1322,7 +1325,6 @@ void EnemyHige::InitHormingParameterValue()
 }
 void EnemyHige::InitTeleportParameterValue()
 {
-	teleportationParameter_.distance = 1.0f;
 	teleportationParameter_.effect->Init();
 	teleportationParameter_.effect->RepeatEffect(false);
 	teleportationParameter_.effect->SetVisible(false);
@@ -1335,8 +1337,6 @@ void EnemyHige::InitSummonsParameterValue()
 	{
 		summonsParameter_.avater[i].Init();
 		summonsParameter_.avater[i].SetVisible(false);
-		summonsParameter_.trans_length = 3.0f;
-		summonsParameter_.trans_speed = 0.1f;
 	}
 }
 void EnemyHige::InitBurstShotParameterValue()

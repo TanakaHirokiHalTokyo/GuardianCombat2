@@ -28,6 +28,7 @@ bool GameManager::ending_ = false;
 int GameManager::playerSkill1_ = -1;
 int GameManager::playerSkill2_ = -1;
 bool GameManager::returnTitle_ = false;
+bool GameManager::isGamePausing_ = false;
 
 void GameManager::Init()
 {

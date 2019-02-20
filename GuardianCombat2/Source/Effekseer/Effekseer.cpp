@@ -74,9 +74,6 @@ void CEffekseer::Uninit()
 }
 void CEffekseer::Update()
 {
-	CAMERA_INFO camInfo = Camera::GetCameraInfo();
-
-	this->SetView(camInfo.pos, camInfo.at, camInfo.up);
 
 	D3DXMATRIX mtxScale, mtxTrans, mtxWorld, mtxRotateX, mtxRotateY, mtxRotateZ;
 
@@ -115,6 +112,9 @@ void CEffekseer::Update()
 }
 void CEffekseer::Draw()
 {
+	CAMERA_INFO camInfo = Camera::GetCameraInfo();
+
+	this->SetView(camInfo.pos, camInfo.at, camInfo.up);
 	if (GetVisible())
 	{
 		effekseerRenderer_->BeginRendering();

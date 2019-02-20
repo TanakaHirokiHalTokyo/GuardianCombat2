@@ -52,6 +52,9 @@ public:
 	static inline void SetReturnTitle(bool flag) { returnTitle_ = flag; }			//タイトルに戻るかのフラグを設定
 	static inline bool GetReturnTitle() { return returnTitle_; }						//タイトルに戻るかのフラグを取得
 
+	static inline void SetGamePause(bool flag) { isGamePausing_ = flag; }	//ポーズフラグ設定
+	static inline bool GetGamePause() { return isGamePausing_; }					//ポーズフラグ取得
+
 	static Blur* GetBlur();												//Blur情報取得
 private:
 	static Scene* scene_;												//Scene情報
@@ -68,4 +71,5 @@ private:
 	static int playerSkill1_;											//PlayerSkill
 	static int playerSkill2_;											//PlayerSkill
 	static bool returnTitle_;											//タイトルに戻るか
+	static bool isGamePausing_;									//ゲームポーズ中か
 };

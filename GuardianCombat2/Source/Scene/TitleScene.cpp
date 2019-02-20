@@ -1,7 +1,6 @@
 #include "TitleScene.h"
 #include "../DInput/DirectInput.h"
 #include "../Game/GameManager/GameManager.h"
-#include "GameScene.h"
 #include "EditScene.h"
 #include "Fade.h"
 #include "../Game/Object.h"
@@ -14,6 +13,8 @@
 #include "../main.h"
 #include "../Sound/Sound.h"
 #include "Title\TitleSelect.h"
+#include "../Imgui/ImguiManager.h"
+#include "Tutorial.h"
 
 TitleScene::TitleScene()
 {
@@ -125,7 +126,7 @@ void TitleScene::Update()
 				break;
 			case TitleSelect::GAME:
 				Object::ReleaseAll();
-				GameManager::SetScene(new GameScene());
+				GameManager::SetScene(new Tutorial());
 				break;
 			default:
 				break;
@@ -186,3 +187,4 @@ void TitleScene::SceneChange()
 		GameEnd();
 	}
 }
+

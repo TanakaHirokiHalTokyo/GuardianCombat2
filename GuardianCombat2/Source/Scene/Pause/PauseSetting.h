@@ -18,7 +18,7 @@ public:
 
 	enum DEVICE
 	{
-		MOUSE = 1,
+		MOUSE = 0,
 		CONTROLLER
 	};
 	struct Size

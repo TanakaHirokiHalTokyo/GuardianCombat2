@@ -7,6 +7,13 @@
 #include "../Imgui/ImguiManager.h"
 #include "../main.h"
 #include "../Sound/Sound.h"
+#include "../Camera/StayCamera.h"
+#include "../Game/XModel/XModel.h"
+#include "../Game/MeshField/MeshField.h"
+#include "../Game/Enemy/RandomMoveHige.h"
+#include "../Light/Light.h"
+#include "../DirectXRenderer.h"
+#include "../Game/Shader/ShadowMapShader.h"
 #include <fstream>
 
 const float WORD_SIZE_WIDTH = 600.0f * ((float)ScreenWidth / 1600.0f);				//デフォルトワードサイズ幅
@@ -17,6 +24,7 @@ const float BACK_SIZE_WIDTH = 1600.0f * ((float)ScreenWidth / 1600.0f);			//背景
 const float BACK_SIZE_HEIGHT = 900.0f * ((float)ScreenHeight / 900.0f);				//背景サイズ高さ
 const float KEY_SIZE_WIDTH = 600.0f * ((float)ScreenWidth / 1600.0f);					//PressKeyサイズ幅
 const float KEY_SIZE_HEIGHT = 200.0f * ((float)ScreenHeight / 900.0f);				//PressKeyサイズ高さ
+const int BACK_ALPHA = 0;		//背景テクスチャの透明度	
 
 const char* RESULT_WORD[2] =
 {
@@ -30,10 +38,36 @@ GameResult::GameResult()
 	GameManager::GetFade()->FadeOut();
 	bgm_ = new Sound(SoundManager::GAMERESULT_BGM);
 	selectSE_ = new Sound(SoundManager::SELECTOK_SE);
+
+	//環境光作成
+	DirectionalLight* light = Object::Create<DirectionalLight>();		
+	light->SetPause(true);
+	light->SetVector(D3DXVECTOR3(0.0f, -1.0f, 1.0f));
+	GameManager::SetDirectionalLight(light);							
+
+	//SkyDome作成
+	XModel* skydome = Object::Create<XModel>();
+	skydome->SetModelType(XModel::MODEL_DOME303);
+	skydome->SetScale(10.0f,10.0f,10.0f);
+
+	Object::Create<MeshField>();
+
+	//ランダムに動く敵を生成
+	enemy_ = Object::Create<RandomMoveHige>();
+	enemy_->SetRangeX(-7.0f, 7.0f);
+	enemy_->SetRangeY(0.0f,1.0f);
+	enemy_->SetRangeZ(-7.0f, 7.0f);
+
+	//カメラの作成
+	camera_ = Object::Create<StayCamera>();
+
 	resultBack_ = Object::Create<Texture>(TextureManager::Tex_GameResultBack);
 	pressKey_ = Object::Create<Texture>(TextureManager::Tex_PressSpace);
+
+	//勝敗結果によってテクスチャ切替
 	if (GameManager::IsGameClear()) { resultWord_ = Object::Create<Texture>(TextureManager::Tex_Win);	selectResultNumber_ = 0; }
 	else { resultWord_ = Object::Create<Texture>(TextureManager::Tex_Lose);		selectResultNumber_ = 1; }
+
 }
 
 GameResult::~GameResult()
@@ -58,12 +92,16 @@ void GameResult::Init()
 	resultBack_->SetDrawSize(BACK_SIZE_WIDTH,BACK_SIZE_HEIGHT);
 	pressKey_->SetDrawSize(KEY_SIZE_WIDTH,KEY_SIZE_HEIGHT);
 	pressKey_->SetPosition(((float)ScreenWidth - KEY_SIZE_WIDTH) / 2.0f, (float)ScreenHeight - KEY_SIZE_HEIGHT, 0.0f);
+
+	camera_->SetAt(0.0f, 0.0f, 0.0f);
+	camera_->SetPosition(11.0f, 5.0f, 11.0f);
+
 	Object::InitAll();
 }
 
 void GameResult::Uninit()
 {
-
+	GameManager::EndGame();
 }
 
 void GameResult::Update()
@@ -106,8 +144,8 @@ void GameResult::Update()
 	if (selectResultNumber_ == 0)		resultWord_->SetColor(D3DCOLOR_RGBA((int)(wordWinColor_[0] * 255.0f), (int)(wordWinColor_[1] * 255.0f), (int)(wordWinColor_[2] * 255.0f), 255));
 	else	resultWord_->SetColor(D3DCOLOR_RGBA((int)(wordLoseColor_[0] * 255.0f), (int)(wordLoseColor_[1] * 255.0f), (int)(wordLoseColor_[2] * 255.0f), 255));
 	//背景色更新
-	if (selectResultNumber_ == 0)	resultBack_->SetColor(D3DCOLOR_RGBA((int)(backWinColor_[0] * 255.0f), (int)(backWinColor_[1] * 255.0f), (int)(backWinColor_[2] * 255.0f), 255));
-	else	resultBack_->SetColor(D3DCOLOR_RGBA((int)(backLoseColor_[0] * 255.0f), (int)(backLoseColor_[1] * 255.0f), (int)(backLoseColor_[2] * 255.0f), 255));
+	if (selectResultNumber_ == 0)	resultBack_->SetColor(D3DCOLOR_RGBA((int)(backWinColor_[0] * 255.0f), (int)(backWinColor_[1] * 255.0f), (int)(backWinColor_[2] * 255.0f), BACK_ALPHA));
+	else	resultBack_->SetColor(D3DCOLOR_RGBA((int)(backLoseColor_[0] * 255.0f), (int)(backLoseColor_[1] * 255.0f), (int)(backLoseColor_[2] * 255.0f), BACK_ALPHA));
 
 	//拡大率更新
 	if (scaleAddRate_ > 0.0f)
@@ -170,11 +208,20 @@ void GameResult::Update()
 		}
 	}
 
+	cameraAngle_ += 0.001f;
+	if (cameraAngle_ >= 360.0f) cameraAngle_ = 0.0f;
+	camera_->SetPosition(cosf(cameraAngle_) * 11.0f, 5.0f,sinf(cameraAngle_) * 11.0f);
+
+	camera_->SetAt(enemy_->GetPosition().x, enemy_->GetPosition().y - 2.0f, enemy_->GetPosition().z);
+
 	Object::UpdateAll();
 }
 
 void GameResult::BeginDraw()
 {
+	ShadowMapShader::CreateShadowMapTexture();
+	ShadowMapShader::CreateShadowMap();
+	CRendererDirectX::Clear();
 	Object::BeginDrawAll();
 }
 
@@ -186,6 +233,7 @@ void GameResult::Draw()
 void GameResult::EndDraw()
 {
 	Object::EndDrawAll();
+	CRendererDirectX::ClearZ();
 }
 
 void GameResult::SaveSettings(std::string filename)

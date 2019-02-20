@@ -25,7 +25,7 @@
 constexpr unsigned int ScreenWidth = 1600;															//画面幅サイズ
 constexpr unsigned int ScreenHeight = 900;															//画面高さサイズ
 constexpr int	GameFPS = 60;																				//FPS
-constexpr bool	FullScreenFlag = true;
+constexpr bool	FullScreenFlag = false;
 
 HINSTANCE GetHinstance();
 HWND	  GethWnd();

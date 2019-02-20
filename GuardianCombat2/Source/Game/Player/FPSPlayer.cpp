@@ -177,11 +177,6 @@ void FPSPlayer::EndDraw()
 	playerUI_->Draw();
 }
 
-Weapon * FPSPlayer::GetWeapon()
-{
-	return shotgun_;
-}
-
 Sphere* FPSPlayer::AddCollision()
 {
 	Sphere* collision = new Sphere();

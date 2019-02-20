@@ -9,6 +9,7 @@
 
 constexpr int SCENE_CHANGE_COUNT = GameFPS * 6;
 
+
 ResultScene::ResultScene()
 {
 	GameManager::SetSceneTag("ResultScene");
